@@ -1,0 +1,1 @@
+64 bit arch kernel built on top of [x64BareBones](https://bitbucket.org/RowDaBoat/x64barebones/wiki/Home) by Rodrigo Rearden (RowDaBoat) and Augusto Nizzo McIntosh
