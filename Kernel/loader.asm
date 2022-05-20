@@ -1,6 +1,6 @@
-global loader
-extern main
-extern initializeKernelBinary
+GLOBAL loader
+EXTERN main
+EXTERN initializeKernelBinary
 
 loader:
 	call initializeKernelBinary	; Set up the kernel binary, and get thet stack address
