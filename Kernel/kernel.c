@@ -5,6 +5,7 @@
 #include <naiveConsole.h>
 #include <interrupts/time.h>
 #include <interrupts/idtLoader.h>
+#include <drivers/keyboard.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
