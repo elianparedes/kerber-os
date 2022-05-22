@@ -86,6 +86,7 @@ void * initializeKernelBinary()
 int main()
 {	
 	load_idt();
+	kbd_install();
 
 	ncPrint("[Kernel Main]");
 	ncNewline();
