@@ -1,4 +1,3 @@
-#include <stdint.h>
 #include <defs.h>
 #include <interrupts/interrupts.h>
 

@@ -1,13 +1,4 @@
-#include <stdint.h>
-#include <defs.h>
 #include <interrupts/idtLoader.h>
-#include <interrupts/interrupts.h>
-
-extern void _irq00Handler(void);
-extern void _exception0Handler(void);
-extern void picSlaveMask(uint8_t mask);
-extern void picSlaveMask(uint8_t mask);
-extern void _sti(void);
 
 #pragma pack(push)		/* Push de la alineación actual */
 #pragma pack (1) 		/* Alinear las siguiente estructuras a 1 byte */
@@ -29,12 +20,11 @@ static void setup_IDT_entry (int index, uint64_t offset);
 void load_idt() {
   _cli();
 
+  setup_IDT_entry (0x00, (uint64_t)&_exception0Handler);
   setup_IDT_entry (0x20, (uint64_t)&_irq00Handler);
   setup_IDT_entry (0x21, (uint64_t)&_irq01Handler);
-  setup_IDT_entry (0x00, (uint64_t)&_exception0Handler);
 
-	//Solo interrupcion timer tick habilitadas
-	picMasterMask(0xFC); 
+	picMasterMask(0xFE); 
 	picSlaveMask(0xFF);
         
 	_sti();

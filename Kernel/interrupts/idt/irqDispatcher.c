@@ -1,17 +1,10 @@
-#include <interrupts/time.h>
-#include <stdint.h>
-
-static void int_20();
+#include <interrupts/irqDispatcher.h>
 
 void irqDispatcher(uint64_t irq) {
-	switch (irq) {
-		case 0:
-			int_20();
-			break;
-	}
-	return;
+	(*irq_handlers[irq])();
 }
 
-void int_20() {
-	timer_handler();
+void set_kbd_handler(void * handler){
+	picMasterMask(0xFD);
+	irq_handlers[IRQ_01]=handler;
 }
