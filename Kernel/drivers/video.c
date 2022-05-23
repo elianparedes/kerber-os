@@ -60,6 +60,58 @@ void get_cursor_position(int pos[2]){
     pos[1] = position%(MAX_COLS);
 }
 
+void print_string(const char * string){
+    for(int i = 0 ; string[i] != 0 ; i++){
+        print_char(string[i]);
+    }
+}
+
+void print_char(const char c){
+    if((current_video-video)%(2*MAX_COLS) == 0 && (current_video-video)/(2*MAX_COLS) == MAX_ROWS){
+        scroll(1);
+        current_video -= (2*MAX_COLS);
+    }
+    *current_video = c;
+    current_video+=2;
+}
+
+/**
+ * TODO: Al pasar 25 de scroll con pantalla dividida en 2 colores (horizontalmente) en lugar de mantener la logica de arrastrar
+ * el ultimo color, simplemente limpia todos los caracteres y mantiene los colores originales. Para un clear tiene sentido, pero no
+ * para un scroll con este comprotamiento de arrastre
+ **/
+
+void scroll(int lines){
+    
+    int index = 0;
+    int delta = MAX_COLS*2;
+    if(lines == 25){
+        index = 0;
+        delta = 0;
+    } else {
+        for(int i = 0 ; i < MAX_ROWS-(lines-1) ; i++){
+            index = i*delta;
+            if(lines != 25){
+                for(int j = 0 ; j < delta ; j++){
+                    video[j+index] = video[j+(delta*lines)+index];
+                }
+            }
+        }
+    }
+
+    while(lines > 0){
+        
+        for(int j = 0 ; j < MAX_COLS*2 ; j++ ){
+            uint8_t color = video[j+index-delta];
+                video[j+index] = (j%2 ? color : ' ');
+        }
+        index += 2*MAX_COLS;
+        lines--;
+    }
+    
+}
+
+
 static void set_color(int first_row , int first_col , int last_row , int last_col, enum colors color,int is_background){
     uint8_t * aux = (video+1);
     aux += first_row*(MAX_COLS*2) + (first_col*2);

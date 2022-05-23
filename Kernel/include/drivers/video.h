@@ -9,14 +9,8 @@ void move_cursor(int row , int col);
 
 void get_cursor_position(int pos[2]);
 
-/**
- *TODO: 
- **/
 void print_string(const char * string);
 
-/**
- *TODO: 
- **/
 void print_char(const char c);
 
 /**
@@ -38,6 +32,8 @@ void clear_line(int row);
  *TODO: 
  **/
 void select();
+
+void scroll(int lines);
 
 void set_background_color(int first_row , int first_col , int last_row , int last_col, enum colors color);
 
