@@ -14,8 +14,11 @@ GLOBAL _irq05Handler
 
 GLOBAL _exception0Handler
 
+GLOBAL _force_schedule
+
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
+EXTERN schedule
 
 SECTION .text
 
@@ -61,6 +64,15 @@ SECTION .text
 	mov rdi, %1 ; pasaje de parametro
 	call irqDispatcher
 
+	mov rdi, %1
+	cmp rdi, 0 
+	jne .EOI
+
+	mov rdi, rsp
+	call schedule
+	mov rsp, rax
+
+.EOI:
 	; signal pic EOI (End of Interrupt)
 	mov al, 20h
 	out 20h, al
@@ -137,6 +149,16 @@ _irq05Handler:
 ;Zero Division Exception
 _exception0Handler:
 	exceptionHandler 0
+
+_force_schedule:
+	pushState
+
+	mov rdi, rsp
+	call schedule
+	mov rsp, rax
+
+	popState
+	iretq
 
 haltcpu:
 	cli

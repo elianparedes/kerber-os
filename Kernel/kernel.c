@@ -5,6 +5,8 @@
 #include <naiveConsole.h>
 #include <interrupts/time.h>
 #include <interrupts/idtLoader.h>
+#include <process/process.h>
+#include <process/scheduler.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -24,6 +26,26 @@ typedef int (*EntryPoint)();
 void clearBSS(void * bssAddress, uint64_t bssSize)
 {
 	memset(bssAddress, 0, bssSize);
+}
+
+void sync_tickprint(char p_ltr){
+	int prev = ticks_elapsed();
+	while (1){
+		int new = ticks_elapsed();
+		if (prev != new){
+			ncPrintChar(p_ltr);
+			ncPrintChar(' ');
+			prev = new;
+		}
+	}
+}
+
+void processAFunction(){
+	sync_tickprint('A');
+}
+
+void processBFunction(){
+	sync_tickprint('B');
 }
 
 void * getStackBase()
@@ -63,6 +85,10 @@ void * initializeKernelBinary()
 
 	clearBSS(&bss, &endOfKernel - &bss);
 
+	ncNewline();
+	ncPrint("  endOfKernel: 0x");
+	ncPrintHex((uint64_t)&endOfKernel);
+	ncNewline();
 	ncPrint("  text: 0x");
 	ncPrintHex((uint64_t)&text);
 	ncNewline();
@@ -84,8 +110,6 @@ void * initializeKernelBinary()
 
 int main()
 {	
-	load_idt();
-
 	ncPrint("[Kernel Main]");
 	ncNewline();
 	ncPrint("  Sample code module at 0x");
@@ -94,7 +118,6 @@ int main()
 	ncPrint("  Calling the sample code module returned: ");
 	ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
 	ncNewline();
-	ncNewline();
 
 	ncPrint("  Sample data module at 0x");
 	ncPrintHex((uint64_t)sampleDataModuleAddress);
@@ -102,6 +125,25 @@ int main()
 	ncPrint("  Sample data module contents: ");
 	ncPrint((char*)sampleDataModuleAddress);
 	ncNewline();
+
+	/**
+	 * Process scheduling test
+	 */
+	
+    uint64_t processA_base = 0x602000;
+	process_t * processA = new_process(processA_base, &processAFunction);
+
+	uint64_t processB_base = 0x604000;
+	process_t * processB = new_process(processB_base, &processBFunction);
+
+	add_process(processA);
+	add_process(processB);
+
+	load_idt();
+
+	while (1){
+		/** ... */
+	}
 	
 	ncPrint("[Finished]");
 	return 0;
