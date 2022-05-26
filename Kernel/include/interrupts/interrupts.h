@@ -8,8 +8,9 @@
 #ifndef INTERRUPS_H_
 #define INTERRUPS_H_
 
-#include <interrupts/idtLoader.h>
+#include <stdint.h>
 
+#define IRQ_01 1
 
 void _irq00Handler(void);
 void _irq01Handler(void);

@@ -7,6 +7,7 @@
 #include <interrupts/idtLoader.h>
 #include <process/process.h>
 #include <process/scheduler.h>
+#include <drivers/keyboard.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -140,6 +141,7 @@ int main()
 	add_process(processB);
 
 	load_idt();
+	kbd_install();
 
 	while (1){
 		/** ... */
