@@ -1,10 +1,10 @@
 #include <process/process.h>
 
-static int last_pid = 1;
+static int last_pid = 0;
 
 static void process_start(function_t function){
     function();
-    // exit_process();
+    exit_process();
 }
 
 process_t * new_process(uint64_t base_addr, function_t function){

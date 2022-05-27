@@ -1,11 +1,14 @@
 #include <process/process.h>
 #include <process/scheduler.h>
+#include <interrupts/idtLoader.h>
 
 static process_t *current_process = NULL;
 static process_t *front_process = NULL;
 static process_t *rear_process = NULL;
 
 static uint64_t process_count = 0;
+
+extern void _force_schedule();
 
 static void enqueue_process(process_t *process){
     if (process_count == 0)
@@ -28,9 +31,8 @@ bool add_process(process_t *process){
 }
 
 void exit_process(){
-    //current_process->terminated = true;
-    //_force_schedule();
-    //...
+    current_process->terminated = true;
+    _force_schedule();
 }
 
 process_t * get_current_process(){
@@ -43,7 +45,12 @@ uint64_t * schedule(uint64_t * rsp){
 
     if (current_process != NULL){
         current_process->context = rsp;
-        current_process = current_process->next;
+
+        // skip terminated processes to clean them up later
+        do 
+            current_process = current_process->next;
+        while(current_process->terminated);
+
     } else 
         current_process = front_process;
     

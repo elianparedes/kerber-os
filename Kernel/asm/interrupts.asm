@@ -59,6 +59,7 @@ SECTION .text
 %endmacro
 
 %macro irqHandlerMaster 1
+	cli
 	pushState
 
 	mov rdi, %1 ; pasaje de parametro
@@ -151,6 +152,7 @@ _exception0Handler:
 	exceptionHandler 0
 
 _force_schedule:
+	cli
 	pushState
 
 	mov rdi, rsp
