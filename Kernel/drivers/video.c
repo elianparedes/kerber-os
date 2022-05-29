@@ -22,95 +22,114 @@ static uint8_t * current_video = (uint8_t *) VIDEO_ADDRESS;
 static const uint32_t width = MAX_ROWS;
 static const uint32_t height = MAX_COLS;
 
+static int cursor_row = 0;
+static int cursor_col = 0;
+static int cursor_enable = 0;
+
+typedef enum {MOVE_UP = -1 , MOVE_DOWN = 1} direction;
+
+
 /**
  * TODO: Incluir este link que es de donde "copiamos" el codigo
  * https://wiki.osdev.org/Text_Mode_Cursor#Moving_the_Cursor_2
- **/
+ **
 
-void enable_cursor(uint8_t cursor_start, uint8_t cursor_end){
-	outb(CRTC_ADRESS_PORT, CURSOR_START_REGISTER);
-	outb(CRTC_DATA_PORT, (inb(CRTC_DATA_PORT) & 0xC0) | cursor_start);
+ /**
+  * TODO: Modo insert - modo overtype (osea, que al escribir desplaze el texto a la derecha)
+  */
 
-	outb(CRTC_ADRESS_PORT, CURSOR_END_REGISTER);
-	outb(CRTC_DATA_PORT, (inb(CRTC_DATA_PORT) & 0xA0) | cursor_end );
+  /**
+  * TODO: Parametrizar todas las funciones para un tamaño reducido de pantalla (max_rows y max_cols menores o iguales a los del DEFINE)
+  * Esto debe permitir scrollear en una unica zona de pantalla
+  */
+
+static void update_current_video(){
+    current_video = video + cursor_row*MAX_COLS + cursor_col*2;
 }
 
-void disable_cursor(){
-	outb(CRTC_ADRESS_PORT, CURSOR_START_REGISTER);
-	outb(CRTC_DATA_PORT, 0x20);
-}
+static void update_cursor_position(){
 
+    if(!cursor_enable)
+        return;
 
-void move_cursor(int row, int col){
-	uint16_t pos = row* MAX_COLS + col;
- 
-	outb(CRTC_ADRESS_PORT, CURSOR_LOCATION_LOW_REGISTER);
+    cursor_col = ((current_video - video)%(2*MAX_COLS))/2;
+    cursor_row = (current_video - video) / (2*MAX_COLS);
+    uint16_t pos = cursor_row* MAX_COLS + cursor_col;
+
+    outb(CRTC_ADRESS_PORT, CURSOR_LOCATION_LOW_REGISTER);
 	outb(CRTC_DATA_PORT, (uint8_t) pos );
 	outb(CRTC_ADRESS_PORT, CURSOR_LOCATION_HIGH_REGISTER);
 	outb(CRTC_DATA_PORT, (uint8_t)(pos >> 8));
+
 }
 
-void get_cursor_position(int pos[2]){
-    outb(CRTC_ADRESS_PORT, CURSOR_LOCATION_LOW_REGISTER);
-    uint16_t low_pos = inb(CRTC_DATA_PORT);
-    outb(CRTC_ADRESS_PORT, CURSOR_LOCATION_HIGH_REGISTER);
-    uint16_t high_pos = inb(CRTC_DATA_PORT);
-    uint16_t position = (high_pos << 8) + low_pos; 
-    pos[0] = position/(MAX_COLS);
-    pos[1] = position%(MAX_COLS);
-}
-
-void print_string(const char * string){
-    for(int i = 0 ; string[i] != 0 ; i++){
-        print_char(string[i]);
+ static void copy_line(int init_line , int offset , direction direction) {
+    uint8_t * aux_video_ptr = video;
+    aux_video_ptr += init_line * MAX_COLS*2;
+    for(int j = 0 ; j < MAX_COLS*2 ; j++){
+        aux_video_ptr[j + offset*direction*MAX_COLS*2] = j%2 ? 
+            ((aux_video_ptr[j] & 0x0F) | (aux_video_ptr[j + offset*direction*MAX_COLS*2] & 0xF0)) 
+            : aux_video_ptr[j]  ;
     }
 }
 
-void print_char(const char c){
-    if((current_video-video)%(2*MAX_COLS) == 0 && (current_video-video)/(2*MAX_COLS) == MAX_ROWS){
-        scroll(1);
-        current_video -= (2*MAX_COLS);
-    }
-    *current_video = c;
-    current_video+=2;
-}
-
-/**
- * TODO: Al pasar 25 de scroll con pantalla dividida en 2 colores (horizontalmente) en lugar de mantener la logica de arrastrar
- * el ultimo color, simplemente limpia todos los caracteres y mantiene los colores originales. Para un clear tiene sentido, pero no
- * para un scroll con este comprotamiento de arrastre
- **/
-
-void scroll(int lines){
+static void copy_lines(int init_line , int count , int offset , direction direction){
     
-    int index = 0;
-    int delta = MAX_COLS*2;
-    if(lines == 25){
-        index = 0;
-        delta = 0;
-    } else {
-        for(int i = 0 ; i < MAX_ROWS-(lines-1) ; i++){
-            index = i*delta;
-            if(lines != 25){
-                for(int j = 0 ; j < delta ; j++){
-                    video[j+index] = video[j+(delta*lines)+index];
-                }
-            }
+    int current_line;
+    switch (direction)
+    {
+    case MOVE_DOWN:
+        current_line = init_line + count -1;
+        if(init_line + count + offset  > MAX_ROWS ){
+            current_line -= (init_line + count + offset  - MAX_ROWS);
+            count -= (init_line + count + offset  - MAX_ROWS);
         }
+        break;
+    
+    case MOVE_UP:
+        current_line = init_line;
+        if(init_line - offset < 0 ){
+            current_line += (offset - init_line);
+            count -= (offset - init_line);
+        }
+        break;
     }
 
-    while(lines > 0){
+
+    while(count > 0){
+        copy_line(current_line,offset,direction);
+        current_line += -1*direction;
+        count--;
+    }
+
+}
+
+static void move_lines(int init_line , int count , int offset , direction direction){
+    copy_lines(init_line,count,offset,direction);
+    int current_line;
+
+    switch (direction)
+    {
+    case MOVE_UP:
+        current_line = init_line + count-1;
         
-        for(int j = 0 ; j < MAX_COLS*2 ; j++ ){
-            uint8_t color = video[j+index-delta];
-                video[j+index] = (j%2 ? color : ' ');
-        }
-        index += 2*MAX_COLS;
-        lines--;
-    }
+        break;
     
-}
+    case MOVE_DOWN:
+        current_line = init_line;
+        break;
+    }
 
+    
+    if(offset < count)
+        count = offset;
+    
+    while(count > 0){
+        clear_line(current_line);
+        current_line += direction;
+        count--;
+    }
+}
 
 static void set_color(int first_row , int first_col , int last_row , int last_col, enum colors color,int is_background){
     uint8_t * aux = (video+1);
@@ -130,6 +149,99 @@ static void set_color(int first_row , int first_col , int last_row , int last_co
         col_counter = 0;
         row_counter++;
     }
+}
+
+void enable_cursor(uint8_t cursor_start, uint8_t cursor_end){
+	outb(CRTC_ADRESS_PORT, CURSOR_START_REGISTER);
+	outb(CRTC_DATA_PORT, (inb(CRTC_DATA_PORT) & 0xC0) | cursor_start);
+
+	outb(CRTC_ADRESS_PORT, CURSOR_END_REGISTER);
+	outb(CRTC_DATA_PORT, (inb(CRTC_DATA_PORT) & 0xA0) | cursor_end );
+    cursor_enable = 1;
+    update_cursor_position();
+}
+
+void disable_cursor(){
+	outb(CRTC_ADRESS_PORT, CURSOR_START_REGISTER);
+	outb(CRTC_DATA_PORT, 0x20);
+    cursor_enable = 0;
+}
+
+void move_cursor(int row, int col){
+    if(!cursor_enable)
+        return;
+    cursor_col = col;
+    cursor_row = row;
+    update_current_video();
+	update_cursor_position();
+}
+
+void get_cursor_position(int pos[2]){
+    pos[0] = cursor_row;
+    pos[1] = cursor_col;
+}
+
+void print_string(const char * string){
+    for(int i = 0 ; string[i] != 0 ; i++){
+        print_char(string[i]);
+    }
+}
+
+void print_char(const char c){
+    if((current_video-video)%(2*MAX_COLS) == 0 && (current_video-video)/(2*MAX_COLS) == MAX_ROWS){
+        scroll(1);
+        current_video -= (2*MAX_COLS);
+    }
+    *current_video = c;
+    current_video+=2;
+    update_cursor_position();
+}
+
+void print_new_line(){
+
+    int col = (current_video - video) % (MAX_COLS*2);
+    int line = (current_video - video) / (MAX_COLS*2);
+
+    if(col == 0 && line == 0){
+        move_lines(line,MAX_ROWS-line,1,MOVE_DOWN);
+        current_video = video;
+        return;
+    }
+
+    if(line == MAX_ROWS-1)
+        move_lines(0,1,1,MOVE_UP);
+    else
+        move_lines(line+1,MAX_ROWS-line,1,MOVE_DOWN);
+    
+    uint8_t * aux_video_ptr = video + line*2*MAX_COLS;
+    current_video = video + (line+1)*2*MAX_COLS;
+    update_cursor_position();
+
+    for(int i = col, j = 0 ; i < MAX_COLS*2 - col ; i+=2 , j+=2){
+        current_video[j] = aux_video_ptr[i];
+        aux_video_ptr[i] = ' ';
+    }
+}
+
+void clear_screen(){
+    for(int i = 0 ; i < MAX_ROWS ; i++){
+        clear_line(i);
+    }
+    current_video = video;
+}
+
+void clear_line(int line){
+    uint8_t * aux_video_ptr = video + line*MAX_COLS*2;
+    for(int i = 0 ; i < MAX_COLS*2 ; i++){
+        if(!(i%2))
+            aux_video_ptr[i] = ' ';
+    }
+}
+
+void scroll(){
+    move_lines(1,MAX_ROWS-1,1,MOVE_UP);
+    current_video -= (((current_video-video)%(2*MAX_COLS) == 0) ? 0 : 2*MAX_COLS);
+    update_cursor_position();
 }
 
 void set_background_color(int first_row , int first_col , int last_row , int last_col, enum colors color){

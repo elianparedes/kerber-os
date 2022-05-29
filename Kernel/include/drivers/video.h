@@ -13,27 +13,13 @@ void print_string(const char * string);
 
 void print_char(const char c);
 
-/**
- *TODO: 
- **/
 void print_new_line();
 
-/**
- *TODO: 
- **/
 void clear_screen();
 
-/**
- *TODO: 
- **/
-void clear_line(int row);
+void clear_line(int line);
 
-/**
- *TODO: 
- **/
-void select();
-
-void scroll(int lines);
+void scroll();
 
 void set_background_color(int first_row , int first_col , int last_row , int last_col, enum colors color);
 
