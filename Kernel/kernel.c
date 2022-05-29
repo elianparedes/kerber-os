@@ -8,6 +8,7 @@
 #include <process/process.h>
 #include <process/scheduler.h>
 #include <drivers/keyboard.h>
+#include <mem/pmm.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -127,14 +128,16 @@ int main()
 	ncPrint((char*)sampleDataModuleAddress);
 	ncNewline();
 
+	init_pmm(); // init physical memory manager
+
 	/**
 	 * Process scheduling test
 	 */
 	
-    uint64_t processA_base = 0x602000;
+    uint64_t processA_base = kmalloc(sizeof(process_t));
 	process_t * processA = new_process(processA_base, &processAFunction);
 
-	uint64_t processB_base = 0x604000;
+	uint64_t processB_base = kmalloc(sizeof(process_t));
 	process_t * processB = new_process(processB_base, &processBFunction);
 
 	add_process(processA);
