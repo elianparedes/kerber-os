@@ -26,17 +26,15 @@ static int cursor_row = 0;
 static int cursor_col = 0;
 static int cursor_enable = 0;
 
-typedef enum {MOVE_UP = -1 , MOVE_DOWN = 1} direction;
+enum writting_mode{INSERT_WRITTING_MODE,OVERTYPE_WRITTING_MODE};
+static enum writting_mode current_writting_mode = INSERT_WRITTING_MODE;
 
+typedef enum {MOVE_UP = -1 , MOVE_DOWN = 1} ldirection_t;
 
 /**
  * TODO: Incluir este link que es de donde "copiamos" el codigo
  * https://wiki.osdev.org/Text_Mode_Cursor#Moving_the_Cursor_2
  **
-
- /**
-  * TODO: Modo insert - modo overtype (osea, que al escribir desplaze el texto a la derecha)
-  */
 
   /**
   * TODO: Parametrizar todas las funciones para un tamaño reducido de pantalla (max_rows y max_cols menores o iguales a los del DEFINE)
@@ -44,7 +42,7 @@ typedef enum {MOVE_UP = -1 , MOVE_DOWN = 1} direction;
   */
 
 static void update_current_video(){
-    current_video = video + cursor_row*MAX_COLS + cursor_col*2;
+    current_video = video + cursor_row*2*MAX_COLS + cursor_col*2;
 }
 
 static void update_cursor_position(){
@@ -63,7 +61,7 @@ static void update_cursor_position(){
 
 }
 
- static void copy_line(int init_line , int offset , direction direction) {
+ static void copy_line(int init_line , int offset , ldirection_t direction) {
     uint8_t * aux_video_ptr = video;
     aux_video_ptr += init_line * MAX_COLS*2;
     for(int j = 0 ; j < MAX_COLS*2 ; j++){
@@ -73,7 +71,7 @@ static void update_cursor_position(){
     }
 }
 
-static void copy_lines(int init_line , int count , int offset , direction direction){
+static void copy_lines(int init_line , int count , int offset , ldirection_t direction){
     
     int current_line;
     switch (direction)
@@ -104,7 +102,7 @@ static void copy_lines(int init_line , int count , int offset , direction direct
 
 }
 
-static void move_lines(int init_line , int count , int offset , direction direction){
+static void move_lines(int init_line , int count , int offset , ldirection_t direction){
     copy_lines(init_line,count,offset,direction);
     int current_line;
 
@@ -151,6 +149,25 @@ static void set_color(int first_row , int first_col , int last_row , int last_co
     }
 }
 
+static void insert(const char c , int current_line , int current_col ){
+    uint8_t * aux_video_ptr = video + current_line*(2*MAX_COLS);
+    if(aux_video_ptr[2*(MAX_COLS-1)] != 0 ){
+        if(current_line == (MAX_ROWS - 1) ){
+            scroll();
+            current_line--;
+        }
+        insert(aux_video_ptr[2*(MAX_COLS-1)] , current_line+1 , 0 );
+    }
+    for(int i = (MAX_COLS-2)*2 ; i >= current_col ; i--){
+        aux_video_ptr[i+2] = aux_video_ptr[i]; 
+    }
+    aux_video_ptr[current_col] = c;
+}
+
+static void overtype(const char c){
+    *current_video = c;
+}
+
 void enable_cursor(uint8_t cursor_start, uint8_t cursor_end){
 	outb(CRTC_ADRESS_PORT, CURSOR_START_REGISTER);
 	outb(CRTC_DATA_PORT, (inb(CRTC_DATA_PORT) & 0xC0) | cursor_start);
@@ -192,7 +209,16 @@ void print_char(const char c){
         scroll(1);
         current_video -= (2*MAX_COLS);
     }
-    *current_video = c;
+    switch (current_writting_mode)
+    {
+    case INSERT_WRITTING_MODE:
+        insert(c,(current_video-video)/(2*MAX_COLS),(current_video-video)%(2*MAX_COLS));
+        break;
+    
+    case OVERTYPE_WRITTING_MODE:
+        overtype(c);
+        break;
+    }
     current_video+=2;
     update_cursor_position();
 }
@@ -219,8 +245,27 @@ void print_new_line(){
 
     for(int i = col, j = 0 ; i < MAX_COLS*2 - col ; i+=2 , j+=2){
         current_video[j] = aux_video_ptr[i];
-        aux_video_ptr[i] = ' ';
+        aux_video_ptr[i] = 0;
     }
+}
+
+void delete_char(){
+    if(!cursor_enable)
+        return;
+
+    uint8_t current_line = (current_video - video) / (2*MAX_COLS);
+    uint8_t current_col = (current_video - video) % (2*MAX_COLS);
+    uint8_t * aux_video_ptr = video + current_line*MAX_COLS*2;
+    
+    if(current_col == 2*(MAX_COLS-1)){
+        aux_video_ptr[current_col] = 0;
+        return;
+    }
+
+    for(int i = current_col ; i < (2*MAX_COLS) ; i++){
+        aux_video_ptr[i] = aux_video_ptr[i+2]; 
+    }
+    aux_video_ptr[2*(MAX_COLS-1)] = 0;
 }
 
 void clear_screen(){
@@ -234,7 +279,7 @@ void clear_line(int line){
     uint8_t * aux_video_ptr = video + line*MAX_COLS*2;
     for(int i = 0 ; i < MAX_COLS*2 ; i++){
         if(!(i%2))
-            aux_video_ptr[i] = ' ';
+            aux_video_ptr[i] = 0 ;
     }
 }
 
@@ -250,4 +295,12 @@ void set_background_color(int first_row , int first_col , int last_row , int las
 
 void set_foreground_color(int first_row , int first_col , int last_row , int last_col, enum colors color){
     set_color(first_row,first_col,last_row,last_col,color,0);
+}
+
+void set_insert_mode(){
+    current_writting_mode = INSERT_WRITTING_MODE;
+}
+
+void set_overtype_mode(){
+    current_writting_mode = OVERTYPE_WRITTING_MODE;
 }

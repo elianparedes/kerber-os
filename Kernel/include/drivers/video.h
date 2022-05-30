@@ -15,6 +15,8 @@ void print_char(const char c);
 
 void print_new_line();
 
+void delete_char();
+
 void clear_screen();
 
 void clear_line(int line);
@@ -24,3 +26,7 @@ void scroll();
 void set_background_color(int first_row , int first_col , int last_row , int last_col, enum colors color);
 
 void set_foreground_color(int first_row , int first_col , int last_row , int last_col, enum colors color);
+
+void set_insert_mode();
+
+void set_overtype_mode();
