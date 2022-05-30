@@ -143,5 +143,5 @@ char kbd_get_last_key(){
     if (index > 0){
         return buffer[index-1];
     }
-    return '\0';
+    return 0;
 }

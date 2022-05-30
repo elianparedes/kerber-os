@@ -21,6 +21,8 @@ void _irq05Handler(void);
 
 void _exception0Handler(void);
 
+uint8_t _syscall_master_handler(void);
+
 void _cli(void);
 
 void _sti(void);
