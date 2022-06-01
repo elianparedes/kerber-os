@@ -14,12 +14,14 @@ GLOBAL _irq05Handler
 
 GLOBAL _exception0Handler
 
+GLOBAL _syscall_master_handler
 GLOBAL _force_schedule
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 EXTERN schedule
 
+EXTERN syscall_dispatcher
 SECTION .text
 
 %macro pushState 0
@@ -162,11 +164,27 @@ _force_schedule:
 	popState
 	iretq
 
+_syscall_master_handler:
+	cli
+	pushState
+
+	mov rcx, r10
+	push rax
+	call syscall_dispatcher 
+	pop rax
+	mov rbx, rax
+
+	mov al, 20h
+	out 20h, al
+
+	mov rax, rbx   ;restore return
+	popState
+	iretq
+
 haltcpu:
 	cli
 	hlt
 	ret
-
 
 SECTION .bss
 	aux resq 1

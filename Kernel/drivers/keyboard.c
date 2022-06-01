@@ -19,25 +19,21 @@ enum KBD_CTRL_CMD{
   KBD_CTRL_CMD_DISABLE = 0xAD, 
   KBD_CTRL_CMD_ENABLE = 0xAE
 };
-/*
-enum KBD_ENC_CMD{
-  KBD_ENC_CMD_SETSC= 0xF0
-};
-enum KBD_SC{
-  KBD_SC_1=0x01,
-  KBD_SC_2=0x02,
-  KBD_SC_3=0x03
-};
-*/
 
 #define BUFFER_SIZE 512
-#define KBD_SIZE 128
+#define KBD_SIZE 90
+
 #define MAYUS_OFFSET ('a'-'A')
 #define IS_ASCII_LETTER(l) (l >= 'a' && l <= 'z')
+
+#define LSHIFT_MK 0x2A
+#define LSHIFT_BK 0xAA
+#define CAPS_MK 0x3A
 
 static char buffer[BUFFER_SIZE];
 static uint16_t index=0;
 static uint8_t caps_locked=0;
+static uint8_t shift_pressed=0;
 
 static char kbd_US_1 [KBD_SIZE] =
 {
@@ -45,15 +41,13 @@ static char kbd_US_1 [KBD_SIZE] =
     '\b' /* Backspace */, '\t', /* Tab */
     'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', 
     '\n' /* Enter */, 0, /* control key */
-    'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`',  0, '\\', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/',   0,
-  '*',
+    'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`',  0, '\\', 
+    'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/',   0, '*',
     0,  /* Alt */
   ' ',  /* Space bar */
     0,  /* Caps lock */
-    0,  /* 59 - F1 key ... > */
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,  /* < ... F10 */
-    0,  /* 69 - Num lock*/
+    0,  0,   0,   0,   0,   0,   0,   0,   0, 0,  /* F1 ... F10 keys */
+    0,  /* Num lock*/
     0,  /* Scroll Lock */
     0,  /* Home key */
     0,  /* Up Arrow */
@@ -63,7 +57,7 @@ static char kbd_US_1 [KBD_SIZE] =
     0,
     0,  /* Right Arrow */
    '+',
-    0,  /* 79 - End key*/
+    0,  /* End key*/
     0,  /* Down Arrow */
     0,  /* Page Down */
     0,  /* Insert Key */
@@ -74,6 +68,38 @@ static char kbd_US_1 [KBD_SIZE] =
     0,  /* Undefined Keys*/
 };
 
+static char kbd_shift_US_1 [KBD_SIZE] = 
+{
+    0, 0, /*Numbers shift locked*/ '!','@', '#', '$', '%', '^', '&', '*', '(',')','_','+',
+    0, 0, /* Backspace and tab */
+    'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}',
+    0,0, /*Enter and control key*/
+    'A', 'S' ,'D' ,'F' ,'G' ,'H' ,'J' ,'K' ,'L' ,':', '"', '~', 0, '|', 
+    'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?', 0, 0,
+    0,  /* Alt */
+    0,  /* Space bar */
+    0,  /* Caps lock */
+    0,  0,   0,   0,   0,   0,   0,   0,   0,  0,  /* F1 ... F10 keys */
+    0,  /* Num lock */
+    0,  /* Scroll Lock */
+    0,  /* Home key */
+    0,  /* Up Arrow */
+    0,  /* Page Up */
+    0,
+    0,  /* Left Arrow */
+    0,
+    0,  /* Right Arrow */
+    0,
+    0,  /* End key*/
+    0,  /* Down Arrow */
+    0,  /* Page Down */
+    0,  /* Insert Key */
+    0,  /* Delete Key */
+    0,   0,   0,
+    0,  /* F11 Key */
+    0,  /* F12 Key */
+    0,  /* Undefined Keys*/
+};
 
 void kbd_install(){
     set_kbd_handler(kbd_handler);
@@ -106,14 +132,24 @@ void kbd_enable(){
 void kbd_handler(){
 
     uint8_t scan_code= inb(KBD_ENCODER_PORT);
+    if (scan_code == LSHIFT_MK || scan_code == LSHIFT_BK){
+        shift_pressed=!shift_pressed;
+        return;
+    }
     if (index > BUFFER_SIZE || scan_code > KBD_SIZE){
         return; 
     }
-    if (scan_code == 0x3A){
+    if (scan_code == CAPS_MK){
         caps_locked=!caps_locked;
         return;
     }
-    uint8_t character=kbd_US_1[scan_code];
+    uint8_t character;
+    if (shift_pressed){
+        character=kbd_shift_US_1[scan_code];
+    }
+    else{
+        character=kbd_US_1[scan_code];
+    }
     if (caps_locked && IS_ASCII_LETTER(character)){
         buffer[index]=character - MAYUS_OFFSET;
     }
@@ -143,5 +179,15 @@ char kbd_get_last_key(){
     if (index > 0){
         return buffer[index-1];
     }
-    return '\0';
+    return 0;
+}
+
+char kbd_get_rm_last_key(){
+    if (index > 0){
+        char toReturn = buffer[index-1];
+        index--;
+        buffer[index]=0;
+        return toReturn;
+    }
+    return 0;
 }
