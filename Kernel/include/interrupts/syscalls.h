@@ -4,5 +4,5 @@ enum STD {STDIN, STDOUT, STDERR};
 #define SYSCALL_READ 0
 #define SYSCALL_WRITE 1
 
-uint8_t read(int fd, char * buffer, uint16_t count);
-uint8_t write(int fd, char * buffer, uint16_t count);
+uint16_t read(int fd, char * buffer, uint16_t count);
+uint16_t write(int fd, char * buffer, uint16_t count);

@@ -112,6 +112,10 @@ void * initializeKernelBinary()
 
 int main()
 {	
+	load_idt();
+	kbd_install();
+	init_pmm(); // init physical memory manager
+ 
 	ncPrint("[Kernel Main]");
 	ncNewline();
 	ncPrint("  Sample code module at 0x");
@@ -128,11 +132,10 @@ int main()
 	ncPrint((char*)sampleDataModuleAddress);
 	ncNewline();
 
-	init_pmm(); // init physical memory manager
 
 	/**
 	 * Process scheduling test
-	 */
+	 
 	
     uint64_t processA_base = kmalloc(sizeof(process_t));
 	process_t * processA = new_process(processA_base, &processAFunction);
@@ -142,9 +145,7 @@ int main()
 
 	add_process(processA);
 	add_process(processB);
-
-	load_idt();
-	kbd_install();
+	*/
 
 	while (1){
 		/** ... */

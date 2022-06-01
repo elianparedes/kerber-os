@@ -3,37 +3,32 @@
 #include <drivers/keyboard.h>
 #include <drivers/video.h>
 
-uint8_t read(int fd, char * buffer, uint16_t count){
+uint16_t read(int fd, char * buffer, uint16_t count){
     //file descriptors not implemented
     if (fd > STDERR){
         return ERROR;
     }
-    char last_key=0;
-    char key=0;
-    uint16_t i=0;
+    kbd_clear_buffer();
     _sti();
-    while (key != 10){
-        key=kbd_get_last_key();
-        if (key != last_key && i < count){
-            buffer[i++]=key;
-        }
-        last_key=key;
+    while (count > kbd_get_current_index()){
 
     }
     _cli();
-    if (i>0){
-        buffer[i-1]=0;
+    char * aux=kbd_get_buffer();
+    uint16_t i;
+    for (i=0; i < count ; i++){
+        buffer[i]=aux[i];
     }
     return i-1;
 }
 
-uint8_t write(int fd, char * buffer, uint16_t count){
+uint16_t write(int fd, char * buffer, uint16_t count){
      //file descriptors not implemented
     if (fd > STDERR){
         return ERROR;
     }
     uint16_t i=0;
-    while (buffer[i] != 0 && i < count){
+    while (i < count){
         print_char(buffer[i++]);
     }
     return i;
