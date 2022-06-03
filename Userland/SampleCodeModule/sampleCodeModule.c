@@ -1,5 +1,6 @@
 /* sampleCodeModule.c */
 #include <stdklib.h>
+#include <kstring.h>
 
 char * v = (char*)0xB8000 + 79 * 2;
 
