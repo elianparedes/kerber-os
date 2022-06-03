@@ -19,7 +19,7 @@ int puts(const char * str){
     return _write(STDOUT, str, length);
 }
 
-/* Implementation by https://iq.opengenus.org/how-printf-and-scanf-function-works-in-c-internally/-- */
+/* Implementation by https://iq.opengenus.org/how-printf-and-scanf-function-works-in-c-internally/ */
 int printf (char * str, ...)
 {
 	va_list vl;

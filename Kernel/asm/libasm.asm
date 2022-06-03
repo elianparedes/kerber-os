@@ -2,6 +2,12 @@ GLOBAL cpuVendor
 GLOBAL outb
 GLOBAL inb
 
+GLOBAL _rtc_time
+GLOBAL _set_hour12_mode
+GLOBAL _set_hour24_mode
+GLOBAL _set_decimal_mode
+GLOBAL _set_BCD_mode
+
 section .text
 	
 cpuVendor:
@@ -39,3 +45,71 @@ inb:
     mov     rdx, rdi
     in      al, dx
     ret
+
+_rtc_time:
+	push rbp
+	mov rbp , rsp
+	mov [aux] , byte rdi
+	mov  al , [aux]
+	out 70h,al
+	in al,71h
+	mov rsp, rbp
+	pop rbp
+ret
+	
+_set_hour12_mode:
+	push rbp
+	mov rbp , rsp
+	mov al, 11
+	out 70h,al
+	in al,71h
+	mov ah,2
+	not ah
+	and al,ah
+	out 71h,al
+	mov rsp, rbp
+	pop rbp
+ret
+
+_set_hour24_mode:
+	push rbp
+	mov rbp , rsp
+	mov al, 11
+	out 70h,al
+	in al,71h
+	mov ah,2
+	or al,ah
+	out 71h,al
+	mov rsp, rbp
+	pop rbp
+ret
+
+_set_decimal_mode:
+	push rbp
+	mov rbp , rsp
+	mov al, 11
+	out 70h,al
+	in al,71h
+	mov ah,4
+	or al,ah
+	out 71h,al
+	mov rsp, rbp
+	pop rbp
+ret
+
+_set_BCD_mode:
+	push rbp
+	mov rbp , rsp
+	mov al, 11
+	out 70h,al
+	in al,71h
+	mov ah,4
+	not ah
+	and al,ah
+	out 71h,al
+	mov rsp, rbp
+	pop rbp
+ret
+
+section .bss
+aux resb 1
