@@ -29,7 +29,14 @@ uint16_t write(int fd, char * buffer, uint16_t count){
     }
     uint16_t i=0;
     while (i < count){
-        print_char(buffer[i++]);
+        char c= buffer[i];
+        if (c == '\n'){
+            print_new_line();
+        }
+        else{
+            print_char(c);
+        }
+        i++;
     }
     return i;
 }

@@ -24,13 +24,13 @@ int strcmp(const char *str1, const char *str2){
     return *str1 - *str2;
 }
 
-//--https://www.geeksforgeeks.org/implement-itoa/--
 void swap (char * c1, char * c2){
     char aux= *c1;
     *c1= *c2;
     *c2=aux;
 }
 
+/* Implementation by https://www.geeksforgeeks.org/implement-itoa/-- */
 /* A utility function to reverse a string  */
 void reverse(char str[], int length)
 {
@@ -43,4 +43,12 @@ void reverse(char str[], int length)
         end--;
     }
 }
-//-------------------------------------------------
+
+
+size_t strlen(const char * str){
+    int i=0;
+    while (str[i] != '\0'){
+        i++;
+    }
+    return i;
+}
