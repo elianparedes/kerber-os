@@ -1,10 +1,6 @@
-#include <stdint.h>
-#include <lib.h>
 #include <drivers/video.h>
 
 #define VIDEO_ADDRESS 0xB8000
-#define MAX_ROWS 25
-#define MAX_COLS 80
 
 #define CRTC_ADRESS_PORT 0x3D4
 #define CRTC_DATA_PORT 0x3D5
@@ -23,13 +19,18 @@
 
 static uint8_t * video = (uint8_t *) VIDEO_ADDRESS;
 static uint8_t * current_video = (uint8_t *) VIDEO_ADDRESS;
+
+static area_t work_area = {.width = MAX_COLS, .height = MAX_ROWS , .first_col = 0, .first_row = 0};
+/*
 static uint8_t width = MAX_COLS;
 static uint8_t height = MAX_ROWS;
 static uint8_t first_col = 0; 
+static uint8_t first_row = 0;*/
 
 static int cursor_row = 0;
 static int cursor_col = 0;
 static int cursor_enable = 0;
+static int scroll_enable = 0;
 
 /**
  * TODO: Incluir este link que es de donde "copiamos" el codigo
@@ -37,7 +38,7 @@ static int cursor_enable = 0;
  **/
 
 static void update_current_video(){
-    current_video = video + cursor_row*2*MAX_COLS + cursor_col*2 + first_col*2;
+    current_video = video + cursor_row*2*MAX_COLS + cursor_col*2;
 }
 
 static void update_cursor_position(){
@@ -60,7 +61,7 @@ static void copy_line(int line) {
 
     uint8_t * aux_video_ptr = LINE_ADDRESS(line);
 
-    for(int j = first_col ; j < width ; j++){
+    for(int j = work_area.first_col ; j < work_area.width ; j++){
         aux_video_ptr[j + MAX_COLS*2] = j%2 ? 
             ((aux_video_ptr[j] & 0x0F) | (aux_video_ptr[j + MAX_COLS*2] & 0xF0)) 
             : aux_video_ptr[j]  ;
@@ -83,18 +84,20 @@ void disable_cursor(){
     cursor_enable = 0;
 }
 
-void move_cursor(int row, int col){
+void move_cursor(position_t pos){
     if(!cursor_enable)
         return;
-    cursor_col = col;
-    cursor_row = row;
+    cursor_col = pos.col;
+    cursor_row = pos.row;
     update_current_video();
 	update_cursor_position();
 }
 
-void get_cursor_position(int pos[2]){
-    pos[0] = cursor_row;
-    pos[1] = cursor_col;
+position_t get_cursor_position(){
+    position_t pos;
+    pos.col = cursor_col;
+    pos.row = cursor_row;
+    return pos;
 }
 
 void print_string(const char * string){
@@ -107,19 +110,33 @@ void print_char(const char c){
 
     int current_col = CURRENT_COL();
     int current_line = CURRENT_LINE();
-    *current_video = c;
-
-    int is_last_col = (current_col == 2*(width+first_col-1));
-    int is_last_row = (current_line == (height-1));
-
-    if( is_last_col && !is_last_row ){
-        print_new_line();
+/*
+    if((current_col > 2*(work_area.first_col + work_area.width -1)) 
+    || (current_col < 2*work_area.first_col) 
+    || (current_line > work_area.first_row + work_area.height -1)
+    || (current_line < work_area.first_row))
         return;
+*/
+    if(current_col==(2*(work_area.first_col + work_area.width-1)) && (work_area.height == 1)){
+        clear_line(current_line);
+        position_t pos = {current_line,work_area.first_col};
+        move_cursor(pos);
+        *current_video = c;
     }
+    else {
+        *current_video = c;
+        int is_last_col = (current_col == 2*(work_area.width + work_area.first_col-1));
+        int is_last_row = (current_line == (work_area.first_row + work_area.height-1));
 
-    if( is_last_col && is_last_row ){
-        scroll();
-        return;
+        if( is_last_col && !is_last_row ){
+            print_new_line();
+            return;
+        }
+
+        if( is_last_col && is_last_row ){
+            scroll();
+            return;
+        }
     }
 
     current_video+=2;
@@ -131,11 +148,11 @@ void print_new_line(){
     int current_col = CURRENT_COL();
     int current_line = CURRENT_LINE();
     
-    if(current_line == height-1)
+    if(current_line == (work_area.first_row + work_area.height-1))
         scroll();
     else
         current_line++;
-    current_video = LINE_ADDRESS(current_line)+2*first_col;
+    current_video = LINE_ADDRESS(current_line)+2*work_area.first_col;
     update_cursor_position();
 
 }
@@ -151,9 +168,9 @@ void delete_char(){
     current_video -=2;
     current_video[0] = 0;
 
-    if(current_col == first_col){
+    if(current_col == work_area.first_col){
         if(current_line != 0)
-            current_video = LINE_ADDRESS(current_line-1) + 2*(width+first_col-((width==MAX_COLS)? 1:0));
+            current_video = LINE_ADDRESS(current_line-1) + 2*(work_area.width+work_area.first_col-((work_area.width==MAX_COLS)? 1:0));
         else
             return;
     }
@@ -161,52 +178,98 @@ void delete_char(){
 }
 
 void clear_screen(){
-    for(int i = 0 ; i < MAX_ROWS ; i++){
+    for(int i = work_area.first_row ; i < work_area.height+work_area.first_row ; i++){
         clear_line(i);
     }
-    current_video = video;
+    current_video = video + work_area.first_col*2 + work_area.first_row*2*MAX_COLS;
+    update_cursor_position();
 }
 
 void clear_line(int line){
-    uint8_t * current_line_video  = LINE_ADDRESS(line) +2*first_col;
-    for(int i  =0 ; i < width*2 ; i++){
+    uint8_t * current_line_video  = LINE_ADDRESS(line) +2*work_area.first_col;
+    for(int i  = 0 ; i < work_area.width*2 ; i++){
         if(!(i%2))
             current_line_video[i] = 0 ;
     }
 }
 
 void scroll(){
-    for(int i = 1 ; i < MAX_ROWS ; i++){
-        uint8_t * current_line_video = LINE_ADDRESS(i)+2*first_col;
-        for(int j = 0 ; j < width*2 ; j++){
+    if(!scroll_enable)
+        return;
+    for(int i = work_area.first_row+1 ; i < (work_area.height+work_area.first_row) ; i++){
+        uint8_t * current_line_video = LINE_ADDRESS(i)+2*work_area.first_col;
+        for(int j = 0 ; j < work_area.width*2 ; j++){
             current_line_video[j-2*MAX_COLS] = current_line_video[j];
         }
     }
-    clear_line(MAX_ROWS-1);
-    current_video = LINE_ADDRESS(MAX_ROWS-1)+2*first_col;
+    clear_line(work_area.first_row+work_area.height-1);
+    current_video = LINE_ADDRESS(work_area.first_row+work_area.height-1)+2*work_area.first_col;
     update_cursor_position();
 }
 
-void set_working_area(int fst_col , int a_width){
-    width = a_width;
-    first_col = fst_col;
-    current_video = video + 2*first_col;
+void set_working_area(area_t area){
+    if(area.first_row + area.height > MAX_ROWS){
+        if(area.first_row >= MAX_ROWS )
+            return;
+        area.height = MAX_ROWS - area.first_row; 
+    }
+    work_area.width = area.width;
+    work_area.height = area.height;
+    work_area.first_col = area.first_col;
+    work_area.first_row = area.first_row;
+    current_video = video + 2*work_area.first_row*MAX_COLS + 2*work_area.first_col;
 }
 
 void full_screen(){
-    width = MAX_COLS;
-    first_col = 0;
+    work_area.width = MAX_COLS;
+    work_area.first_col = 0;
     current_video = video;
 }
 
 void left_screen(){
-    width = MAX_COLS/2-1;
-    first_col = 0;
-    current_video = video + 2*first_col;
+    work_area.width = MAX_COLS/2-1;
+    work_area.first_col = 0;
+    current_video = video + 2*work_area.first_col;
 }
 
 void right_screen(){
-    width = MAX_COLS/2-1;
-    first_col = MAX_COLS/2+1;
-    current_video = video + 2*first_col;
+    work_area.width = MAX_COLS/2-1;
+    work_area.first_col = MAX_COLS/2+1;
+    current_video = video + 2*work_area.first_col;
+}
+
+void enable_scroll(){
+    scroll_enable = 1;
+}
+
+void disable_scroll(){
+    scroll_enable = 0;
+}
+
+static void set_color(int first_row , int first_col , int last_row , int last_col, enum colors color,int is_background){
+    uint8_t * aux = (video+1);
+    aux += first_row*(MAX_COLS*2) + (first_col*2);
+    int row_delta = last_row - first_row;
+    int col_delta = last_col - first_col;
+    int row_counter = 0;
+    int col_counter = 0;
+    while(row_counter <= row_delta){
+        while(col_counter <= col_delta){
+            *aux = is_background ? ((color<<4) | ((*aux) & 0x0F)) : ((color&0x0F) | ((*aux) & 0xF0));
+            aux += 2;
+            col_counter++;
+        }
+        aux -= 2;
+        aux += (2*MAX_COLS - 2*(last_col-first_col));
+        col_counter = 0;
+        row_counter++;
+    }
+}
+
+void set_background_color(int first_row , int first_col , int last_row , int last_col, enum colors color){
+    set_color(first_row,first_col,last_row,last_col,color,1);
+}
+
+void set_foreground_color(int first_row , int first_col , int last_row , int last_col, enum colors color){
+    set_color(first_row,first_col,last_row,last_col,color,0);
 }
