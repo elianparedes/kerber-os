@@ -134,7 +134,6 @@ int main()
 	/**
 	 * Process scheduling test
 	*/
-
 	add_process(&processAFunction);
 	add_process(&processBFunction);
 	

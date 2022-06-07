@@ -16,4 +16,6 @@ int puts(const char * str);
 
 char* itoa(int num, char* str, int base);
 
+int printf(char * str, ...);
+
 #endif

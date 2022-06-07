@@ -2,6 +2,7 @@
 
 #include <interrupts/syscalls.h>
 #include <stddef.h>
+#include <stdarg.h>
 
 void swap (char * c1, char * c2){
     char aux= *c1;
@@ -31,6 +32,14 @@ size_t strlen(const char * str){
     }
     return i;
 }
+
+char *strcpy(char *dest, const char *src){
+    for (int i=0; src[i] != '\0'; i++){
+        dest[i] = src[i];
+    }
+    return dest;
+}
+
 
 void * memset(void * destination, int32_t c, uint64_t length)
 {
@@ -133,4 +142,52 @@ char* itoa(int num, char* str, int base)
     reverse(str, i);
  
     return str;
+}
+
+/* Implementation by https://iq.opengenus.org/how-printf-and-scanf-function-works-in-c-internally/ */
+int printf (char * str, ...)
+{
+	va_list vl;
+	int i = 0, j=0;
+		char buff[100]={0}, tmp[20];
+		va_start( vl, str ); 
+		while (str && str[i])
+		{
+		  	if(str[i] == '%')
+		  	{
+ 		    i++;
+ 		    switch (str[i]) 
+ 		    {
+	 		    case 'c': 
+	 		    {
+	 		        buff[j] = (char)va_arg( vl, int );
+	 		        j++;
+	 		        break;
+	 		    }
+	 		    case 'd': 
+	 		    {
+                    itoa(va_arg( vl, int ), tmp, 10);
+	 		        strcpy(&buff[j], tmp);
+	 		        j += strlen(tmp);
+		           break;
+                }
+		        case 'x': 
+		        {   
+		           itoa(va_arg( vl, int ), tmp, 16);
+		           strcpy(&buff[j], tmp);
+		           j += strlen(tmp);
+		           break;
+		        }
+        	}
+     	} 
+     	else 
+	    {
+	       	buff[j] =str[i];
+	       	j++;
+	    }
+	    i++;
+	} 
+    write(1,buff,j);
+    va_end(vl);
+    return j;
 }

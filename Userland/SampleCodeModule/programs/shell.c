@@ -1,4 +1,4 @@
-#include <kdstdio.h>
+#include <kstdio.h>
 #include <kstring.h>
 
 #define LINE_LENGTH 60
@@ -86,7 +86,7 @@ int parse_command(char **src, char *main, char *arg)
 
     char token[TOKEN_LENGTH];
 
-    while (true)
+    while (1)
     {
         int res = gettoken(&src, token, ' ');
         if (res == SUCCESS)
@@ -133,7 +133,7 @@ int shell()
 {
     char cmd_buff[LINE_LENGTH], token_buff[TOKEN_LENGTH], main_buff[TOKEN_LENGTH], arg_buff[TOKEN_LENGTH];
 
-    while (true)
+    while (1)
     {
         read_input(cmd_buff);
 
