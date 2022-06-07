@@ -11,11 +11,20 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t
         case SYSCALL_WRITE:
             return write((int)arg0, (char*)arg1, arg2);
             break;
+        case SYSCALL_SWITCH_SCREEN_MODE:
+            sys_switch_screen_mode((int)arg0);
+            break;
+        case SYSCALL_CLEAR_SCREEN:
+            sys_clear_screen();
+            break;
+        case SYSCALL_EXIT:
+            sys_exit((int)arg0);
+            break;
         case SYSCALL_GETTIME:
             return sys_gettime((time_t *)arg0, (int)arg1);
             break;
         default:
             return 0;
     }
-
+    return 0;
 }

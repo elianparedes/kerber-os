@@ -1,5 +1,4 @@
 #include <drivers/keyboard.h>
-#include <naiveConsole.h>
 
 #define KBD_ENCODER_PORT 0x60
 #define KBD_CTRL_PORT 0x64
@@ -101,9 +100,6 @@ static char kbd_shift_US_1 [KBD_SIZE] =
     0,  /* Undefined Keys*/
 };
 
-void kbd_install(){
-    set_kbd_handler(kbd_handler);
-}
 
 void kbd_send_enc_cmd(uint8_t cmd){
 	while (1){

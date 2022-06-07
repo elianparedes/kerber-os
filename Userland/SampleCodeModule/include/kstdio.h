@@ -15,6 +15,9 @@ typedef struct time{
 
 int _read(int fd, char * buffer, size_t count);
 int _write(int fd, char * buffer, size_t count);
+int _switch_screen_mode(int mode);
+int _clear_screen();
+int _exit(int error_code);
 int _time(time_t * time_struct, int utc_offset);
 
 char getchar();
