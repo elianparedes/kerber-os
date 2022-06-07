@@ -16,7 +16,14 @@ int putchar(int character){
 
 int puts(const char * str){
     size_t length= strlen(str);
-    return _write(STDOUT, str, length);
+	char new_str[length+2];
+	int i;
+	for (i=0; i < length; i++){
+		new_str[i]=str[i];
+	}
+	new_str[i++]='\n';
+	new_str[i]='\0';
+    return _write(STDOUT, new_str, length+1);
 }
 
 /* Implementation by https://iq.opengenus.org/how-printf-and-scanf-function-works-in-c-internally/ */
