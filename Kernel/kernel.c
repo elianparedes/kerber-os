@@ -112,8 +112,7 @@ void * initializeKernelBinary()
 
 int main()
 {	
-	load_idt();
-	kbd_install();
+	
 	init_pmm(); // init physical memory manager
  
 	ncPrint("[Kernel Main]");
@@ -132,20 +131,14 @@ int main()
 	ncPrint((char*)sampleDataModuleAddress);
 	ncNewline();
 
-
 	/**
 	 * Process scheduling test
-	 
-	
-    uint64_t processA_base = kmalloc(sizeof(process_t));
-	process_t * processA = new_process(processA_base, &processAFunction);
-
-	uint64_t processB_base = kmalloc(sizeof(process_t));
-	process_t * processB = new_process(processB_base, &processBFunction);
-
-	add_process(processA);
-	add_process(processB);
 	*/
+
+	add_process(&processAFunction);
+	add_process(&processBFunction);
+	
+	load_idt();
 
 	while (1){
 		/** ... */

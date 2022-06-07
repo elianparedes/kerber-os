@@ -5,9 +5,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define NPROC   10
+#define MAX_PROC_COUNT   10
 
-bool add_process(process_t * process);
+bool add_process(function_t main);
 
 void exit_process();
 

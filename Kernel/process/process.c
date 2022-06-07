@@ -1,4 +1,8 @@
 #include <process/process.h>
+#include <mem/pmm.h>
+
+#define P_INIT_EFLAGS 0x202
+#define P_INIT_CS     0x8
 
 static int last_pid = 0;
 
@@ -7,19 +11,23 @@ static void process_start(function_t function){
     exit_process();
 }
 
-process_t * new_process(uint64_t base_addr, function_t function){
-    context_t * context = (context_t *)(base_addr + PROCESS_STACK_SIZE - sizeof(context_t));
+process_t * new_process(function_t function){
+
+    process_t * process = kmalloc(sizeof(process_t));
+    if (process == NULL)
+        return NULL;
+
+    process->pid = last_pid++;
+    process->terminated = false;
+
+    context_t * context = (context_t *)((uint64_t) process + K_PROCESS_STACK_SIZE - sizeof(context_t));
 
     context->rdi = function;
     context->rip = &process_start;
-	context->cs = 0x8;  // TODO: get cs from gdt 
-	context->eflags = 0x202;
+	context->cs = P_INIT_CS;
+	context->eflags = P_INIT_EFLAGS;
 	
-    process_t * process = base_addr;
     process->context = context;
-    process->pid = last_pid++;
-    process->terminated = false;
-    process->next = NULL;
 
     return process;
 }

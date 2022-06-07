@@ -6,7 +6,7 @@
 #include <stddef.h>
 #include <process/process.h>
 
-#define PROCESS_STACK_SIZE  4096  //  1 Kib
+#define K_PROCESS_STACK_SIZE  4096
 
 typedef struct context {
 	uint64_t r15;
@@ -32,18 +32,15 @@ typedef struct context {
 	uint64_t eflags;
 } context_t;
 
-typedef void (*function_t)();
-
-typedef struct process process_t;
-
 typedef struct process {
-    uint8_t stack[PROCESS_STACK_SIZE];
+    uint8_t k_stack[K_PROCESS_STACK_SIZE];
     context_t * context;
 	int pid;
 	bool terminated;
-	process_t * next;
 } process_t;
 
-process_t * new_process(uint64_t base_addr, function_t function);
+typedef void (*function_t)();
+
+process_t * new_process(function_t function);
 
 #endif
