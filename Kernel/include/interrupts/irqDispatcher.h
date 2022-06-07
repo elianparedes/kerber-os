@@ -4,4 +4,4 @@
 
 static void (*irq_handlers[])()={
         timer_handler, kbd_handler
-    };
+};
