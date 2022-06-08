@@ -62,6 +62,7 @@ void * getStackBase()
 void * initializeKernelBinary()
 {
 	char buffer[10];
+	
 
 	ncPrint("[x64BareBones]");
 	ncNewline();
@@ -112,36 +113,12 @@ void * initializeKernelBinary()
 
 int main()
 {	
-	
 	init_pmm(); // init physical memory manager
 	load_idt();
 
-	ncPrint("[Kernel Main]");
-	ncNewline();
-	ncPrint("  Sample code module at 0x");
-	ncPrintHex((uint64_t)sampleCodeModuleAddress);
-	ncNewline();
-	ncPrint("  Calling the sample code module returned: ");
-	ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
-	ncNewline();
+	((EntryPoint)sampleCodeModuleAddress)();
 
-	ncPrint("  Sample data module at 0x");
-	ncPrintHex((uint64_t)sampleDataModuleAddress);
-	ncNewline();
-	ncPrint("  Sample data module contents: ");
-	ncPrint((char*)sampleDataModuleAddress);
-	ncNewline();
+	while(1);
 
-	/**
-	 * Process scheduling test
-	*/
-	add_process(&processAFunction);
-	add_process(&processBFunction);
-	
-	while (1){
-		/** ... */
-	}
-	
-	ncPrint("[Finished]");
 	return 0;
 }
