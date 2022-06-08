@@ -5,8 +5,8 @@
  *      Author: anizzomc
  */
 
-#ifndef INTERRUPS_H_
-#define INTERRUPS_H_
+#ifndef _INTERRUPS_H_
+#define _INTERRUPS_H_
 
 #include <stdint.h>
 

@@ -1,6 +1,7 @@
-#ifndef LIB_H
-#define LIB_H
-/*Kernel utilities */
+#ifndef _LIB_H_
+#define _LIB_H_
+
+/* Kernel utilities */
 #include <stdint.h>
 #include <interrupts/syscalls.h>
 #include <stddef.h>
@@ -25,4 +26,4 @@ size_t strlen(const char * str);
 
 char* strcat(char* destination, const char* source);
 
-#endif
+#endif /* _LIB_H_ */

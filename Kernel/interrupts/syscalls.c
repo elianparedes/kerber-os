@@ -4,6 +4,8 @@
 #include <drivers/video.h>
 #include <process/scheduler.h>
 
+enum DISTRIBUTION {FULL_DISTRIBUTION=0, SPLIT_DISTRIBUTION};
+
 uint16_t read(int fd, char * buffer, uint16_t count){
     //file descriptors not implemented
     if (fd > STDERR){

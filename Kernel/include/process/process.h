@@ -1,10 +1,9 @@
-#ifndef _PROCESS_
-#define _PROCESS_
+#ifndef _PROCESS_H_
+#define _PROCESS_H_
 
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include <process/process.h>
 #include <graphics.h>
 
 #define K_PROCESS_STACK_SIZE  4096
@@ -45,4 +44,4 @@ typedef void (*function_t)();
 
 process_t * new_process(function_t function);
 
-#endif
+#endif /* _PROCESS_H_ */

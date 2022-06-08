@@ -1,3 +1,6 @@
+#ifndef _RTC_H_
+#define _RTC_H_
+
 #include <stdint.h>
 
 typedef struct time{
@@ -54,3 +57,5 @@ uint64_t get_month();
 uint64_t get_year();
 
 void get_struct_time();
+
+#endif /* _RTC_H_ */

@@ -1,3 +1,6 @@
+#ifndef _KSTDIO_H_
+#define _KSTDIO_H_
+
 #include <stddef.h>
 #include <stdint.h>
 #define STDIN 0
@@ -27,3 +30,5 @@ int puts(const char * str);
 
 int printf(char * str, ...);
 int scanf(char *str, ...);
+
+#endif /* _KSTDIO_H_ */

@@ -1,5 +1,5 @@
-#ifndef NAIVE_CONSOLE_H
-#define NAIVE_CONSOLE_H
+#ifndef _NAIVE_CONSOLE_H_
+#define _NAIVE_CONSOLE_H_
 
 #include <stdint.h>
 
@@ -12,4 +12,4 @@ void ncPrintBin(uint64_t value);
 void ncPrintBase(uint64_t value, uint32_t base);
 void ncClear();
 
-#endif
+#endif /* _NAIVE_CONSOLE_H_ */

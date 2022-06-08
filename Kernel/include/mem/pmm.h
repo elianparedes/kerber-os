@@ -1,5 +1,5 @@
-#ifndef PMM_H
-#define PMM_H
+#ifndef _PMM_H
+#define _PMM_H
 
 #include <stdint.h>
 #include <stddef.h>
@@ -15,4 +15,4 @@ void kfree(uint64_t * ptr);
  */
 void dump_mem();
 
-#endif
+#endif /* _PMM_H */

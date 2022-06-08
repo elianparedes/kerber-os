@@ -1,5 +1,5 @@
-#ifndef _PROCESS_SCHEDULER_
-#define _PROCESS_SCHEDULER_
+#ifndef _SCHEDULER_H_
+#define _SCHEDULER_H_
 
 #include <process/process.h>
 #include <stdint.h>
@@ -17,4 +17,4 @@ extern void _force_schedule();
 
 uint64_t * schedule(uint64_t * rsp);
 
-#endif
+#endif /* _SCHEDULER_H_ */
