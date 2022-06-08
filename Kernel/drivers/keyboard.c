@@ -1,4 +1,5 @@
 #include <drivers/keyboard.h>
+#include <process/scheduler.h>
 
 #define KBD_ENCODER_PORT 0x60
 #define KBD_CTRL_PORT 0x64
@@ -28,11 +29,13 @@ enum KBD_CTRL_CMD{
 #define LSHIFT_MK 0x2A
 #define LSHIFT_BK 0xAA
 #define CAPS_MK 0x3A
+#define LCNTRL_MK 0x1D
 
 static char buffer[BUFFER_SIZE];
 static uint16_t index=0;
 static uint8_t caps_locked=0;
 static uint8_t shift_pressed=0;
+static uint8_t cntrl_locked=0;
 
 static char kbd_US_1 [KBD_SIZE] =
 {
@@ -132,6 +135,9 @@ void kbd_handler(){
         shift_pressed=!shift_pressed;
         return;
     }
+    if (scan_code == LCNTRL_MK){
+        cntrl_locked = !cntrl_locked;
+    }
     if (index > BUFFER_SIZE || scan_code > KBD_SIZE){
         return; 
     }
@@ -145,6 +151,9 @@ void kbd_handler(){
     }
     else{
         character=kbd_US_1[scan_code];
+    }
+    if (cntrl_locked && (character == 'c' || character == 'C')){
+        exit_process();
     }
     if (caps_locked && IS_ASCII_LETTER(character)){
         buffer[index]=character - MAYUS_OFFSET;
