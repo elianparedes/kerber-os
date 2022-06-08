@@ -114,7 +114,8 @@ int main()
 {	
 	
 	init_pmm(); // init physical memory manager
- 
+	load_idt();
+
 	ncPrint("[Kernel Main]");
 	ncNewline();
 	ncPrint("  Sample code module at 0x");
@@ -137,8 +138,6 @@ int main()
 	add_process(&processAFunction);
 	add_process(&processBFunction);
 	
-	load_idt();
-
 	while (1){
 		/** ... */
 	}

@@ -1,7 +1,5 @@
 #include <lib.h>
-#include <interrupts/irqDispatcher.h>
 
-void kbd_install();
 void kbd_disable();
 void kbd_enable();
 

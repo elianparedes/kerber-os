@@ -2,6 +2,8 @@
 #include <interrupts/interrupts.h>
 #include <drivers/keyboard.h>
 #include <drivers/video.h>
+#include <process/scheduler.h>
+#include <graphics.h>
 
 uint16_t read(int fd, char * buffer, uint16_t count){
     //file descriptors not implemented
@@ -45,4 +47,21 @@ uint8_t sys_gettime(time_t * struct_time, int utc_offset){
     //set_UTC_offset(utc_offset);
     get_struct_time();
     return 1;
+}
+
+void sys_exit(int error_code){
+    exit_process();
+}
+
+void sys_switch_screen_mode(int mode){
+    if (mode == FULL_DISTRIBUTION){
+        full_screen_distribution();
+    }
+    if (mode == SPLIT_DISTRIBUTION){
+        split_screen_distribution();
+    }
+}
+
+void sys_clear_screen(){
+    clear_screen();
 }
