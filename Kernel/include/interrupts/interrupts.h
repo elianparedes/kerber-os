@@ -20,6 +20,7 @@ void _irq04Handler(void);
 void _irq05Handler(void);
 
 void _exception0Handler(void);
+void _exception6Handler(void);
 
 uint8_t _syscall_master_handler(void);
 

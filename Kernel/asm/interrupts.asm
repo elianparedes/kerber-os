@@ -13,6 +13,7 @@ GLOBAL _irq04Handler
 GLOBAL _irq05Handler
 
 GLOBAL _exception0Handler
+GLOBAL _exception6Handler
 
 GLOBAL _syscall_master_handler
 GLOBAL _force_schedule
@@ -20,7 +21,7 @@ GLOBAL _force_schedule
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 EXTERN schedule
-
+EXTERN get_cpu_state
 EXTERN syscall_dispatcher
 SECTION .text
 
@@ -85,12 +86,22 @@ SECTION .text
 %endmacro
 
 %macro exceptionHandler 1
+;https://os.phil-opp.com/cpu-exceptions/#behind-the-scenes
 	pushState
-
+	mov rbx , rsp
+	add rbx , 120
+	; RIP
+	push QWORD [rbx]
+	add rbx, 16
+	; RFLAGS
+	push QWORD [rbx]
+	add rbx, 8
+	; RSP
+	push QWORD [rbx]
+	mov rsi, rsp
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
 
-	popState
 	iretq
 %endmacro
 
@@ -152,6 +163,10 @@ _irq05Handler:
 ;Zero Division Exception
 _exception0Handler:
 	exceptionHandler 0
+
+;Invalid Opcode Exception
+_exception6Handler:
+	exceptionHandler 6
 
 _force_schedule:
 	cli
