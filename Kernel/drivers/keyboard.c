@@ -72,11 +72,11 @@ static char kbd_US_1 [KBD_SIZE] =
 
 static char kbd_shift_US_1 [KBD_SIZE] = 
 {
-    0, 0, /*Numbers shift locked*/ '!','@', '#', '$', '%', '^', '&', '*', '(',')','_','+',
+    0, 0, /*Numbers shift locked*/ '|','@', '#', '$', '%', '^', '&', '*', '(',')','_','+',
     0, 0, /* Backspace and tab */
     'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}',
     0,0, /*Enter and control key*/
-    'A', 'S' ,'D' ,'F' ,'G' ,'H' ,'J' ,'K' ,'L' ,':', '"', '~', 0, '|', 
+    'A', 'S' ,'D' ,'F' ,'G' ,'H' ,'J' ,'K' ,'L' ,':', '"', '~', 0, 0, 
     'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?', 0, 0,
     0,  /* Alt */
     0,  /* Space bar */
