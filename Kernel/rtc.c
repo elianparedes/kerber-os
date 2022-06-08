@@ -1,4 +1,4 @@
-#include <realTimeClock.h>
+#include <rtc.h>
 #include <stddef.h>
 
 extern uint16_t _rtc_time();
