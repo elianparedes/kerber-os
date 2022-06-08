@@ -2,6 +2,9 @@
 #define LIB_H
 /*Kernel utilities */
 #include <stdint.h>
+#include <interrupts/syscalls.h>
+#include <stddef.h>
+#include <stdarg.h>
 
 void * memset(void * destination, int32_t character, uint64_t length);
 void * memcpy(void * destination, const void * source, uint64_t length);
@@ -17,5 +20,9 @@ int puts(const char * str);
 char* itoa(int num, char* str, int base);
 
 int printf(char * str, ...);
+
+size_t strlen(const char * str);
+
+char* strcat(char* destination, const char* source);
 
 #endif

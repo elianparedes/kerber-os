@@ -1,3 +1,6 @@
+#ifndef GRAPHICS_H
+#define GRAPHICS_H
+
 #include <drivers/video.h>
 typedef enum {LEFT=0,RIGHT,FULL} context_id_t;
 
@@ -18,3 +21,5 @@ void gdelete_char(context_id_t id);
 void gclear_screen(context_id_t id);
 
 context_id_t get_context_id();
+
+#endif
