@@ -3,6 +3,7 @@
 #include <help.h>
 #include <primes.h>
 #include <fibonacci.h>
+#include <time.h>
 
 #define LINE_LENGTH 60
 #define TOKEN_LENGTH 128
@@ -146,6 +147,8 @@ void run_command(char *main)
         _run(&fibonacci);
     else if (strcmp(main, "primes") == 0)
         _run(&primes);
+    else if (strcmp(main, "time") == 0)
+         _run(&time);
     else
         return;
 }
