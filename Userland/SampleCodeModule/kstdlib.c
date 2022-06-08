@@ -4,7 +4,7 @@
 #include <kctype.h>
 #include <limits.h>
 
-/*Implementation by https://www.geeksforgeeks.org/implement-itoa/ */
+/* Implementation by https://www.geeksforgeeks.org/implement-itoa/ */
 char* itoa(int num, char* str, int base)
 {
     int i = 0;
