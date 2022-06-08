@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <process/process.h>
+#include <graphics.h>
 
 #define K_PROCESS_STACK_SIZE  4096
 
@@ -37,6 +38,7 @@ typedef struct process {
     context_t * context;
 	int pid;
 	bool terminated;
+	context_id_t g_context;
 } process_t;
 
 typedef void (*function_t)();

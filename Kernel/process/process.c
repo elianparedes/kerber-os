@@ -1,6 +1,7 @@
 #include <process/process.h>
 #include <mem/pmm.h>
 
+
 #define P_INIT_EFLAGS 0x202
 #define P_INIT_CS     0x8
 
@@ -28,6 +29,7 @@ process_t * new_process(function_t function){
 	context->eflags = P_INIT_EFLAGS;
 	
     process->context = context;
+    process->g_context = get_context_id();
 
     return process;
 }

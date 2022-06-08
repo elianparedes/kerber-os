@@ -1,4 +1,5 @@
 #include <process/scheduler.h>
+#include <interrupts/idtLoader.h>
 #include <mem/pmm.h>
 
 typedef struct node node_t;
@@ -13,8 +14,6 @@ static node_t *front_node = NULL;
 static node_t *rear_node = NULL;
 
 static uint64_t process_count = 0;
-
-extern void _force_schedule();
 
 static bool enqueue_process(process_t *process){
 
