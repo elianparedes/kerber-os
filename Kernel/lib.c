@@ -1,9 +1,5 @@
 #include <lib.h>
 
-#include <interrupts/syscalls.h>
-#include <stddef.h>
-#include <stdarg.h>
-
 void swap (char * c1, char * c2){
     char aux= *c1;
     *c1= *c2;
@@ -24,6 +20,26 @@ void reverse(char str[], int length)
     }
 }
 
+/**
+ * @see https://www.techiedelight.com/implement-strcat-function-c/
+ **/
+
+char* strcat(char* destination, const char* source)
+{
+    // make `ptr` point to the end of the destination string
+    char* ptr = destination + strlen(destination);
+ 
+    // appends characters of the source to the destination string
+    while (*source != '\0') {
+        *ptr++ = *source++;
+    }
+ 
+    // null terminate destination string
+    *ptr = '\0';
+ 
+    // the destination is returned by standard `strcat()`
+    return destination;
+}
 
 size_t strlen(const char * str){
     int i=0;
