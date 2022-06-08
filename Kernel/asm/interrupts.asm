@@ -61,7 +61,6 @@ SECTION .text
 %endmacro
 
 %macro irqHandlerMaster 1
-	cli
 	pushState
 
 	mov rdi, %1 ; pasaje de parametro

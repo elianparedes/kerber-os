@@ -23,6 +23,9 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t
         case SYSCALL_GETTIME:
             return sys_gettime((time_t *)arg0, (int)arg1);
             break;
+        case SYSCALL_RUN:
+            sys_run((void *)arg0);
+            break;
         default:
             return 0;
     }

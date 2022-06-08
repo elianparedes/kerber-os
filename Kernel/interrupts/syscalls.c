@@ -3,7 +3,6 @@
 #include <drivers/keyboard.h>
 #include <drivers/video.h>
 #include <process/scheduler.h>
-#include <graphics.h>
 
 uint16_t read(int fd, char * buffer, uint16_t count){
     //file descriptors not implemented
@@ -29,14 +28,18 @@ uint16_t write(int fd, char * buffer, uint16_t count){
     if (fd > STDERR){
         return ERROR;
     }
+
+    process_t * current_process = get_current_process();
+    context_id_t gc = current_process->g_context;
+
     uint16_t i=0;
     while (i < count){
         char c= buffer[i];
         if (c == '\n'){
-            print_new_line();
+            gprint_new_line(gc);
         }
         else{
-            print_char(c);
+            gprint_char(c, gc);
         }
         i++;
     }
@@ -64,4 +67,8 @@ void sys_switch_screen_mode(int mode){
 
 void sys_clear_screen(){
     clear_screen();
+}
+
+void sys_run(void *main){
+    add_process(main);
 }
