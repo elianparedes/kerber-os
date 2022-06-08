@@ -1,8 +1,13 @@
 #include <kstdio.h>
 #include <kstring.h>
+#include <help.h>
+#include <primes.h>
+#include <fibonacci.h>
 
 #define LINE_LENGTH 60
 #define TOKEN_LENGTH 128
+
+#define PROMPT_SYMBOL "#>"
 
 enum exit_status
 {
@@ -125,23 +130,72 @@ void read_input(char *buffer)
     char c;
     int offset = 0;
     while ((c = getchar()) != '\n')
+    {
+        putchar(c);
         buffer[offset++] = c;
+    }
     buffer[offset] = '\0';
+    printf("\n");
+}
+
+void run_command(char *main)
+{
+    if (strcmp(main, "help") == 0)
+        _run(&help);
+    else if (strcmp(main, "fibonacci") == 0)
+        _run(&fibonacci);
+    else if (strcmp(main, "primes") == 0)
+        _run(&primes);
+    else
+        return;
 }
 
 int shell()
 {
-    char cmd_buff[LINE_LENGTH], token_buff[TOKEN_LENGTH], main_buff[TOKEN_LENGTH], arg_buff[TOKEN_LENGTH];
+    char cmd_buff[LINE_LENGTH], token_buff[TOKEN_LENGTH];
 
     while (1)
     {
+        printf(PROMPT_SYMBOL);
         read_input(cmd_buff);
 
         char *input = cmd_buff;
-        while (gettoken(&input, token_buff, '|') != -1)
+        int p_count = 0;
+
+        char main_buff1[TOKEN_LENGTH], arg_buff1[TOKEN_LENGTH];
+        char main_buff2[TOKEN_LENGTH], arg_buff2[TOKEN_LENGTH];
+
+        while (gettoken(&input, token_buff, '?') != -1)
         {
-            parse_command(&token_buff, main_buff, arg_buff);
+            if (p_count == 0)
+            {
+                parse_command(&token_buff, main_buff1, arg_buff1);
+                p_count++;
+            }
+            else if (p_count == 1)
+            {
+                parse_command(&token_buff, main_buff2, arg_buff2);
+                p_count++;
+            }
         }
+
+        /**
+         * arguments not supported yet
+         */
+
+        if (p_count == 1)
+        {
+            _switch_screen_mode(0);
+            run_command(main_buff1);
+        }
+        else if (p_count == 2)
+        {
+            _switch_screen_mode(1);
+            run_command(main_buff1);
+            run_command(main_buff2);
+        }
+        else
+            continue;
     }
 
     return 0;

@@ -6,7 +6,7 @@
 
 int isprime(unsigned int n);
 
-int main(void){
+void primes(){
     unsigned int n=1;
     while (1){
         if (isprime(n)){

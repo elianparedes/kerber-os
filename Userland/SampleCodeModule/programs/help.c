@@ -1,10 +1,11 @@
 #include <kstdio.h>
+#include <help.h>
 
 /*
 * Prints a list of comands
 */
 
-int main(void){
+void help(){
     puts("*************************");
     puts("Kerber-OS version 1.0");
     puts("*************************");

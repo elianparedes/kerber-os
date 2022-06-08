@@ -4,7 +4,7 @@
 * Prints fibonacci sequence
 */
 
-int main(){
+void fibonacci(){
     int n1=0;
     int n2=1;
 
