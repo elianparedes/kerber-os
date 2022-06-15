@@ -2,7 +2,7 @@
 #define _SYSCALLS_H
 
 #include <stdint.h>
-#include <realTimeClock.h>
+#include <rtc.h>
 
 #define ERROR -1
 

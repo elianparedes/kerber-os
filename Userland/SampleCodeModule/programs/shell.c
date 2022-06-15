@@ -159,7 +159,6 @@ int shell()
 
     while (1)
     {
-        printf(PROMPT_SYMBOL);
         read_input(cmd_buff);
 
         char *input = cmd_buff;
@@ -168,7 +167,7 @@ int shell()
         char main_buff1[TOKEN_LENGTH], arg_buff1[TOKEN_LENGTH];
         char main_buff2[TOKEN_LENGTH], arg_buff2[TOKEN_LENGTH];
 
-        while (gettoken(&input, token_buff, '?') != -1)
+        while (gettoken(&input, token_buff, '|') != -1)
         {
             if (p_count == 0)
             {
