@@ -135,9 +135,6 @@ void kbd_handler(){
         shift_pressed=!shift_pressed;
         return;
     }
-    if (scan_code == LCNTRL_MK){
-        cntrl_locked = !cntrl_locked;
-    }
     if (index > BUFFER_SIZE || scan_code > KBD_SIZE){
         return; 
     }
@@ -151,9 +148,6 @@ void kbd_handler(){
     }
     else{
         character=kbd_US_1[scan_code];
-    }
-    if (cntrl_locked && (character == 'c' || character == 'C')){
-        exit_process();
     }
     if (caps_locked && IS_ASCII_LETTER(character)){
         buffer[index]=character - MAYUS_OFFSET;
