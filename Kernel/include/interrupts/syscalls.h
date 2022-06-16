@@ -8,11 +8,11 @@
 
 enum STD {STDIN, STDOUT, STDERR};
 
-
 #define SYSCALL_READ 0
 #define SYSCALL_WRITE 1
 #define SYSCALL_SWITCH_SCREEN_MODE 4
 #define SYSCALL_CLEAR_SCREEN 5
+#define SYSCALL_CNTRL_PRESSED 6
 #define SYSCALL_EXIT 60
 #define SYSCALL_GETTIME 96
 #define SYSCALL_RUN 66
@@ -24,5 +24,7 @@ uint8_t sys_gettime(time_t * struct_time, int utc_offset);
 void sys_exit(int error_code);
 void sys_switch_screen_mode(int mode);
 void sys_clear_screen();
+
+int sys_cntrl_pressed();
 
 #endif

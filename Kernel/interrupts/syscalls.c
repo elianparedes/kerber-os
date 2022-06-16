@@ -74,3 +74,7 @@ void sys_clear_screen(){
 void sys_run(void *main){
     add_process(main);
 }
+
+int sys_cntrl_pressed(){
+    return kbd_is_cntrl_pressed();
+}

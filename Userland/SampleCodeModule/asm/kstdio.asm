@@ -43,11 +43,17 @@ _run:
     int 0x80
 ret
 
+_cntrl_pressed:
+    mov rax, SYSCALL_CNTRL_PRESSED_ID
+    int 0x80
+ret
+
 section .rodata
 SYSCALL_READ_ID equ 0
 SYSCALL_WRITE_ID equ 1
 SYSCALL_SWITCH_SCREEN_MODE_ID equ 4
 SYSCALL_CLEAR_SCREEN_ID equ 5
+SYSCALL_CNTRL_PRESSED_ID equ 6
 SYSCALL_EXIT_ID equ 60
 SYSCALL_GETTIME_ID equ 96
 SYSCALL_RUN_ID equ 66

@@ -23,6 +23,7 @@ int _clear_screen();
 int _exit(int error_code);
 int _time(time_t * time_struct, int utc_offset);
 void _run(void *main);
+int _cntrl_pressed();
 
 char getchar();
 int putchar (int character);
