@@ -30,6 +30,8 @@ typedef struct context {
 	uint64_t rip;	
 	uint64_t cs;
 	uint64_t eflags;
+	uint64_t rsp;
+	uint64_t ss;
 } context_t;
 
 typedef struct process {

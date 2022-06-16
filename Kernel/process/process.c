@@ -28,6 +28,9 @@ process_t * new_process(function_t function){
 	context->cs = P_INIT_CS;
 	context->eflags = P_INIT_EFLAGS;
 	
+    context->rsp = context;
+    context->ss = 0x0;
+
     process->context = context;
     process->g_context = get_context_id();
 
