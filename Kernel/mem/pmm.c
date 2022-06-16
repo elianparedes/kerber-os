@@ -2,8 +2,8 @@
 #include <stddef.h>
 #include <naiveConsole.h> // temporary import
 
-#define SIZE        (1024 * 500)
-#define BASE_ADDR   0x600000
+#define SIZE        (1024 * 256)
+#define BASE_ADDR   0x50000
 
 typedef union header
 {
