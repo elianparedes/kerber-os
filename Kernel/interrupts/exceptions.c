@@ -1,4 +1,5 @@
 #include <interrupts/exceptions.h>
+#include <interrupts/interrupts.h>
 
 #define ZERO_EXCEPTION_ID 0
 #define INVALID_OPCODE_EXCEPTION_ID 6
@@ -80,19 +81,22 @@ static void show_registers(char * error_message,int exception_id){
 void exceptionDispatcher(int exception ,  cpu_state_t * cpu) {
 	registers = cpu;
 	if (exception == ZERO_EXCEPTION_ID){
+		
 		zero_division_exception();
 	}
 	else if( exception == INVALID_OPCODE_EXCEPTION_ID){
 		opcode_exception();
 	}
+	
+	exit_process();
 }
 
 void zero_division_exception() {
 	show_registers("Divide by Zero Exception",ZERO_EXCEPTION_ID);
-	exit_process();
+	
 }
 
  void opcode_exception() {
+
 	show_registers("Invalid Op Code Exception",INVALID_OPCODE_EXCEPTION_ID);
-	exit_process();
 }

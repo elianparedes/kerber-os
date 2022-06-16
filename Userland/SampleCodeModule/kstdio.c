@@ -4,9 +4,9 @@
 #include <stdarg.h>
 
 char getchar(){
-    char * buffer=NULL;
-    _read(STDIN, buffer, 1);
-    return *buffer;
+    char buffer;
+    _read(STDIN, &buffer, 1);
+    return buffer;
 }
 
 int putchar(int character){

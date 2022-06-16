@@ -100,8 +100,6 @@ SECTION .text
 	mov rsi, rsp
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
-
-	iretq
 %endmacro
 
 _hlt:
@@ -148,16 +146,15 @@ _irq02Handler:
 
 ;Serial Port 2 and 4
 _irq03Handler:
-	irqHandlerMaster 3
+irqHandlerMaster 3
 
 ;Serial Port 1 and 3
 _irq04Handler:
-	irqHandlerMaster 4
+irqHandlerMaster 4
 
 ;USB
 _irq05Handler:
-	irqHandlerMaster 5
-
+irqHandlerMaster 5
 
 ;Zero Division Exception
 _exception0Handler:
