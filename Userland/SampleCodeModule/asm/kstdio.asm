@@ -7,6 +7,7 @@ GLOBAL _clear_screen
 GLOBAL _exit
 GLOBAL _delete_char
 GLOBAL _cntrl_listener
+GLOBAL _get_mem
 
 section .text
 
@@ -55,12 +56,18 @@ _delete_char:
     int 0x80
 ret
 
+_get_mem:
+    mov rax, SYSCALL_GET_MEM_ID
+    int 0x80
+ret
+
 section .rodata
 SYSCALL_READ_ID equ 0
 SYSCALL_WRITE_ID equ 1
 SYSCALL_SWITCH_SCREEN_MODE_ID equ 4
 SYSCALL_CLEAR_SCREEN_ID equ 5
 SYSCALL_CNTRL_LISTENER_ID equ 6
+SYSCALL_GET_MEM_ID equ 10
 SYSCALL_EXIT_ID equ 60
 SYSCALL_GETTIME_ID equ 96
 SYSCALL_RUN_ID equ 66

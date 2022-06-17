@@ -27,6 +27,7 @@ void _run(void *main);
 int _cntrl_pressed();
 void _delete_char();
 int _cntrl_listener(char * listener);
+int _get_mem(uint8_t * address, uint8_t * buffer, size_t count);
 
 char getchar();
 int putchar (int character);

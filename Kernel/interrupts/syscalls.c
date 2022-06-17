@@ -90,3 +90,11 @@ uint8_t sys_cntrl_listener(char * listener){
     kbd_sets_cntrl_listener(listener);
     return SUCCESS;
 }
+
+uint8_t sys_get_mem(uint8_t * address, uint8_t * buffer, uint16_t count){
+    for (int i=0; i < count ; i++){
+        buffer[i]=(*address);
+        address++;
+    }
+    return SUCCESS;
+}

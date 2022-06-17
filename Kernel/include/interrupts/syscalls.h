@@ -14,6 +14,7 @@ enum STD {STDIN, STDOUT, STDERR};
 #define SYSCALL_SWITCH_SCREEN_MODE 4
 #define SYSCALL_CLEAR_SCREEN 5
 #define SYSCALL_CNTRL_LISTENER 6
+#define SYSCALL_GET_MEM 10
 #define SYSCALL_EXIT 60
 #define SYSCALL_GETTIME 96
 #define SYSCALL_RUN 66
@@ -56,5 +57,7 @@ void sys_clear_screen();
 uint8_t sys_cntrl_listener(char * listener);
 
 void sys_delete_char();
+
+uint8_t sys_get_mem(uint8_t * address, uint8_t * buffer, uint16_t count);
 
 #endif

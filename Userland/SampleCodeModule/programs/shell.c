@@ -8,6 +8,7 @@
 #include <invalidopcode.h>
 #include <clear.h>
 #include <kerberos.h>
+#include <printmem.h>
 
 #define LINE_LENGTH 60
 #define TOKEN_LENGTH 128
@@ -171,7 +172,7 @@ void run_command(char *main)
         _run(&invalidopcode);
     else if (strcmp(main, "clear") == 0)
         _run(&clear);
-     else if (strcmp(main, "kerberos") == 0)
+    else if (strcmp(main, "kerberos") == 0)
         _run(&kerberos);
     else
         return;
@@ -180,8 +181,11 @@ void run_command(char *main)
 int shell()
 {
     char cmd_buff[LINE_LENGTH], token_buff[TOKEN_LENGTH];
-
+    
     _cntrl_listener(&cntrl_listener);
+    while(1){
+        
+    }
     while (1)
     {
         read_input(cmd_buff);
