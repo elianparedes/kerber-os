@@ -6,6 +6,7 @@
 #include <time.h>
 #include <divzero.h>
 #include <invalidopcode.h>
+#include <printreg.h>
 
 #define LINE_LENGTH 60
 #define TOKEN_LENGTH 128
@@ -155,6 +156,8 @@ void run_command(char *main)
         _run(&divzero);
     else if (strcmp(main, "invalidopcode") == 0)
         _run(&invalidopcode);
+    else if (strcmp(main, "printreg") == 0)
+        _run(&printreg);
     else
         return;
 }

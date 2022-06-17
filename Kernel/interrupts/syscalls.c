@@ -3,6 +3,7 @@
 #include <drivers/keyboard.h>
 #include <drivers/video.h>
 #include <process/scheduler.h>
+#include <registers.h>
 
 enum DISTRIBUTION {FULL_DISTRIBUTION=0, SPLIT_DISTRIBUTION};
 
@@ -77,4 +78,8 @@ void sys_run(void *main){
 
 int sys_cntrl_pressed(){
     return kbd_is_cntrl_pressed();
+}
+
+int sys_copy_cpu_state(cpu_state_t* cpu_ptr){
+    return  copy_cpu_state(cpu_ptr);
 }
