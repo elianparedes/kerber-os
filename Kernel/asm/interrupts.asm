@@ -198,6 +198,7 @@ _syscall_master_handler:
 	call syscall_dispatcher 
 
 	pop rbx
+	mov rbx, rax
 
 	mov al, 20h
 	out 20h, al
