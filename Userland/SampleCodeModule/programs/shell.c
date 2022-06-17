@@ -18,6 +18,8 @@ enum exit_status
     FAILURE = 0,
 };
 
+static char cntrl_listener;
+
 /**
  * @brief Get token using a state machine.
  * Inspired in John Bode's answer
@@ -133,7 +135,7 @@ void read_input(char *buffer)
     char c;
     int offset = 0;
     while ((c = getchar()) != '\n')
-    {
+    {   
         putchar(c);
         buffer[offset++] = c;
     }
@@ -163,6 +165,7 @@ int shell()
 {
     char cmd_buff[LINE_LENGTH], token_buff[TOKEN_LENGTH];
 
+    _cntrl_listener(&cntrl_listener);
     while (1)
     {
         read_input(cmd_buff);

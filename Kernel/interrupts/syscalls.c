@@ -75,6 +75,7 @@ void sys_run(void *main){
     add_process(main);
 }
 
-int sys_cntrl_pressed(){
-    return kbd_is_cntrl_pressed();
+uint8_t sys_cntrl_listener(char * listener){
+    kbd_sets_cntrl_listener(listener);
+    return SUCCESS;
 }

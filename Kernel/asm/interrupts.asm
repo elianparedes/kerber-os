@@ -177,19 +177,48 @@ _force_schedule:
 
 _syscall_master_handler:
 	cli
-	pushState
+
+	push rbx
+	push rcx
+	push rdx
+	push rbp
+	push rdi
+	push rsi
+	push r8
+	push r9
+	push r10
+	push r11
+	push r12
+	push r13
+	push r14
+	push r15
 
 	mov rcx, r10
 	push rax
 	call syscall_dispatcher 
-	pop rax
-	mov rbx, rax
+
+	pop rbx
 
 	mov al, 20h
 	out 20h, al
 
 	mov rax, rbx   ;restore return
-	popState
+	
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop r11
+	pop r10
+	pop r9
+	pop r8
+	pop rsi
+	pop rdi
+	pop rbp
+	pop rdx
+	pop rcx
+	pop rbx
+	
 	iretq
 
 haltcpu:

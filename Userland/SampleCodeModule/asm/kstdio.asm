@@ -5,6 +5,7 @@ GLOBAL _run
 GLOBAL _switch_screen_mode
 GLOBAL _clear_screen
 GLOBAL _exit
+GLOBAL _cntrl_listener
 
 section .text
 
@@ -43,8 +44,8 @@ _run:
     int 0x80
 ret
 
-_cntrl_pressed:
-    mov rax, SYSCALL_CNTRL_PRESSED_ID
+_cntrl_listener:
+    mov rax, SYSCALL_CNTRL_LISTENER_ID
     int 0x80
 ret
 
@@ -53,7 +54,7 @@ SYSCALL_READ_ID equ 0
 SYSCALL_WRITE_ID equ 1
 SYSCALL_SWITCH_SCREEN_MODE_ID equ 4
 SYSCALL_CLEAR_SCREEN_ID equ 5
-SYSCALL_CNTRL_PRESSED_ID equ 6
+SYSCALL_CNTRL_LISTENER_ID equ 6
 SYSCALL_EXIT_ID equ 60
 SYSCALL_GETTIME_ID equ 96
 SYSCALL_RUN_ID equ 66
