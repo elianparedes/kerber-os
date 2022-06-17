@@ -195,14 +195,27 @@ _force_schedule:
 
 _syscall_master_handler:
 	cli
-	pushState
+
+	push rbx
+	push rcx
+	push rdx
+	push rbp
+	push rdi
+	push rsi
+	push r8
+	push r9
+	push r10
+	push r11
+	push r12
+	push r13
+	push r14
+	push r15
 
 	mov rcx, r10
 	push rax
 	call syscall_dispatcher 
-	
+
 	pop rbx
-	mov rbx, rax
 
 	mov al, 20h
 	out 20h, al
@@ -223,7 +236,6 @@ _syscall_master_handler:
 	pop rdx
 	pop rcx
 	pop rbx
-	pop rax
 
 	iretq
 

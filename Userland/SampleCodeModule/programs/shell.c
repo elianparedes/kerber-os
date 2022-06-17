@@ -7,17 +7,23 @@
 #include <divzero.h>
 #include <invalidopcode.h>
 #include <printreg.h>
+#include <clear.h>
+#include <kerberos.h>
 
 #define LINE_LENGTH 60
 #define TOKEN_LENGTH 128
 
-#define PROMPT_SYMBOL "#>"
+#define PROMPT_SYMBOL ">"
+
+#define BACKSPACE_KEY 8
 
 enum exit_status
 {
     SUCCESS = 1,
     FAILURE = 0,
 };
+
+static char cntrl_listener;
 
 /**
  * @brief Get token using a state machine.
@@ -132,11 +138,19 @@ int parse_command(char **src, char *main, char *arg)
 void read_input(char *buffer)
 {
     char c;
-    int offset = 0;
+    unsigned int offset = 0;
     while ((c = getchar()) != '\n')
     {
-        putchar(c);
-        buffer[offset++] = c;
+        if (c == BACKSPACE_KEY){
+            if (offset){
+                _delete_char();
+                offset--;
+            }   
+        }
+        else {
+            putchar(c);
+            buffer[offset++] = c;
+        }
     }
     buffer[offset] = '\0';
     printf("\n");
@@ -158,6 +172,10 @@ void run_command(char *main)
         _run(&invalidopcode);
     else if (strcmp(main, "printreg") == 0)
         _run(&printreg);
+    else if (strcmp(main, "clear") == 0)
+        _run(&clear);
+     else if (strcmp(main, "kerberos") == 0)
+        _run(&kerberos);
     else
         return;
 }
@@ -166,6 +184,7 @@ int shell()
 {
     char cmd_buff[LINE_LENGTH], token_buff[TOKEN_LENGTH];
 
+    _cntrl_listener(&cntrl_listener);
     while (1)
     {
         read_input(cmd_buff);
@@ -193,6 +212,7 @@ int shell()
         /**
          * arguments not supported yet
          */
+
 
         if (p_count == 1)
         {

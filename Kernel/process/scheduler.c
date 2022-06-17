@@ -46,7 +46,23 @@ bool add_process(function_t main){
 }
 
 void exit_process(){
-    current_node->process->terminated = true;
+    node_t *aux_node = front_node;
+
+    while (aux_node->next != current_node)
+        aux_node = aux_node->next;
+    
+    aux_node->next = current_node->next;
+
+    if(rear_node == current_node)
+        rear_node = current_node->next;
+
+    if(front_node == current_node)
+        front_node = current_node->next;
+
+    kfree(current_node->process);
+    kfree(current_node);
+
+    process_count--;
     _force_schedule();
 }
 
@@ -60,11 +76,7 @@ uint64_t * schedule(uint64_t * rsp){
 
     if (current_node != NULL){
         current_node->process->context = rsp;
-
-        // skip terminated processes to clean them up later
-        do 
-            current_node = current_node->next;
-        while(current_node->process->terminated);
+        current_node = current_node->next;
 
     } else 
         current_node = front_node;

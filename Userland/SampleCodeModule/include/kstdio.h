@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+
 #define STDIN 0
 #define STDOUT 1
 #define STDERR 2
@@ -53,6 +54,8 @@ int _time(time_t * time_struct, int utc_offset);
 void _run(void *main);
 int _cntrl_pressed();
 int _copy_cpu_state(cpu_state_t * cpu_ptr);
+void _delete_char();
+int _cntrl_listener(char * listener);
 
 char getchar();
 int putchar (int character);

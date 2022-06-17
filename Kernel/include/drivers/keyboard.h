@@ -18,4 +18,6 @@ uint8_t kbd_is_cntrl_pressed();
 
 uint8_t kbd_is_save_reg_shortcut();
 
+void kbd_sets_cntrl_listener(char * listener);
+
 #endif

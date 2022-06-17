@@ -76,10 +76,23 @@ void sys_run(void *main){
     add_process(main);
 }
 
+void sys_delete_char(){
+    process_t * current_process = get_current_process();
+    context_id_t gc = current_process->g_context;
+
+    gdelete_char(gc);
+}
+
 int sys_cntrl_pressed(){
     return kbd_is_cntrl_pressed();
 }
 
 int sys_copy_cpu_state(cpu_state_t* cpu_ptr){
     return  copy_cpu_state(cpu_ptr);
+}
+
+uint8_t sys_cntrl_listener(char * listener){
+    kbd_sets_cntrl_listener(listener);
+    return SUCCESS;
+
 }

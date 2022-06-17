@@ -9,7 +9,7 @@ static int last_pid = 0;
 
 static void process_start(function_t function){
     function();
-    exit_process();
+    sys_exit(0);
 }
 
 process_t * new_process(function_t function){
