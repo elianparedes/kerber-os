@@ -2,6 +2,8 @@
 #define _GRAPHICS_H_
 
 #include <drivers/video.h>
+#include <rtc.h>
+
 typedef enum {LEFT=0,RIGHT,FULL} context_id_t;
 
 area_t create_window(area_t area);
@@ -21,5 +23,7 @@ void gdelete_char(context_id_t id);
 void gclear_screen(context_id_t id);
 
 context_id_t get_context_id();
+
+void snapshot_animation();
 
 #endif /* _GRAPHICS_H_ */

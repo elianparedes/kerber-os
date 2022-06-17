@@ -6,6 +6,7 @@
 #include <time.h>
 #include <divzero.h>
 #include <invalidopcode.h>
+#include <printreg.h>
 #include <clear.h>
 #include <kerberos.h>
 #include <printmem.h>
@@ -170,6 +171,8 @@ void run_command(char *main)
         _run(&divzero);
     else if (strcmp(main, "invalidopcode") == 0)
         _run(&invalidopcode);
+    else if (strcmp(main, "printreg") == 0)
+        _run(&printreg);
     else if (strcmp(main, "clear") == 0)
         _run(&clear);
     else if (strcmp(main, "kerberos") == 0)

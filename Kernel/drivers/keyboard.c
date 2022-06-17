@@ -32,6 +32,9 @@ enum KBD_CTRL_CMD{
 #define LCNTRL_MK 0x1D
 #define LCNTRL_BK 0X9D
 
+// CONTROL + R save registers
+#define SAVE_REG_KEY 'R'
+
 static char buffer[BUFFER_SIZE];
 static uint16_t index=0;
 static uint8_t caps_locked=0;
@@ -204,4 +207,12 @@ void kbd_sets_cntrl_listener(char * listener){
 
 uint8_t kbd_is_cntrl_pressed(){
     return cntrl_pressed;
+}
+
+uint8_t kbd_is_save_reg_shortcut(){
+    if(cntrl_pressed && ((kbd_get_last_key() == SAVE_REG_KEY) || ((kbd_get_last_key()-MAYUS_OFFSET) == SAVE_REG_KEY))){
+        kbd_get_rm_last_key();
+        return 1;
+    }
+    return 0;
 }

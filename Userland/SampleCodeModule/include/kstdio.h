@@ -8,6 +8,9 @@
 #define STDOUT 1
 #define STDERR 2
 
+#define REG_SIZE 16
+#define REGISTERS_COUNT 18
+
 typedef struct time{
     uint64_t year;
     uint64_t month;
@@ -17,6 +20,31 @@ typedef struct time{
     uint64_t seconds;
 } time_t;
 
+typedef struct cpu_state {
+	uint64_t rsp;
+	uint64_t rflags;
+	uint64_t rip;
+
+	uint64_t r15;
+	uint64_t r14;
+	uint64_t r13;
+	uint64_t r12;
+	uint64_t r11;
+	uint64_t r10;
+	uint64_t r9;
+	uint64_t r8;
+
+	uint64_t rsi;
+	uint64_t rdi;
+	uint64_t rbp;
+
+	uint64_t rdx;
+	uint64_t rcx;
+	uint64_t rbx;
+	uint64_t rax;
+	
+} cpu_state_t;
+
 int _read(int fd, char * buffer, size_t count);
 int _write(int fd, char * buffer, size_t count);
 int _switch_screen_mode(int mode);
@@ -25,6 +53,7 @@ int _exit(int error_code);
 int _time(time_t * time_struct, int utc_offset);
 void _run(void *main);
 int _cntrl_pressed();
+int _copy_cpu_state(cpu_state_t * cpu_ptr);
 void _delete_char();
 int _cntrl_listener(char * listener);
 int _get_mem(uint8_t * address, uint8_t * buffer, size_t count);

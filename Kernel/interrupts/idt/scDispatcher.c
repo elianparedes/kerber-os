@@ -32,8 +32,14 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t
         case SYSCALL_DELETE_CHAR:
             sys_delete_char();
             break;
+<<<<<<< HEAD
         case SYSCALL_GET_MEM:
             return sys_get_mem((uint64_t *)arg0, (uint8_t *)arg1, (uint16_t)arg2);
+=======
+        case SYSCALL_COPY_CPU_STATE:
+            return sys_copy_cpu_state((cpu_state_t *)arg0);
+            break;
+>>>>>>> 7572c2cb7dcb6261edd4dfd93cb3a3b07a3fb0b2
         default:
             return 0;
     }

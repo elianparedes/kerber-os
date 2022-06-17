@@ -21,8 +21,10 @@ GLOBAL _force_schedule
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 EXTERN schedule
-EXTERN get_cpu_state
+EXTERN save_cpu_state
 EXTERN syscall_dispatcher
+EXTERN kbd_is_save_reg_shortcut
+EXTERN snapshot_animation
 SECTION .text
 
 %macro pushState 0
@@ -61,32 +63,8 @@ SECTION .text
 	pop rax
 %endmacro
 
-%macro irqHandlerMaster 1
-	pushState
-
-	mov rdi, %1 ; pasaje de parametro
-	call irqDispatcher
-
-	mov rdi, %1
-	cmp rdi, 0 
-	jne .EOI
-
-	mov rdi, rsp
-	call schedule
-	mov rsp, rax
-
-.EOI:
-	; signal pic EOI (End of Interrupt)
-	mov al, 20h
-	out 20h, al
-
-	popState
-	iretq
-%endmacro
-
-%macro exceptionHandler 1
-;https://os.phil-opp.com/cpu-exceptions/#behind-the-scenes
-	pushState
+%macro saveRegisters 0
+	pushState	
 	mov rbx , rsp
 	add rbx , 120
 	; RIP
@@ -97,7 +75,47 @@ SECTION .text
 	add rbx, 8
 	; RSP
 	push QWORD [rbx]
-	mov rsi, rsp
+	mov rdi, rsp
+%endmacro
+
+%macro irqHandlerMaster 1
+	pushState
+	mov rdi, %1 ; pasaje de parametro
+	call irqDispatcher
+
+	mov rdi, %1
+	cmp rdi, 0
+	je .schedule
+	cmp rdi, 1
+	jne .EOI
+
+	call kbd_is_save_reg_shortcut
+	cmp rax,1
+	jne .EOI
+	popState
+	saveRegisters
+	call save_cpu_state
+	call snapshot_animation
+	add rsp,24
+	jmp .EOI
+
+.schedule:
+	mov rdi, rsp
+	call schedule
+	mov rsp, rax
+
+.EOI:
+	; signal pic EOI (End of Interrupt)
+	mov al, 20h
+	out 20h, al
+	popState
+	iretq
+%endmacro
+
+%macro exceptionHandler 1
+;https://os.phil-opp.com/cpu-exceptions/#behind-the-scenes
+	saveRegisters
+	call save_cpu_state
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
 %endmacro
@@ -203,7 +221,7 @@ _syscall_master_handler:
 	out 20h, al
 
 	mov rax, rbx   ;restore return
-	
+
 	pop r15
 	pop r14
 	pop r13
@@ -218,7 +236,7 @@ _syscall_master_handler:
 	pop rdx
 	pop rcx
 	pop rbx
-	
+
 	iretq
 
 haltcpu:
