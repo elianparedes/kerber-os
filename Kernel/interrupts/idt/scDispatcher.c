@@ -26,8 +26,8 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t
         case SYSCALL_RUN:
             sys_run((void *)arg0);
             break;
-        case SYSCALL_CNTRL_PRESSED:
-            return sys_cntrl_pressed();
+        case SYSCALL_CNTRL_LISTENER:
+            return sys_cntrl_listener((char *)arg0);
             break;
         case SYSCALL_DELETE_CHAR:
             sys_delete_char();

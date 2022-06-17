@@ -37,6 +37,7 @@ static uint16_t index=0;
 static uint8_t caps_locked=0;
 static uint8_t shift_pressed=0;
 static uint8_t cntrl_pressed=0;
+static uint8_t * cntrl_listener= &cntrl_pressed;
 
 static char kbd_US_1 [KBD_SIZE] =
 {
@@ -138,6 +139,8 @@ void kbd_handler(){
     }
     if (scan_code == LCNTRL_MK || scan_code == LCNTRL_BK){
         cntrl_pressed= !cntrl_pressed;
+        (*cntrl_listener)=cntrl_pressed;
+        return;
     }
     if (index > BUFFER_SIZE || scan_code > KBD_SIZE){
         return; 
@@ -193,6 +196,10 @@ char kbd_get_rm_last_key(){
         return toReturn;
     }
     return 0;
+}
+
+void kbd_sets_cntrl_listener(char * listener){
+    cntrl_listener=listener;
 }
 
 uint8_t kbd_is_cntrl_pressed(){
