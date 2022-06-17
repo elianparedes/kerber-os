@@ -87,8 +87,8 @@ int sys_cntrl_pressed(){
     return kbd_is_cntrl_pressed();
 }
 
-int sys_copy_cpu_state(cpu_state_t* cpu_ptr){
-    return  copy_cpu_state(cpu_ptr);
+int sys_copy_cpu_state(cpu_state_t* cpu_ptr , request_t request){
+    return  copy_cpu_state(cpu_ptr,request);
 }
 
 uint8_t sys_cntrl_listener(char * listener){
