@@ -1,8 +1,9 @@
-#ifndef _SYSCALLS_H
-#define _SYSCALLS_H
+#ifndef _SYSCALLS_H_
+#define _SYSCALLS_H_
 
 #include <stdint.h>
 #include <rtc.h>
+#include <registers.h>
 
 #define ERROR -1
 #define SUCCESS 0
@@ -13,7 +14,11 @@ enum STD {STDIN, STDOUT, STDERR};
 #define SYSCALL_WRITE 1
 #define SYSCALL_SWITCH_SCREEN_MODE 4
 #define SYSCALL_CLEAR_SCREEN 5
+
 #define SYSCALL_CNTRL_LISTENER 6
+#define SYSCALL_GET_MEM 10
+#define SYSCALL_COPY_CPU_STATE 7
+
 #define SYSCALL_EXIT 60
 #define SYSCALL_GETTIME 96
 #define SYSCALL_RUN 66
@@ -47,6 +52,9 @@ void sys_exit(int error_code);
 
 void sys_switch_screen_mode(int mode);
 
+int sys_copy_cpu_state(cpu_state_t* cpu_ptr);
+
+
 void sys_clear_screen();
 
 /**
@@ -64,5 +72,6 @@ int sys_run(void *main);
 int sys_running(int pid);
 
 void sys_kill(int pid);
+uint8_t sys_get_mem(uint8_t * address, uint8_t * buffer, uint16_t count);
 
 #endif

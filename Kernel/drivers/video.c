@@ -273,3 +273,7 @@ void set_background_color(int first_row , int first_col , int last_row , int las
 void set_foreground_color(int first_row , int first_col , int last_row , int last_col, enum colors color){
     set_color(first_row,first_col,last_row,last_col,color,0);
 }
+
+area_t get_current_working_area(){
+    return work_area;
+}

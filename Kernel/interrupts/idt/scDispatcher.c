@@ -32,6 +32,12 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t
             break;
         case SYSCALL_RUNNING:
             return sys_running((int)arg0);
+        case SYSCALL_GET_MEM:
+            return sys_get_mem((uint64_t *)arg0, (uint8_t *)arg1, (uint16_t)arg2);
+            break;
+        case SYSCALL_COPY_CPU_STATE:
+            return sys_copy_cpu_state((cpu_state_t *)arg0);
+            break;
         default:
             return 0;
     }

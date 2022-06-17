@@ -1,16 +1,7 @@
-#include <interrupts/exceptions.h>
-#include <interrupts/interrupts.h>
-#include <registers.h>
+#include <kstdio.h>
+#include <printreg.h>
 
-#define ZERO_EXCEPTION_ID 0
-#define INVALID_OPCODE_EXCEPTION_ID 6
-#define REG_SIZE 16
-#define REGISTERS_COUNT 18
-
-void division_exception();
-void opcode_exception();
-
-cpu_state_t  * registers;
+cpu_state_t * registers;
 
 static void format_reg_str(char * dest , uint64_t reg){
 	dest[0] = '0';
@@ -28,13 +19,7 @@ static void format_reg_str(char * dest , uint64_t reg){
 	dest[REG_SIZE+2] = '\0';
 }
 
-static void show_registers(char * error_message,int exception_id){
-	process_t * process = get_current_process();
-	gclear_screen(get_current_process()->g_context);
-
-	printf(error_message);
-	printf(" - CODE=%d\n",exception_id);
-
+static void show_registers(){
 	char reg_str[REG_SIZE+3];
 	char * registers_strings[] = {"R15: ","R14: ","R13: ","R12: ","R11: ","R10: ","R9: ","R8: ", "RDX: " , "RCX: ", "RBX: ", "RAX: ", 
 	"RSI: ", "RDI: ", "RBP: ", "RSP: ", "RIP: ", "RFLAGS: "};
@@ -50,25 +35,13 @@ static void show_registers(char * error_message,int exception_id){
 	}
 }
 
-void exceptionDispatcher(int exception) {
-	registers = get_cpu_state();
-	if (exception == ZERO_EXCEPTION_ID){
-		
-		zero_division_exception();
-	}
-	else if( exception == INVALID_OPCODE_EXCEPTION_ID){
-		opcode_exception();
-	}
-	
-	exit_process();
-}
+void printreg(){
+    int succeed;
+	succeed = _copy_cpu_state(registers);
 
-void zero_division_exception() {
-	show_registers("Divide by Zero Exception",ZERO_EXCEPTION_ID);
-	
-}
-
- void opcode_exception() {
-
-	show_registers("Invalid Op Code Exception",INVALID_OPCODE_EXCEPTION_ID);
+	if(!succeed)
+		return;
+	show_registers();
+	puts("");
+	printf("%d",succeed);
 }

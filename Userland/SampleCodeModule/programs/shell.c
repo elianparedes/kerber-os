@@ -7,6 +7,8 @@
 #include <kstdio.h>
 #include <kstring.h>
 #include <primes.h>
+#include <printmem.h>
+#include <printreg.h>
 #include <time.h>
 
 #define LINE_LENGTH 512
@@ -141,22 +143,27 @@ static int run_command(char *main) {
 
     else if (strcmp(main, "time") == 0)
         return _run(&time);
-
     else if (strcmp(main, "divzero") == 0)
         return _run(&divzero);
+    else if (strcmp(main, "kerberos") == 0)
+        return _run(&kerberos);
 
     else if (strcmp(main, "invalidopcode") == 0)
-        return _run(&invalidopcode);
+        _run(&invalidopcode);
 
-    else if (strcmp(main, "clear") == 0){
-        // temporary workaround. clear command should not be used with pipe operator
+    else if (strcmp(main, "printreg") == 0)
+        _run(&printreg);
+
+    else if (strcmp(main, "kerberos") == 0)
+        _run(&kerberos);
+
+    else if (strcmp(main, "clear") == 0) {
+        // temporary workaround. clear command should not be used with pipe
+        // operator
         _clear_screen();
         _switch_screen_mode(FULLSCREEN);
         return 1;
     }
-    else if (strcmp(main, "kerberos") == 0)
-        return _run(&kerberos);
-
     return -1;
 }
 

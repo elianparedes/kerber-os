@@ -55,7 +55,7 @@ int printf (char * str, ...)
                 }
 		        case 'x': 
 		        {   
-		           itoa(va_arg( vl, int ), tmp, 16);
+		           uitoa(va_arg( vl, uint64_t ), tmp, 16);
 		           strcpy(&buff[j], tmp);
 		           j += strlen(tmp);
 		           break;

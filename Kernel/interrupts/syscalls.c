@@ -3,6 +3,7 @@
 #include <drivers/keyboard.h>
 #include <drivers/video.h>
 #include <process/scheduler.h>
+#include <registers.h>
 
 enum DISTRIBUTION {FULL_DISTRIBUTION=0, SPLIT_DISTRIBUTION};
 
@@ -86,6 +87,10 @@ int sys_cntrl_pressed(){
     return kbd_is_cntrl_pressed();
 }
 
+int sys_copy_cpu_state(cpu_state_t* cpu_ptr){
+    return  copy_cpu_state(cpu_ptr);
+}
+
 uint8_t sys_cntrl_listener(char * listener){
     kbd_sets_cntrl_listener(listener);
     return SUCCESS;
@@ -97,4 +102,12 @@ void sys_kill(int pid){
 
 int sys_running(int pid){
     return get_current_process()->children != NULL;
+}
+
+uint8_t sys_get_mem(uint8_t * address, uint8_t * buffer, uint16_t count){
+    for (int i=0; i < count ; i++){
+        buffer[i]=(*address);
+        address++;
+    }
+    return SUCCESS;
 }

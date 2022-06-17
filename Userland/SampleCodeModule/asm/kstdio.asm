@@ -6,64 +6,76 @@ GLOBAL _running
 GLOBAL _switch_screen_mode
 GLOBAL _clear_screen
 GLOBAL _exit
+GLOBAL _copy_cpu_state
 GLOBAL _delete_char
 GLOBAL _cntrl_listener
 GLOBAL _kill
+GLOBAL _get_mem
 
 section .text
 
 _read:
     mov rax, SYSCALL_READ_ID
     int 0x80
-ret
+    ret
 
 _write:
     mov rax, SYSCALL_WRITE_ID
     int 0x80
-ret
+    ret
 
 _switch_screen_mode:
     mov rax, SYSCALL_SWITCH_SCREEN_MODE_ID
     int 0x80
-ret
+    ret
 
 _clear_screen:
     mov rax, SYSCALL_CLEAR_SCREEN_ID
     int 0x80
-ret
+    ret
 
 _exit:
     mov rax, SYSCALL_EXIT_ID
     int 0x80
-ret
+    ret
 
 _time:
     mov rax, SYSCALL_GETTIME_ID
     int 0x80
-ret
+    ret
 
 _run:
     mov rax, SYSCALL_RUN_ID
     int 0x80
-ret
+    ret
 
 _running:
     mov rax, SYSCALL_RUNNING_ID
     int 0x80
-ret
+    ret
 
 _cntrl_listener:
     mov rax, SYSCALL_CNTRL_LISTENER_ID
     int 0x80
-ret
+    ret
 
 _delete_char:
     mov rax, SYSCALL_DELETE_CHAR_ID
     int 0x80
-ret
+    ret
 
 _kill:
     mov rax, SYSCALL_KILL_ID
+    int 0x80
+    ret
+    
+_get_mem:
+    mov rax, SYSCALL_GET_MEM_ID
+    int 0x80
+    ret
+
+_copy_cpu_state:
+    mov rax, SYSCALL_COPY_CPU_STATE 
     int 0x80
     ret
 
@@ -73,6 +85,8 @@ SYSCALL_WRITE_ID equ 1
 SYSCALL_SWITCH_SCREEN_MODE_ID equ 4
 SYSCALL_CLEAR_SCREEN_ID equ 5
 SYSCALL_CNTRL_LISTENER_ID equ 6
+SYSCALL_GET_MEM_ID equ 10
+SYSCALL_COPY_CPU_STATE equ 7
 SYSCALL_EXIT_ID equ 60
 SYSCALL_GETTIME_ID equ 96
 SYSCALL_RUN_ID equ 66

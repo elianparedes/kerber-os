@@ -6,12 +6,14 @@
 // C   └	┴	┬	├	─	┼	╞	╟	╚	╔	╩	╦	╠	═	╬	╧
 // D   ╨	╤	╥	╙	╘	╒	╓	╫	╪	┘	┌					
 
-#define LEFT_TOP_CORNER 0xC9
-#define RIGHT_TOP_CORNER 0xBB
-#define LEFT_BOTTOM_CORNER 0xC8
-#define RIGHT_BOTTOM_CORNER 0XBC
-#define HZ_LINE 0xCD
-#define VT_LINE 0xBA
+#define LEFT_TOP_CORNER 0xDA
+#define RIGHT_TOP_CORNER 0xBF
+#define LEFT_BOTTOM_CORNER 0xC0
+#define RIGHT_BOTTOM_CORNER 0XD9
+#define HZ_LINE 0xC4
+#define VT_LINE 0xB3
+#define MIDDLE_TOP 0xC2
+#define MIDDLE_BOTTOM 0xC1
 
 #include <graphics.h>
 
@@ -53,11 +55,10 @@ area_t create_window(area_t area){
     enable_cursor(15,16);
     disable_scroll();
 
-    //set_background_color(area.first_row,area.first_col,area.first_row+area.height-1,area.first_col+area.width-1,RED);
-
     move_cursor((position_t){area.first_row,area.first_col});
     set_working_area(area);
-    set_foreground_color(area.first_row,area.first_col,area.first_row+area.height-1,area.first_col+area.width-1,RED);
+    //set_background_color(area.first_row,area.first_col,area.first_row+area.height-1,area.first_col+area.width-1,LIGHT_GRAY);
+    set_foreground_color(area.first_row,area.first_col,area.first_row+area.height-1,area.first_col+area.width-1,LIGHT_BLUE);
     draw_bottom_line(area);
     draw_top_line(area);
     for(int i = area.first_row +1 ; i < (area.first_row + area.height -1) ; i++){
@@ -122,27 +123,56 @@ void split_screen_distribution(){
     current_distribution = SPLIT_DISTRIBUTION;
 
     area_t screen = {MAX_COLS,MAX_ROWS-2,0,1};
+
+    set_working_area(screen);
+    create_window(screen);
+    clear_screen();
+
+    set_foreground_color(1,MAX_COLS/2,MAX_ROWS-2,MAX_COLS/2,LIGHT_BLUE);
+    move_cursor((position_t){1, MAX_COLS/2});
+    print_char(MIDDLE_TOP);
+    for(int i = 2 ; i < MAX_ROWS-2;i++){
+        move_cursor((position_t){i,MAX_COLS/2});
+        print_char(VT_LINE);
+    }
+    move_cursor((position_t){MAX_ROWS-2, MAX_COLS/2});
+    print_char(MIDDLE_BOTTOM);
+
+    
+    area_t left = {MAX_COLS/2-2,MAX_ROWS-4,1,2};
+    contexts[0].area = left;
+    move_cursor((position_t){left.first_row,left.first_col});
+    contexts[0].last_cursor_pos = get_cursor_position();
+
+    area_t right = {MAX_COLS/2-2,MAX_ROWS-4,MAX_COLS/2+1,2};
+    contexts[1].area = right;
+    move_cursor((position_t){right.first_row,right.first_col});
+    contexts[1].last_cursor_pos = get_cursor_position();
+
+    area_t bottom_line = {MAX_COLS,1,0,MAX_ROWS-1};
+    create_line(bottom_line,LIGHT_BLUE);
+
+    /*area_t screen = {MAX_COLS,MAX_ROWS-2,0,1};
 	set_working_area(screen);
     clear_screen();
 
-    area_t left = {MAX_COLS/2-1,MAX_ROWS-2,0,1};
+    area_t left = {MAX_COLS/2,MAX_ROWS-2,0,1};
 	left = create_window(left);
     contexts[0].area = left;
     contexts[0].last_cursor_pos = get_cursor_position();
 
-    area_t right = {MAX_COLS/2-1,MAX_ROWS-2,MAX_COLS/2+1,1};
+    area_t right = {MAX_COLS/2,MAX_ROWS-2,MAX_COLS/2,1};
     right = create_window(right);
     contexts[1].area = right;
     contexts[1].last_cursor_pos = get_cursor_position();
 
     area_t top_line = {MAX_COLS,1,0,0};
-    create_line(top_line,RED);
+    create_line(top_line,LIGHT_CYAN);
     area_t bottom_line = {MAX_COLS,1,0,MAX_ROWS-1};
-    create_line(bottom_line,LIGHT_RED);
+    create_line(bottom_line,LIGHT_BLUE);*/
 }
 
 void full_screen_distribution(){
-
     allocated_windows_count = 0;
     current_distribution = FULL;
 
@@ -154,9 +184,9 @@ void full_screen_distribution(){
     clear_screen();
 
     area_t top_line = {MAX_COLS,1,0,0};
-    create_line(top_line,RED);
+    create_line(top_line,DARK_GRAY);
     area_t bottom_line = {MAX_COLS,1,0,MAX_ROWS-1};
-    create_line(bottom_line,LIGHT_RED);
+    create_line(bottom_line,LIGHT_BLUE);
 }
 
 static void load_context(context_id_t id){
@@ -192,6 +222,16 @@ void gclear_screen(context_id_t id){
     load_context(id);
     clear_screen();
     contexts[id].last_cursor_pos=get_cursor_position();
+}
+
+void snapshot_animation(){
+    area_t current = get_current_working_area();
+    set_working_area((area_t){MAX_COLS,MAX_ROWS,0,0});
+    uint64_t seconds = get_seconds();
+    set_background_color(1,0,MAX_ROWS-2,MAX_COLS-1,LIGHT_GRAY);
+    while(get_seconds() - seconds < 1);
+    set_background_color(1,0,MAX_ROWS-2,MAX_COLS-1, BLACK);
+    set_working_area(current);
 }
 
 #endif
