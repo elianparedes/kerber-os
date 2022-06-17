@@ -94,7 +94,6 @@ int sys_copy_cpu_state(cpu_state_t* cpu_ptr){
 uint8_t sys_cntrl_listener(char * listener){
     kbd_sets_cntrl_listener(listener);
     return SUCCESS;
-<<<<<<< HEAD
 }
 
 uint8_t sys_get_mem(uint8_t * address, uint8_t * buffer, uint16_t count){
@@ -103,7 +102,4 @@ uint8_t sys_get_mem(uint8_t * address, uint8_t * buffer, uint16_t count){
         address++;
     }
     return SUCCESS;
-=======
-
->>>>>>> 7572c2cb7dcb6261edd4dfd93cb3a3b07a3fb0b2
 }

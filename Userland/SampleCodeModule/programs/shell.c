@@ -186,9 +186,7 @@ int shell()
     char cmd_buff[LINE_LENGTH], token_buff[TOKEN_LENGTH];
     
     _cntrl_listener(&cntrl_listener);
-    while(1){
-        
-    }
+
     while (1)
     {
         read_input(cmd_buff);

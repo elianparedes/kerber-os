@@ -16,12 +16,9 @@ enum STD {STDIN, STDOUT, STDERR};
 #define SYSCALL_CLEAR_SCREEN 5
 
 #define SYSCALL_CNTRL_LISTENER 6
-<<<<<<< HEAD
 #define SYSCALL_GET_MEM 10
-=======
 #define SYSCALL_COPY_CPU_STATE 7
 
->>>>>>> 7572c2cb7dcb6261edd4dfd93cb3a3b07a3fb0b2
 #define SYSCALL_EXIT 60
 #define SYSCALL_GETTIME 96
 #define SYSCALL_RUN 66
@@ -68,9 +65,6 @@ uint8_t sys_cntrl_listener(char * listener);
 
 void sys_delete_char();
 
-<<<<<<< HEAD
 uint8_t sys_get_mem(uint8_t * address, uint8_t * buffer, uint16_t count);
-=======
->>>>>>> 7572c2cb7dcb6261edd4dfd93cb3a3b07a3fb0b2
 
 #endif
