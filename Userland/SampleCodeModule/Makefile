@@ -24,7 +24,7 @@ _loader.o: _loader.c
 	$(ASM) $(ASMFLAGS) $< -o $@
 
 clean:
-	rm -rf asm/*.o *.o *.bin
+	rm -rf asm/*.o programs/*.o *.o *.bin *.elf
 
 .PHONY: all clean print
 
