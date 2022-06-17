@@ -1,5 +1,5 @@
-#ifndef _VIDEO_
-#define _VIDEO_
+#ifndef _VIDEO_H
+#define _VIDEO_H
 
 #include <stdlib.h>
 #include <lib.h>
@@ -55,4 +55,6 @@ void disable_scroll();
 void set_background_color(int first_row , int first_col , int last_row , int last_col, enum colors color);
 
 void set_foreground_color(int first_row , int first_col , int last_row , int last_col, enum colors color);
+
+area_t get_current_working_area();
 #endif
