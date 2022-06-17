@@ -1,28 +1,35 @@
+#include <clear.h>
+#include <divzero.h>
+#include <fibonacci.h>
+#include <help.h>
+#include <invalidopcode.h>
+#include <kerberos.h>
 #include <kstdio.h>
 #include <kstring.h>
-#include <help.h>
 #include <primes.h>
-#include <fibonacci.h>
 #include <time.h>
-#include <divzero.h>
-#include <invalidopcode.h>
-#include <clear.h>
-#include <kerberos.h>
 
-#define LINE_LENGTH 60
-#define TOKEN_LENGTH 128
+#define LINE_LENGTH 512
+#define TOKEN_LENGTH 512
+#define MAX_PROC_COUNT 2
 
-#define PROMPT_SYMBOL ">"
+#define PROMPT_SYMBOL '>'
+#define PIPE_SYMBOL '|'
 
 #define BACKSPACE_KEY 8
 
-enum exit_status
-{
-    SUCCESS = 1,
-    FAILURE = 0,
-};
+typedef struct process {
+    char name[TOKEN_LENGTH];
+    char main[TOKEN_LENGTH];
+    char arg[TOKEN_LENGTH];
+    int pid;
+} process_t;
 
-static char cntrl_listener;
+static enum exit_status { FAILURE, SUCCESS };
+
+static enum layout_mode { FULLSCREEN, SPLITSCREEN };
+
+static char ctrl_pressed = 0;
 
 /**
  * @brief Get token using a state machine.
@@ -30,95 +37,31 @@ static char cntrl_listener;
  *
  * @see https://stackoverflow.com/questions/4547570/tokenizing-a-string-in-c
  */
-int gettoken(char **src, char *token, char delimiter)
-{
-    enum
-    {
-        START,
-        STEP,
-        ERROR,
-        DONE
-    } state = START;
+static int gettoken(char **src, char *token, char delimiter) {
+    enum { START, STEP, ERROR, DONE } state = START;
 
     size_t i = 0;
 
-    if (**src == '\0')
-    {
-        return -1;
-    }
+    if (**src == '\0') return -1;
 
-    while (**src != '\0')
-    {
-        switch (state)
-        {
-        case START:
-            if (**src != delimiter)
-            {
-                token[i++] = *(*src)++;
-                state = STEP;
-            }
-            else
-            {
-                *(*src)++;
-            }
-            break;
-        case STEP:
-            if (**src != delimiter)
-            {
-                token[i++] = *(*src)++;
-            }
-            else
-            {
-                token[i++] = '\0';
-                *(*src)++;
-                state = DONE;
-            }
-            break;
-
-        case DONE:
-            return SUCCESS;
-
-        case ERROR:
-            return FAILURE;
-        }
-    }
-
-    token[i++] = '\0';
-    return SUCCESS;
-}
-
-int parse_command(char **src, char *main, char *arg)
-{
-    enum
-    {
-        START,
-        COMMAND,
-        ARGUMENT,
-        ERROR,
-        DONE
-    } state = START;
-
-    char token[TOKEN_LENGTH];
-
-    while (1)
-    {
-        int res = gettoken(&src, token, ' ');
-        if (res == SUCCESS)
-        {
-            switch (state)
-            {
+    while (**src != '\0') {
+        switch (state) {
             case START:
-                state = COMMAND;
-                strcpy(main, token);
+                if (**src != delimiter) {
+                    token[i++] = *(*src)++;
+                    state = STEP;
+                } else {
+                    *(*src)++;
+                }
                 break;
-
-            case COMMAND:
-                state = ARGUMENT;
-                strcpy(arg, token);
-                break;
-
-            case ARGUMENT:
-                state = DONE;
+            case STEP:
+                if (**src != delimiter) {
+                    token[i++] = *(*src)++;
+                } else {
+                    token[i++] = '\0';
+                    *(*src)++;
+                    state = DONE;
+                }
                 break;
 
             case DONE:
@@ -126,27 +69,58 @@ int parse_command(char **src, char *main, char *arg)
 
             case ERROR:
                 return FAILURE;
-            }
         }
-        else if (res == -1)
+    }
+
+    token[i++] = '\0';
+    return SUCCESS;
+}
+
+static int parse_command(char **src, char *main, char *arg) {
+    enum { START, COMMAND, ARGUMENT, ERROR, DONE } state = START;
+    char token[TOKEN_LENGTH];
+
+    while (1) {
+        int res = gettoken(&src, token, ' ');
+        if (res == SUCCESS) {
+            switch (state) {
+                case START:
+                    state = COMMAND;
+                    strcpy(main, token);
+                    break;
+
+                case COMMAND:
+                    state = ARGUMENT;
+                    strcpy(arg, token);
+                    break;
+
+                case ARGUMENT:
+                    state = DONE;
+                    break;
+
+                case DONE:
+                    return SUCCESS;
+
+                case ERROR:
+                    return FAILURE;
+            }
+        } else if (res == -1)
             break;
     }
     return SUCCESS;
 }
 
-void read_input(char *buffer)
-{
+static void read_input(char *buffer) {
     char c;
     unsigned int offset = 0;
-    while ((c = getchar()) != '\n')
-    {
-        if (c == BACKSPACE_KEY){
-            if (offset){
+    putchar(PROMPT_SYMBOL);
+    while ((c = getchar()) != '\n') {
+        if (c == BACKSPACE_KEY) {
+            if (offset) {
                 _delete_char();
                 offset--;
-            }   
-        }
-        else {
+            }
+        } else {
             putchar(c);
             buffer[offset++] = c;
         }
@@ -155,75 +129,82 @@ void read_input(char *buffer)
     printf("\n");
 }
 
-void run_command(char *main)
-{
+static int run_command(char *main) {
     if (strcmp(main, "help") == 0)
-        _run(&help);
+        return _run(&help);
+
     else if (strcmp(main, "fibonacci") == 0)
-        _run(&fibonacci);
+        return _run(&fibonacci);
+
     else if (strcmp(main, "primes") == 0)
-        _run(&primes);
+        return _run(&primes);
+
     else if (strcmp(main, "time") == 0)
-         _run(&time);
+        return _run(&time);
+
     else if (strcmp(main, "divzero") == 0)
-        _run(&divzero);
+        return _run(&divzero);
+
     else if (strcmp(main, "invalidopcode") == 0)
-        _run(&invalidopcode);
-    else if (strcmp(main, "clear") == 0)
-        _run(&clear);
-     else if (strcmp(main, "kerberos") == 0)
-        _run(&kerberos);
-    else
-        return;
+        return _run(&invalidopcode);
+
+    else if (strcmp(main, "clear") == 0){
+        // temporary workaround. clear command should not be used with pipe operator
+        _clear_screen();
+        _switch_screen_mode(FULLSCREEN);
+        return 1;
+    }
+    else if (strcmp(main, "kerberos") == 0)
+        return _run(&kerberos);
+
+    return -1;
 }
 
-int shell()
-{
+int shell() {
     char cmd_buff[LINE_LENGTH], token_buff[TOKEN_LENGTH];
+    static unsigned int pcount = 0;
+    static process_t children[MAX_PROC_COUNT];
 
-    _cntrl_listener(&cntrl_listener);
-    while (1)
-    {
-        read_input(cmd_buff);
+    _cntrl_listener(&ctrl_pressed);
 
-        char *input = cmd_buff;
-        int p_count = 0;
+    while (1) {
+        if (pcount == 0) {
+            unsigned int command_count = 0;
+            read_input(cmd_buff);
+            char *input = cmd_buff;
 
-        char main_buff1[TOKEN_LENGTH], arg_buff1[TOKEN_LENGTH];
-        char main_buff2[TOKEN_LENGTH], arg_buff2[TOKEN_LENGTH];
-
-        while (gettoken(&input, token_buff, '|') != -1)
-        {
-            if (p_count == 0)
-            {
-                parse_command(&token_buff, main_buff1, arg_buff1);
-                p_count++;
+            while (gettoken(&input, token_buff, PIPE_SYMBOL) != -1) {
+                if (command_count <= MAX_PROC_COUNT) {
+                    parse_command(&token_buff, children[command_count].main,
+                                  children[command_count].arg);
+                    command_count++;
+                }
             }
-            else if (p_count == 1)
-            {
-                parse_command(&token_buff, main_buff2, arg_buff2);
-                p_count++;
+
+            for (size_t i = 0; i < command_count; i++) {
+                process_t p = children[i];
+                int pid = run_command(p.main);
+                if (pid >= 0) {
+                    children[i].pid = pid;
+                    strcpy(p.name, p.main);
+                    pcount++;
+                } else {
+                    printf("[command ");
+                    printf(p.main);
+                    printf(" not found]\n\n", p.main);
+                }
+            }
+        } else {
+            if (ctrl_pressed && getchar() == 'c') {
+                while (pcount) {
+                    int pid = children[--pcount].pid;
+                    _kill(pid);
+                    printf("\n[process %d terminated]\n\n", pid);
+                }
+            } else {
+                if (_running(0) == 0) pcount = 0;
             }
         }
-
-        /**
-         * arguments not supported yet
-         */
-
-
-        if (p_count == 1)
-        {
-            _switch_screen_mode(0);
-            run_command(main_buff1);
-        }
-        else if (p_count == 2)
-        {
-            _switch_screen_mode(1);
-            run_command(main_buff1);
-            run_command(main_buff2);
-        }
-        else
-            continue;
     }
 
     return 0;

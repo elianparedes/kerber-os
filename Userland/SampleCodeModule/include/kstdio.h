@@ -23,10 +23,12 @@ int _switch_screen_mode(int mode);
 int _clear_screen();
 int _exit(int error_code);
 int _time(time_t * time_struct, int utc_offset);
-void _run(void *main);
+int _run(void *main);
+int _running(int pid);
 int _cntrl_pressed();
 void _delete_char();
 int _cntrl_listener(char * listener);
+void _kill(int pid);
 
 char getchar();
 int putchar (int character);

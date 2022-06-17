@@ -71,8 +71,8 @@ void sys_clear_screen(){
     clear_screen();
 }
 
-void sys_run(void *main){
-    add_process(main);
+int sys_run(void *main){
+    return add_process(main);
 }
 
 void sys_delete_char(){
@@ -89,4 +89,12 @@ int sys_cntrl_pressed(){
 uint8_t sys_cntrl_listener(char * listener){
     kbd_sets_cntrl_listener(listener);
     return SUCCESS;
+}
+
+void sys_kill(int pid){
+    kill_process(pid);
+}
+
+int sys_running(int pid){
+    return get_current_process()->children != NULL;
 }

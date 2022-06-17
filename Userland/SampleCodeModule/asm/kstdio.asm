@@ -2,11 +2,13 @@ GLOBAL _read
 GLOBAL _write
 GLOBAL _time
 GLOBAL _run
+GLOBAL _running
 GLOBAL _switch_screen_mode
 GLOBAL _clear_screen
 GLOBAL _exit
 GLOBAL _delete_char
 GLOBAL _cntrl_listener
+GLOBAL _kill
 
 section .text
 
@@ -45,6 +47,11 @@ _run:
     int 0x80
 ret
 
+_running:
+    mov rax, SYSCALL_RUNNING_ID
+    int 0x80
+ret
+
 _cntrl_listener:
     mov rax, SYSCALL_CNTRL_LISTENER_ID
     int 0x80
@@ -55,6 +62,11 @@ _delete_char:
     int 0x80
 ret
 
+_kill:
+    mov rax, SYSCALL_KILL_ID
+    int 0x80
+    ret
+
 section .rodata
 SYSCALL_READ_ID equ 0
 SYSCALL_WRITE_ID equ 1
@@ -64,4 +76,6 @@ SYSCALL_CNTRL_LISTENER_ID equ 6
 SYSCALL_EXIT_ID equ 60
 SYSCALL_GETTIME_ID equ 96
 SYSCALL_RUN_ID equ 66
+SYSCALL_RUNNING_ID equ 67
 SYSCALL_DELETE_CHAR_ID equ 46
+SYSCALL_KILL_ID equ 62

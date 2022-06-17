@@ -7,10 +7,8 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t
     switch(id){
         case SYSCALL_READ:
             return read((int)arg0, (char*)arg1, arg2);
-            break;
         case SYSCALL_WRITE:
             return write((int)arg0, (char*)arg1, arg2);
-            break;
         case SYSCALL_SWITCH_SCREEN_MODE:
             sys_switch_screen_mode((int)arg0);
             break;
@@ -22,16 +20,18 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t
             break;
         case SYSCALL_GETTIME:
             return sys_gettime((time_t *)arg0, (int)arg1);
-            break;
         case SYSCALL_RUN:
-            sys_run((void *)arg0);
-            break;
+            return sys_run((void *)arg0);
         case SYSCALL_CNTRL_LISTENER:
             return sys_cntrl_listener((char *)arg0);
-            break;
         case SYSCALL_DELETE_CHAR:
             sys_delete_char();
             break;
+        case SYSCALL_KILL:
+            sys_kill((int)arg0);
+            break;
+        case SYSCALL_RUNNING:
+            return sys_running((int)arg0);
         default:
             return 0;
     }

@@ -18,6 +18,8 @@ enum STD {STDIN, STDOUT, STDERR};
 #define SYSCALL_GETTIME 96
 #define SYSCALL_RUN 66
 #define SYSCALL_DELETE_CHAR 46
+#define SYSCALL_KILL 62
+#define SYSCALL_RUNNING 67
 
 /**
  * @brief reads up to @count bytes from keyboard and copies them to @buffer
@@ -56,5 +58,11 @@ void sys_clear_screen();
 uint8_t sys_cntrl_listener(char * listener);
 
 void sys_delete_char();
+
+int sys_run(void *main);
+
+int sys_running(int pid);
+
+void sys_kill(int pid);
 
 #endif
