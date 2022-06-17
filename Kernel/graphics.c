@@ -1,5 +1,4 @@
-#ifndef _GRAPHICS_
-#define _GRAPHICS_
+#include <graphics.h>
 
 //     0	1	2	3	4	5	6	7	8	9	A	B	C	D	E	F
 // B			    │	┤	╡	╢	╖	╕	╣	║	╗	╝	╜	╛	┐
@@ -15,7 +14,6 @@
 #define MIDDLE_TOP 0xC2
 #define MIDDLE_BOTTOM 0xC1
 
-#include <graphics.h>
 
 typedef struct gcontext{
     area_t area;
@@ -58,7 +56,7 @@ area_t create_window(area_t area){
     move_cursor((position_t){area.first_row,area.first_col});
     set_working_area(area);
     //set_background_color(area.first_row,area.first_col,area.first_row+area.height-1,area.first_col+area.width-1,LIGHT_GRAY);
-    set_foreground_color(area.first_row,area.first_col,area.first_row+area.height-1,area.first_col+area.width-1,LIGHT_BLUE);
+    set_foreground_color(area.first_row,area.first_col,area.first_row+area.height-1,area.first_col+area.width-1,LIGHT_GRAY);
     draw_bottom_line(area);
     draw_top_line(area);
     for(int i = area.first_row +1 ; i < (area.first_row + area.height -1) ; i++){
@@ -89,6 +87,36 @@ void create_line(area_t area , enum colors color){
 
     set_working_area(area);
     set_background_color(area.first_row,area.first_col,area.first_row+area.height-1,area.first_col+area.width-1,color);
+}
+
+void create_bottom_module(){
+
+    area_t bottom_line = {MAX_COLS,1,0,MAX_ROWS-1};
+    enable_cursor(15,16);
+    move_cursor((position_t){bottom_line.first_row,bottom_line.first_col});
+    set_foreground_color(bottom_line.first_row,0,bottom_line.first_row,MAX_COLS-1,WHITE);
+    int col = 0;
+    print_string(" CTRL+C ");
+    col = strlen(" CTRL+C ");
+    set_background_color(bottom_line.first_row,col,bottom_line.first_row,col+strlen(" KILL PROCESS"),CYAN);
+    print_string(" KILL PROCESS ");
+
+    col += strlen(" KILL PROCESS ");
+    col += 5;
+    move_cursor((position_t){bottom_line.first_row,col});
+    print_string(" CTRL+R ");
+    col += strlen(" CTRL+R ");
+    set_background_color(bottom_line.first_row,col,bottom_line.first_row,col+strlen(" REG SNAPSHOT"),CYAN);
+    print_string(" REG SNAPSHOT ");
+
+    col += strlen(" REG SNAPSHOT ");
+    col += 5;
+    move_cursor((position_t){bottom_line.first_row,col});
+    print_string(" SHIFT+TAB ");
+    col += strlen(" SHIFT+TAB ");
+    set_background_color(bottom_line.first_row,col,bottom_line.first_row,col+strlen(" SWITCH FOCUS"),CYAN);
+    print_string(" SWITCH FOCUS ");
+
 }
 
 /**
@@ -128,7 +156,7 @@ void split_screen_distribution(){
     create_window(screen);
     clear_screen();
 
-    set_foreground_color(1,MAX_COLS/2,MAX_ROWS-2,MAX_COLS/2,LIGHT_BLUE);
+    set_foreground_color(1,MAX_COLS/2,MAX_ROWS-2,MAX_COLS/2,LIGHT_GRAY);
     move_cursor((position_t){1, MAX_COLS/2});
     print_char(MIDDLE_TOP);
     for(int i = 2 ; i < MAX_ROWS-2;i++){
@@ -149,29 +177,8 @@ void split_screen_distribution(){
     move_cursor((position_t){right.first_row,right.first_col});
     contexts[1].last_cursor_pos = get_cursor_position();
 
-    area_t bottom_line = {MAX_COLS,1,0,MAX_ROWS-1};
-    create_line(bottom_line,LIGHT_BLUE);
-
-    disable_cursor();
-
-    /*area_t screen = {MAX_COLS,MAX_ROWS-2,0,1};
-	set_working_area(screen);
-    clear_screen();
-
-    area_t left = {MAX_COLS/2,MAX_ROWS-2,0,1};
-	left = create_window(left);
-    contexts[0].area = left;
-    contexts[0].last_cursor_pos = get_cursor_position();
-
-    area_t right = {MAX_COLS/2,MAX_ROWS-2,MAX_COLS/2,1};
-    right = create_window(right);
-    contexts[1].area = right;
-    contexts[1].last_cursor_pos = get_cursor_position();
-
-    area_t top_line = {MAX_COLS,1,0,0};
-    create_line(top_line,LIGHT_CYAN);
-    area_t bottom_line = {MAX_COLS,1,0,MAX_ROWS-1};
-    create_line(bottom_line,LIGHT_BLUE);*/
+    create_bottom_module();
+    move_cursor(contexts[0].last_cursor_pos);
 }
 
 void full_screen_distribution(){
@@ -187,10 +194,12 @@ void full_screen_distribution(){
     clear_screen();
 
     area_t top_line = {MAX_COLS,1,0,0};
-    create_line(top_line,DARK_GRAY);
+    create_line(top_line,CYAN);
+    set_foreground_color(0,0,0,MAX_COLS-1,WHITE);
+    print_string(" KerberOS");
     area_t bottom_line = {MAX_COLS,1,0,MAX_ROWS-1};
-    create_line(bottom_line,LIGHT_BLUE);
-    disable_cursor();
+    create_bottom_module();
+    move_cursor(contexts[2].last_cursor_pos);
 }
 
 static void load_context(context_id_t id){
@@ -199,27 +208,21 @@ static void load_context(context_id_t id){
 }
 
 void gprint_char(const char c , context_id_t id){
-    enable_cursor(0,16);
     load_context(id);
     print_char(c);
     contexts[id].last_cursor_pos=get_cursor_position();
-    disable_cursor();
 }
 
 void gprint_string(const char * str ,context_id_t id){
-    enable_cursor(0,16);
     load_context(id);
     print_string(str);
     contexts[id].last_cursor_pos=get_cursor_position();
-    disable_cursor();
 }
 
 void gprint_new_line(context_id_t id){
-    enable_cursor(15,16);
     load_context(id);
     print_new_line();
     contexts[id].last_cursor_pos=get_cursor_position();
-     disable_cursor();
 }
 
 void gdelete_char(context_id_t id){
@@ -229,21 +232,29 @@ void gdelete_char(context_id_t id){
 }
 
 void gclear_screen(context_id_t id){
-    enable_cursor(15,16);
     load_context(id);
     clear_screen();
     contexts[id].last_cursor_pos=get_cursor_position();
-    disable_cursor();
 }
 
 void snapshot_animation(){
+    position_t pos = get_cursor_position();
     area_t current = get_current_working_area();
-    set_working_area((area_t){MAX_COLS,MAX_ROWS,0,0});
-    uint64_t seconds = get_seconds();
+    char * msg = "TAKING SNAPSHOT";
+    int len = strlen(msg);
+    set_working_area((area_t){16,1,MAX_COLS/2-len/2,0});
+    print_string(msg);
+    disable_cursor();
+    set_working_area((area_t){MAX_COLS,MAX_ROWS-2,0,1});
     set_background_color(1,0,MAX_ROWS-2,MAX_COLS-1,LIGHT_GRAY);
-    while(get_seconds() - seconds < 1);
+
+    uint64_t seconds = get_seconds();
+    uint64_t last_seconds;
+    while((last_seconds=get_seconds()) - seconds <2);
+    set_working_area((area_t){16,1,MAX_COLS/2-len/2,0});
+    enable_cursor(15,16);
+    clear_line(0);
     set_background_color(1,0,MAX_ROWS-2,MAX_COLS-1, BLACK);
     set_working_area(current);
+    move_cursor(pos);
 }
-
-#endif

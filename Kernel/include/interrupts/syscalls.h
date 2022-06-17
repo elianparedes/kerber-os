@@ -49,7 +49,7 @@ void sys_exit(int error_code);
 
 void sys_switch_screen_mode(int mode);
 
-int sys_copy_cpu_state(cpu_state_t* cpu_ptr);
+int sys_copy_cpu_state(cpu_state_t* cpu_ptr,request_t request);
 
 
 void sys_clear_screen();

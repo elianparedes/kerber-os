@@ -94,6 +94,7 @@ SECTION .text
 	jne .EOI
 	popState
 	saveRegisters
+	mov rsi,KBD
 	call save_cpu_state
 	call snapshot_animation
 	add rsp,24
@@ -115,6 +116,7 @@ SECTION .text
 %macro exceptionHandler 1
 ;https://os.phil-opp.com/cpu-exceptions/#behind-the-scenes
 	saveRegisters
+	mov rsi,EXCEPTION
 	call save_cpu_state
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
@@ -216,7 +218,8 @@ _syscall_master_handler:
 	call syscall_dispatcher 
 
 	pop rbx
-
+	mov rbx,rax
+	
 	mov al, 20h
 	out 20h, al
 
@@ -246,3 +249,7 @@ haltcpu:
 
 SECTION .bss
 	aux resq 1
+
+SECTION .rodata
+	EXCEPTION equ 0
+	KBD equ 1

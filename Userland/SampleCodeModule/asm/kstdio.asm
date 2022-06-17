@@ -57,7 +57,7 @@ _delete_char:
 ret
 
 _copy_cpu_state:
-    mov rax, SYSCALL_COPY_CPU_STATE 
+    mov rax, SYSCALL_COPY_CPU_STATE
     int 0x80
 ret
 
@@ -74,3 +74,5 @@ SYSCALL_EXIT_ID equ 60
 SYSCALL_GETTIME_ID equ 96
 SYSCALL_RUN_ID equ 66
 SYSCALL_DELETE_CHAR_ID equ 46
+
+KBD_PRINT_REG equ 1
