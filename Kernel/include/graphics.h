@@ -2,6 +2,7 @@
 #define _GRAPHICS_H_
 
 #include <drivers/video.h>
+#include <lib.h>
 #include <rtc.h>
 
 typedef enum {LEFT=0,RIGHT,FULL} context_id_t;

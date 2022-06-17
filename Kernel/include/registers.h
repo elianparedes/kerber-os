@@ -2,6 +2,8 @@
 #define _REGISTERS_H_
 #include <stdint.h>
 
+typedef enum {EXCEPTION = 0 , KBD} request_t;
+
 typedef struct cpu_state {
 	uint64_t rsp;
 	uint64_t rflags;
@@ -27,7 +29,7 @@ typedef struct cpu_state {
 	
 } cpu_state_t;
 
-void save_cpu_state(cpu_state_t * cpu);
+void save_cpu_state(cpu_state_t * cpu, request_t request);
 cpu_state_t * get_cpu_state();
-int copy_cpu_state(cpu_state_t* cpu_ptr);
+int copy_cpu_state(cpu_state_t* cpu_ptr,request_t request);
 #endif

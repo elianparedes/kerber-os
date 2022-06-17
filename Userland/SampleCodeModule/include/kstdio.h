@@ -53,10 +53,14 @@ int _switch_screen_mode(int mode);
 int _clear_screen();
 int _exit(int error_code);
 int _time(time_t * time_struct, int utc_offset);
-void _run(void *main);
+int _run(void *main);
+int _running(int pid);
+int _cntrl_pressed();
 int _copy_cpu_state(cpu_state_t * cpu_ptr, request_t request);
 void _delete_char();
 int _cntrl_listener(char * listener);
+void _kill(int pid);
+int _get_mem(uint8_t * address, uint8_t * buffer, size_t count);
 
 char getchar();
 int putchar (int character);

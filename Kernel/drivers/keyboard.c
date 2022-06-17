@@ -141,7 +141,7 @@ void kbd_handler(){
         return;
     }
     if (scan_code == LCNTRL_MK || scan_code == LCNTRL_BK){
-        cntrl_pressed= !cntrl_pressed;
+        cntrl_pressed= scan_code == LCNTRL_MK;
         (*cntrl_listener)=cntrl_pressed;
         return;
     }

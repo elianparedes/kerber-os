@@ -7,11 +7,15 @@
 
 #define MAX_PROC_COUNT   256
 
-bool add_process(function_t main);
+int add_process(function_t main);
+
+void kill_process(int pid);
 
 void exit_process();
 
 process_t * get_current_process();
+
+process_t * get_process();
 
 extern void _force_schedule();
 

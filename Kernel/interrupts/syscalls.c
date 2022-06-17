@@ -72,8 +72,8 @@ void sys_clear_screen(){
     clear_screen();
 }
 
-void sys_run(void *main){
-    add_process(main);
+int sys_run(void *main){
+    return add_process(main);
 }
 
 void sys_delete_char(){
@@ -94,5 +94,20 @@ int sys_copy_cpu_state(cpu_state_t* cpu_ptr , request_t request){
 uint8_t sys_cntrl_listener(char * listener){
     kbd_sets_cntrl_listener(listener);
     return SUCCESS;
+}
 
+void sys_kill(int pid){
+    kill_process(pid);
+}
+
+int sys_running(int pid){
+    return get_current_process()->children != NULL;
+}
+
+uint8_t sys_get_mem(uint8_t * address, uint8_t * buffer, uint16_t count){
+    for (int i=0; i < count ; i++){
+        buffer[i]=(*address);
+        address++;
+    }
+    return SUCCESS;
 }

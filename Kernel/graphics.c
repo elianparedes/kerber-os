@@ -182,7 +182,6 @@ void split_screen_distribution(){
 }
 
 void full_screen_distribution(){
-
     allocated_windows_count = 0;
     current_distribution = FULL;
 
@@ -198,6 +197,7 @@ void full_screen_distribution(){
     set_foreground_color(0,0,0,MAX_COLS-1,WHITE);
     print_string(" KerberOS");
     area_t bottom_line = {MAX_COLS,1,0,MAX_ROWS-1};
+
     create_bottom_module();
     move_cursor(contexts[2].last_cursor_pos);
 }
