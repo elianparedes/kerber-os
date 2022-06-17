@@ -1,7 +1,7 @@
 #include <kstdio.h>
-#include <printreg.h>
+#include <inforeg.h>
 
-cpu_state_t * registers;
+cpu_state_t registers;
 
 static void format_reg_str(char * dest , uint64_t reg){
 	dest[0] = '0';
@@ -24,9 +24,9 @@ static void show_registers(){
 	char * registers_strings[] = {"R15: ","R14: ","R13: ","R12: ","R11: ","R10: ","R9: ","R8: ", "RDX: " , "RCX: ", "RBX: ", "RAX: ", 
 	"RSI: ", "RDI: ", "RBP: ", "RSP: ", "RIP: ", "RFLAGS: "};
 	uint64_t regs_values[] = 
-	{registers->r15  ,registers->r14  ,registers->r13  ,registers->r12 , registers->r11 , registers->r10 , registers->r9 ,
-	registers->r8 , registers->rdx , registers->rcx , registers->rbx , registers->rax , registers->rsi , registers->rdi ,
-	registers->rbp , registers->rsp , registers->rip , registers->rflags};
+	{registers.r15  ,registers.r14  ,registers.r13  ,registers.r12 , registers.r11 , registers.r10 , registers.r9 ,
+	registers.r8 , registers.rdx , registers.rcx , registers.rbx , registers.rax , registers.rsi , registers.rdi ,
+	registers.rbp , registers.rsp , registers.rip , registers.rflags};
 
 	for(int i = 0 ; i < REGISTERS_COUNT ; i++){
 		format_reg_str(reg_str,regs_values[i]);
@@ -35,13 +35,13 @@ static void show_registers(){
 	}
 }
 
-void printreg(){
+void inforeg(){
     int succeed;
-	succeed = _copy_cpu_state(registers);
+	succeed = _copy_cpu_state(&registers,KBD_PRINT_REG);
 
-	if(!succeed)
+	if(!succeed){
+		puts("No snapshot to show");
 		return;
+	}
 	show_registers();
-	puts("");
-	printf("%d",succeed);
 }
