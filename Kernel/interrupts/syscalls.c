@@ -75,6 +75,13 @@ void sys_run(void *main){
     add_process(main);
 }
 
+void sys_delete_char(){
+    process_t * current_process = get_current_process();
+    context_id_t gc = current_process->g_context;
+
+    gdelete_char(gc);
+}
+
 int sys_cntrl_pressed(){
     return kbd_is_cntrl_pressed();
 }

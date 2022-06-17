@@ -6,11 +6,15 @@
 #include <time.h>
 #include <divzero.h>
 #include <invalidopcode.h>
+#include <clear.h>
+#include <kerberos.h>
 
 #define LINE_LENGTH 60
 #define TOKEN_LENGTH 128
 
-#define PROMPT_SYMBOL "#>"
+#define PROMPT_SYMBOL ">"
+
+#define BACKSPACE_KEY 8
 
 enum exit_status
 {
@@ -131,11 +135,19 @@ int parse_command(char **src, char *main, char *arg)
 void read_input(char *buffer)
 {
     char c;
-    int offset = 0;
+    unsigned int offset = 0;
     while ((c = getchar()) != '\n')
     {
-        putchar(c);
-        buffer[offset++] = c;
+        if (c == BACKSPACE_KEY){
+            if (offset){
+                _delete_char();
+                offset--;
+            }   
+        }
+        else {
+            putchar(c);
+            buffer[offset++] = c;
+        }
     }
     buffer[offset] = '\0';
     printf("\n");
@@ -155,6 +167,10 @@ void run_command(char *main)
         _run(&divzero);
     else if (strcmp(main, "invalidopcode") == 0)
         _run(&invalidopcode);
+    else if (strcmp(main, "clear") == 0)
+        _run(&clear);
+     else if (strcmp(main, "kerberos") == 0)
+        _run(&kerberos);
     else
         return;
 }
@@ -190,6 +206,7 @@ int shell()
         /**
          * arguments not supported yet
          */
+
 
         if (p_count == 1)
         {

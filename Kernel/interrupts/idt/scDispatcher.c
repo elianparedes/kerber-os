@@ -29,6 +29,9 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t
         case SYSCALL_CNTRL_PRESSED:
             return sys_cntrl_pressed();
             break;
+        case SYSCALL_DELETE_CHAR:
+            sys_delete_char();
+            break;
         default:
             return 0;
     }

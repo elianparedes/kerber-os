@@ -5,6 +5,7 @@ GLOBAL _run
 GLOBAL _switch_screen_mode
 GLOBAL _clear_screen
 GLOBAL _exit
+GLOBAL _delete_char
 
 section .text
 
@@ -48,6 +49,11 @@ _cntrl_pressed:
     int 0x80
 ret
 
+_delete_char:
+    mov rax, SYSCALL_DELETE_CHAR_ID
+    int 0x80
+ret
+
 section .rodata
 SYSCALL_READ_ID equ 0
 SYSCALL_WRITE_ID equ 1
@@ -57,3 +63,4 @@ SYSCALL_CNTRL_PRESSED_ID equ 6
 SYSCALL_EXIT_ID equ 60
 SYSCALL_GETTIME_ID equ 96
 SYSCALL_RUN_ID equ 66
+SYSCALL_DELETE_CHAR_ID equ 46

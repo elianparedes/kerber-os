@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+
 #define STDIN 0
 #define STDOUT 1
 #define STDERR 2
@@ -24,6 +25,7 @@ int _exit(int error_code);
 int _time(time_t * time_struct, int utc_offset);
 void _run(void *main);
 int _cntrl_pressed();
+void _delete_char();
 
 char getchar();
 int putchar (int character);
