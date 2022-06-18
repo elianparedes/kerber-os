@@ -15,6 +15,7 @@
 #include <clear.h>
 #include <kerberos.h>
 #include <printmem.h>
+#include <test_inforeg.h>
 
 #define LINE_LENGTH 512
 #define TOKEN_LENGTH 512
@@ -154,14 +155,15 @@ static int run_command(char *main) {
         return _run(&kerberos);
 
     else if (strcmp(main, "invalidopcode") == 0)
-        _run(&invalidopcode);
+        return _run(&invalidopcode);
     else if (strcmp(main, "inforeg") == 0)
-        _run(&inforeg);
+        return _run(&inforeg);
     else if (strcmp(main, "clear") == 0)
-        _run(&clear);
+        return _run(&clear);
      else if (strcmp(main, "kerberos") == 0)
-        _run(&kerberos);
-
+        return _run(&kerberos);
+    else if (strcmp(main, "testinforeg") == 0)
+        return _run(&testinforeg);
     else if (strcmp(main, "clear") == 0) {
         // temporary workaround. clear command should not be used with pipe
         // operator

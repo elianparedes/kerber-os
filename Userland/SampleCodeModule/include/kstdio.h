@@ -56,7 +56,7 @@ int _time(time_t * time_struct, int utc_offset);
 int _run(void *main);
 int _running(int pid);
 int _cntrl_pressed();
-int _copy_cpu_state(cpu_state_t * cpu_ptr, request_t request);
+int _copy_cpu_state(cpu_state_t* cpu_ptr, request_t request);
 void _delete_char();
 int _cntrl_listener(char * listener);
 void _kill(int pid);
