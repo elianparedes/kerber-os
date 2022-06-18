@@ -24,7 +24,7 @@ EXTERN schedule
 EXTERN save_cpu_state
 EXTERN syscall_dispatcher
 EXTERN kbd_is_save_reg_shortcut
-EXTERN snapshot_animation
+EXTERN gsnapshot
 SECTION .text
 
 %macro pushState 0
@@ -96,7 +96,7 @@ SECTION .text
 	saveRegisters
 	mov rsi,KBD
 	call save_cpu_state
-	call snapshot_animation
+	call gsnapshot
 	add rsp,24
 	jmp .EOI
 

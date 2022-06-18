@@ -25,6 +25,8 @@ void gclear_screen(context_id_t id);
 
 context_id_t get_context_id();
 
-void snapshot_animation();
+void gsnapshot();
+
+void gfocus(context_id_t target);
 
 #endif /* _GRAPHICS_H_ */
