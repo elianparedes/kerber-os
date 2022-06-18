@@ -24,6 +24,7 @@ enum STD {STDIN, STDOUT, STDERR};
 #define SYSCALL_RUN 66
 #define SYSCALL_DELETE_CHAR 46
 #define SYSCALL_KILL 62
+#define SYSCALL_PAUSE 75
 #define SYSCALL_RUNNING 67
 
 /**
@@ -89,5 +90,7 @@ void sys_kill(int pid);
  * @return uint16_t number of bytes copied to buffer
  */
 uint16_t sys_get_mem(uint8_t * address, uint8_t * buffer, uint16_t count);
+
+void sys_pause(int pid);
 
 #endif

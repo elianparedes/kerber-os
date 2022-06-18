@@ -60,6 +60,7 @@ int _copy_cpu_state(cpu_state_t * cpu_ptr, request_t request);
 void _delete_char();
 int _cntrl_listener(char * listener);
 void _kill(int pid);
+void _pause(int pid);
 int _get_mem(uint8_t * address, uint8_t * buffer, size_t count);
 
 char getchar();
