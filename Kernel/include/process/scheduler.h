@@ -15,7 +15,7 @@ void exit_process();
 
 process_t* get_current_process();
 
-process_t* get_process();
+process_t* get_process(pid_t pid);
 
 extern void _force_schedule();
 

@@ -21,6 +21,7 @@
 #define BACKSPACE_KEY 8
 #define PAUSE_KEY 'p'
 #define SIGINT_KEY 'c'
+#define FOCUS_KEY 9
 
 typedef struct process {
     char name[TOKEN_LENGTH];
@@ -116,6 +117,13 @@ static int parse_command(char **src, char *main, char *arg) {
     return SUCCESS;
 }
 
+static void switch_layout(layout_mode_t mode) {
+    if (current_layout_mode != mode) {
+        current_layout_mode = mode;
+        _switch_screen_mode(mode);
+    }
+}
+
 static void read_input(char *buffer) {
     char c;
     unsigned int offset = 0;
@@ -170,17 +178,11 @@ static int run_command(char *main) {
     return -1;
 }
 
-static void switch_layout(layout_mode_t mode) {
-    if (current_layout_mode != mode) {
-        current_layout_mode = mode;
-        _switch_screen_mode(mode);
-    }
-}
-
 int shell() {
     char cmd_buff[LINE_LENGTH], token_buff[TOKEN_LENGTH];
-    static unsigned int pcount = 0;
-    static process_t children[MAX_PROC_COUNT];
+    unsigned int pcount = 0;
+    process_t children[MAX_PROC_COUNT];
+    int fidx = 0;
 
     _cntrl_listener(&ctrl_pressed);
 
@@ -231,9 +233,14 @@ int shell() {
                         int pid = children[i].pid;
                         _pause(pid);
                     }
+                } else if (c == FOCUS_KEY) {
+                    int fpid = children[fidx++ % pcount].pid;
+                    _focus(fpid);
                 }
             } else {
-                if (!_running(0)) pcount = 0;
+                if (!_running(0)) {
+                    pcount = 0;
+                }
             }
         }
     }

@@ -112,3 +112,10 @@ uint16_t sys_get_mem(uint8_t * address, uint8_t * buffer, uint16_t count){
     }
     return i;
 }
+
+void sys_focus(int pid){
+    process_t* process = get_process(pid);
+    if (process != NULL){
+
+    }
+}

@@ -41,6 +41,9 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t
         case SYSCALL_COPY_CPU_STATE:
             return sys_copy_cpu_state((cpu_state_t *)arg0 ,(request_t)arg1);
             break;
+         case SYSCALL_FOCUS:
+            sys_focus((int)arg0);
+            break;
         default:
             return 0;
     }

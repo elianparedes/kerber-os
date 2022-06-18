@@ -12,6 +12,7 @@ GLOBAL _cntrl_listener
 GLOBAL _kill
 GLOBAL _get_mem
 GLOBAL _pause
+GLOBAL _focus
 
 section .text
 
@@ -85,6 +86,11 @@ _pause:
     int 0x80
     ret
 
+_focus:
+    mov rax, SYSCALL_FOCUS_ID
+    int 0x80
+    ret
+
 section .rodata
 SYSCALL_READ_ID equ 0
 SYSCALL_WRITE_ID equ 1
@@ -99,6 +105,7 @@ SYSCALL_RUN_ID equ 66
 SYSCALL_RUNNING_ID equ 67
 SYSCALL_DELETE_CHAR_ID equ 46
 SYSCALL_KILL_ID equ 62
-SYSCALL_PAUSE_ID equ 75  
+SYSCALL_PAUSE_ID equ 75 
+SYSCALL_FOCUS_ID equ 77   
 
 KBD_PRINT_REG equ 1
