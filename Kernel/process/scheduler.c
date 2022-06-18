@@ -42,11 +42,14 @@ int add_process(function_t main) {
     if (process == NULL) return PID_ERR;
 
     if (enqueue_process(process)) {
-        if (current_node != NULL && current_node->process->children == NULL) {
-            current_node->process->children = process;
-            process->parent = current_node->process;
-        }
+        if (current_node != NULL) {
+            if (current_node->process->l_child == NULL)
+                current_node->process->l_child = process;
 
+            else if (current_node->process->r_child == NULL)
+                current_node->process->r_child = process;
+        }
+        process->parent = current_node->process;
         return process->pid;
     }
 
@@ -64,7 +67,14 @@ void exit_process() {
 
     if (front_node == current_node) front_node = current_node->next;
 
-    current_node->process->parent->children = NULL;
+    if (current_node->process->parent->l_child->pid ==
+        current_node->process->pid)
+        current_node->process->parent->l_child = NULL;
+
+    if (current_node->process->parent->r_child->pid ==
+        current_node->process->pid)
+        current_node->process->parent->r_child = NULL;
+
     kfree(current_node->process);
     kfree(current_node);
 
@@ -87,7 +97,12 @@ void kill_process(int pid) {
 
     if (front_node == target_node) front_node = target_node->next;
 
-    target_node->process->parent->children = NULL;
+    if (target_node->process->parent->l_child->pid == target_node->process->pid)
+        target_node->process->parent->l_child = NULL;
+
+    if (target_node->process->parent->r_child->pid == target_node->process->pid)
+        target_node->process->parent->r_child = NULL;
+
     kfree(target_node->process);
     kfree(target_node);
 
@@ -96,15 +111,13 @@ void kill_process(int pid) {
 
 process_t *get_current_process() { return current_node->process; }
 
-process_t *get_process(int pid) {
+process_t *get_process(pid_t pid) {
     node_t *aux_node = front_node;
 
-    do {
-        if (aux_node->process->pid == pid) return aux_node->process;
+    while (aux_node->next->process->pid != pid) 
         aux_node = aux_node->next;
-    } while (aux_node != rear_node);
-
-    return NULL;
+        
+    return  aux_node->next->process;
 }
 
 uint64_t *schedule(uint64_t *rsp) {
@@ -112,7 +125,11 @@ uint64_t *schedule(uint64_t *rsp) {
 
     if (current_node != NULL) {
         current_node->process->context = rsp;
-        current_node = current_node->next;
+
+        // skip paused processes
+        do {
+            current_node = current_node->next;
+        } while (current_node->process->status == PAUSED);
 
     } else
         current_node = front_node;

@@ -2,23 +2,23 @@
 #define _SCHEDULER_H_
 
 #include <process/process.h>
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
-#define MAX_PROC_COUNT   256
+#define MAX_PROC_COUNT 256
 
 int add_process(function_t main);
 
-void kill_process(int pid);
+void kill_process(pid_t pid);
 
 void exit_process();
 
-process_t * get_current_process();
+process_t* get_current_process();
 
-process_t * get_process();
+process_t* get_process();
 
 extern void _force_schedule();
 
-uint64_t * schedule(uint64_t * rsp);
+uint64_t* schedule(uint64_t* rsp);
 
 #endif /* _SCHEDULER_H_ */
