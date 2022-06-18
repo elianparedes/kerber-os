@@ -1,7 +1,7 @@
 #include <kstdio.h>
 #include <inforeg.h>
 
-cpu_state_t registers;
+//cpu_state_t registers;
 
 static void format_reg_str(char * dest , uint64_t reg){
 	dest[0] = '0';
@@ -19,7 +19,7 @@ static void format_reg_str(char * dest , uint64_t reg){
 	dest[REG_SIZE+2] = '\0';
 }
 
-static void show_registers(){
+static void show_registers(cpu_state_t registers){
 	char reg_str[REG_SIZE+3];
 	char * registers_strings[] = {"R15: ","R14: ","R13: ","R12: ","R11: ","R10: ","R9: ","R8: ", "RDX: " , "RCX: ", "RBX: ", "RAX: ", 
 	"RSI: ", "RDI: ", "RBP: ", "RSP: ", "RIP: ", "RFLAGS: "};
@@ -37,11 +37,13 @@ static void show_registers(){
 
 void inforeg(){
     int succeed;
-	succeed = _copy_cpu_state(&registers,KBD_PRINT_REG);
+	cpu_state_t aux;
+	succeed = _copy_cpu_state(&aux,KBD_PRINT_REG);
 
 	if(!succeed){
 		puts("No snapshot to show");
 		return;
 	}
-	show_registers();
+
+	show_registers(aux);
 }

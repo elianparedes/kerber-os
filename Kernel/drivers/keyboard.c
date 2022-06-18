@@ -28,6 +28,8 @@ enum KBD_CTRL_CMD{
 
 #define LSHIFT_MK 0x2A
 #define LSHIFT_BK 0xAA
+#define RSHIFT_MK 0x36
+#define RSHIFT_BK 0xB6
 #define CAPS_MK 0x3A
 #define LCNTRL_MK 0x1D
 #define LCNTRL_BK 0X9D
@@ -136,21 +138,30 @@ void kbd_enable(){
 void kbd_handler(){
 
     uint8_t scan_code= inb(KBD_ENCODER_PORT);
-    if (scan_code == LSHIFT_MK || scan_code == LSHIFT_BK){
-        shift_pressed=!shift_pressed;
-        return;
+    if ((scan_code == LSHIFT_MK) || (scan_code == RSHIFT_MK)){
+        shift_pressed = 1;
+        return ;
     }
-    if (scan_code == LCNTRL_MK || scan_code == LCNTRL_BK){
-        cntrl_pressed= scan_code == LCNTRL_MK;
+    if ((scan_code == LSHIFT_BK) || (scan_code == RSHIFT_BK)){
+        shift_pressed = 0;
+        return ;
+    }
+    if (scan_code == LCNTRL_MK){
+        cntrl_pressed = 1;
         (*cntrl_listener)=cntrl_pressed;
         return;
     }
-    if (index > BUFFER_SIZE || scan_code > KBD_SIZE){
-        return; 
+    if (scan_code == LCNTRL_BK){
+        cntrl_pressed = 0;
+        (*cntrl_listener)=cntrl_pressed;
+        return;
     }
     if (scan_code == CAPS_MK){
         caps_locked=!caps_locked;
         return;
+    }
+    if (index > BUFFER_SIZE || scan_code > KBD_SIZE){
+        return; 
     }
     uint8_t character;
     if (shift_pressed){
@@ -158,6 +169,9 @@ void kbd_handler(){
     }
     else{
         character=kbd_US_1[scan_code];
+    }
+    if (character == 0){
+        return ;         //no character to map
     }
     if (caps_locked && IS_ASCII_LETTER(character)){
         buffer[index]=character - MAYUS_OFFSET;

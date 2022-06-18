@@ -5,6 +5,8 @@
 // C   └	┴	┬	├	─	┼	╞	╟	╚	╔	╩	╦	╠	═	╬	╧
 // D   ╨	╤	╥	╙	╘	╒	╓	╫	╪	┘	┌					
 
+// ■
+
 #define LEFT_TOP_CORNER 0xDA
 #define RIGHT_TOP_CORNER 0xBF
 #define LEFT_BOTTOM_CORNER 0xC0
@@ -13,6 +15,7 @@
 #define VT_LINE 0xB3
 #define MIDDLE_TOP 0xC2
 #define MIDDLE_BOTTOM 0xC1
+#define SQUARE 0xFE
 
 
 typedef struct gcontext{
@@ -110,24 +113,14 @@ void create_bottom_module(){
     print_string(" REG SNAPSHOT ");
 
     col += strlen(" REG SNAPSHOT ");
-    col += 5;
+    col += 6;
     move_cursor((position_t){bottom_line.first_row,col});
-    print_string(" SHIFT+TAB ");
-    col += strlen(" SHIFT+TAB ");
-    set_background_color(bottom_line.first_row,col,bottom_line.first_row,col+strlen(" SWITCH FOCUS"),CYAN);
-    print_string(" SWITCH FOCUS ");
+    print_string(" CTRL+TAB ");
+    col += strlen(" CTRL+TAB ");
+    set_background_color(bottom_line.first_row,col,bottom_line.first_row,col+strlen(" TOGGLE FOCUS"),CYAN);
+    print_string(" TOGGLE FOCUS ");
 
 }
-
-/**
- * COLECCTION[cursor_pos,cursor_pos]
- * count  = 0
- * count = 1
- * 
- * print_c(id,c)
- * 
- * 
- */
 
 context_id_t get_context_id(){
     switch (current_distribution)
@@ -237,7 +230,7 @@ void gclear_screen(context_id_t id){
     contexts[id].last_cursor_pos=get_cursor_position();
 }
 
-void snapshot_animation(){
+void gsnapshot(){
     position_t pos = get_cursor_position();
     area_t current = get_current_working_area();
     char * msg = "TAKING SNAPSHOT";
@@ -257,4 +250,40 @@ void snapshot_animation(){
     set_background_color(1,0,MAX_ROWS-2,MAX_COLS-1, BLACK);
     set_working_area(current);
     move_cursor(pos);
+}
+
+void gfocus(context_id_t target){
+    if(target == FULL)
+        return;
+
+    context_id_t other_screen;
+    if(target == LEFT)
+        other_screen = RIGHT;
+    else
+        other_screen = LEFT;
+
+    area_t bkup = contexts[target].area;
+    area_t other_area = {contexts[other_screen].area.width+2,
+                  contexts[other_screen].area.height+2,
+                  contexts[other_screen].area.first_col-1,
+                  contexts[other_screen].area.first_row-1};
+
+    set_working_area(other_area);
+    move_cursor((position_t){other_area.first_row,other_area.first_col+1});
+    set_foreground_color(other_area.first_row,other_area.first_col+1,other_area.first_row,other_area.first_col+1+3,WHITE);
+    print_char(HZ_LINE);
+    print_char(HZ_LINE);
+    print_char(HZ_LINE);
+
+    area_t new_area = {bkup.width+2,bkup.height+2,bkup.first_col-1,bkup.first_row-1};
+    set_working_area(new_area);
+
+    move_cursor((position_t){new_area.first_row,new_area.first_col+1});
+    set_foreground_color(new_area.first_row,new_area.first_col+1,new_area.first_row,new_area.first_col+1+3,CYAN);
+    print_char(SQUARE);
+    print_char(SQUARE);
+    print_char(SQUARE);
+
+    set_working_area(bkup);
+    move_cursor(contexts[target].last_cursor_pos);
 }

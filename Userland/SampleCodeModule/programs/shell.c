@@ -9,6 +9,7 @@
 #include <kstring.h>
 #include <primes.h>
 #include <printmem.h>
+#include <test_inforeg.h>
 #include <time.h>
 
 #define LINE_LENGTH 512
@@ -164,10 +165,14 @@ static int run_command(char *main) {
 
     else if (strcmp(main, "invalidopcode") == 0)
         return _run(&invalidopcode);
-
     else if (strcmp(main, "inforeg") == 0)
         return _run(&inforeg);
-
+    else if (strcmp(main, "clear") == 0)
+        return _run(&clear);
+     else if (strcmp(main, "kerberos") == 0)
+        return _run(&kerberos);
+    else if (strcmp(main, "testinforeg") == 0)
+        return _run(&testinforeg);
     else if (strcmp(main, "clear") == 0) {
         // temporary workaround. clear command should not be used with pipe
         // operator
