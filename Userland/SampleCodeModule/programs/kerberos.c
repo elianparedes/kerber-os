@@ -12,10 +12,10 @@ void kerberos() {
     puts("");
     puts("                                                               /\\_/\\____,    ");         
     puts(" v2.0 //****************************************//   ,___/\\_/\\ \\  ~     /    ");    
-    puts(" Available commands:                                 \\     ~  \\ )   KKK      ");
-    puts("                                                       KKK     /    /\\_/\\___,");
+    puts(" Available commands:                                 \\     ~  \\ )   XXX      ");
+    puts("                                                       XXX     /    /\\_/\\___,");
     puts(" help:            shows available programs                \\o-o/-o-o/   ~    /");
-    puts(" time:            displays system day and hour            ) /     \\    KKK  ");
+    puts(" time:            displays system day and hour            ) /     \\    XXX  ");
     puts(" fibonacci:       prints fibonacci sequence              _|    / \\ \\_/      ");
     puts(" primes:          prints prime numbers                ,-/   _  \\_/   \\      ");
     puts(" [c1] | [c2]:     runs [c1] & [c2] in splitscreen     / (   /____,__|  )     ");
