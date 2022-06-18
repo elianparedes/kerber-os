@@ -1,47 +1,45 @@
-#include <interrupts/syscalls.h>
-#include <interrupts/interrupts.h>
 #include <drivers/keyboard.h>
 #include <drivers/video.h>
+#include <interrupts/interrupts.h>
+#include <interrupts/syscalls.h>
 #include <process/scheduler.h>
 #include <registers.h>
 
-enum DISTRIBUTION {FULL_DISTRIBUTION=0, SPLIT_DISTRIBUTION};
+enum DISTRIBUTION { FULL_DISTRIBUTION = 0, SPLIT_DISTRIBUTION };
 
-uint16_t read(int fd, char * buffer, uint16_t count){
-    //file descriptors not implemented
-    if (fd > STDERR){
+uint16_t read(int fd, char* buffer, uint16_t count) {
+    // file descriptors not implemented
+    if (fd > STDERR) {
         return ERROR;
     }
     kbd_clear_buffer();
     _sti();
-    while (count > kbd_get_current_index()){
-
+    while (count > kbd_get_current_index()) {
     }
     _cli();
-    char * aux=kbd_get_buffer();
+    char* aux = kbd_get_buffer();
     uint16_t i;
-    for (i=0; i < count ; i++){
-        buffer[i]=aux[i];
+    for (i = 0; i < count; i++) {
+        buffer[i] = aux[i];
     }
-    return i-1;
+    return i - 1;
 }
 
-uint16_t write(int fd, char * buffer, uint16_t count){
-     //file descriptors not implemented
-    if (fd > STDERR){
+uint16_t write(int fd, char* buffer, uint16_t count) {
+    // file descriptors not implemented
+    if (fd > STDERR) {
         return ERROR;
     }
 
-    process_t * current_process = get_current_process();
+    process_t* current_process = get_current_process();
     context_id_t gc = current_process->g_context;
 
-    uint16_t i=0;
-    while (i < count){
-        char c= buffer[i];
-        if (c == '\n'){
+    uint16_t i = 0;
+    while (i < count) {
+        char c = buffer[i];
+        if (c == '\n') {
             gprint_new_line(gc);
-        }
-        else{
+        } else {
             gprint_char(c, gc);
         }
         i++;
@@ -49,64 +47,61 @@ uint16_t write(int fd, char * buffer, uint16_t count){
     return i;
 }
 
-uint8_t sys_gettime(time_t * struct_time, int utc_offset){
-    //set_UTC_offset(utc_offset);
+uint8_t sys_gettime(time_t* struct_time, int utc_offset) {
+    // set_UTC_offset(utc_offset);
     get_struct_time();
     return 1;
 }
 
-void sys_exit(int error_code){
-    exit_process();
-}
+void sys_exit(int error_code) { exit_process(); }
 
-void sys_switch_screen_mode(int mode){
-    if (mode == FULL_DISTRIBUTION){
+void sys_switch_screen_mode(int mode) {
+    if (mode == FULL_DISTRIBUTION) {
         full_screen_distribution();
     }
-    if (mode == SPLIT_DISTRIBUTION){
+    if (mode == SPLIT_DISTRIBUTION) {
         split_screen_distribution();
     }
 }
 
-void sys_clear_screen(){
-    clear_screen();
-}
+void sys_clear_screen() { clear_screen(); }
 
-int sys_run(void *main){
-    return add_process(main);
-}
+int sys_run(void* main) { return add_process(main); }
 
-void sys_delete_char(){
-    process_t * current_process = get_current_process();
+void sys_delete_char() {
+    process_t* current_process = get_current_process();
     context_id_t gc = current_process->g_context;
 
     gdelete_char(gc);
 }
 
-int sys_cntrl_pressed(){
-    return kbd_is_cntrl_pressed();
+int sys_cntrl_pressed() { return kbd_is_cntrl_pressed(); }
+
+int sys_copy_cpu_state(cpu_state_t* cpu_ptr, request_t request) {
+    return copy_cpu_state(cpu_ptr, request);
 }
 
-int sys_copy_cpu_state(cpu_state_t* cpu_ptr , request_t request){
-    return  copy_cpu_state(cpu_ptr,request);
-}
-
-uint8_t sys_cntrl_listener(char * listener){
+uint8_t sys_cntrl_listener(char* listener) {
     kbd_sets_cntrl_listener(listener);
     return SUCCESS;
 }
 
-void sys_kill(int pid){
-    kill_process(pid);
+void sys_kill(int pid) { kill_process(pid); }
+
+int sys_running(int pid) {
+    return get_current_process()->l_child != NULL ||
+           get_current_process()->r_child != NULL;
 }
 
-int sys_running(int pid){
-    return get_current_process()->children != NULL;
+void sys_pause(int pid) {
+    process_t* process = get_process(pid);
+    if (process != NULL) process->status = !process->status;
+    return;
 }
 
-uint8_t sys_get_mem(uint8_t * address, uint8_t * buffer, uint16_t count){
-    for (int i=0; i < count ; i++){
-        buffer[i]=(*address);
+uint8_t sys_get_mem(uint8_t* address, uint8_t* buffer, uint16_t count) {
+    for (int i = 0; i < count; i++) {
+        buffer[i] = (*address);
         address++;
     }
     return SUCCESS;

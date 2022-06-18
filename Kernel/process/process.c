@@ -17,8 +17,7 @@ process_t *new_process(function_t function) {
     if (process == NULL) return NULL;
 
     process->pid = last_pid++;
-    process->children = NULL;
-    process->parent = NULL;
+    process->status = READY;
 
     context_t *context =
         (context_t *)((uint64_t)process + K_PROCESS_STACK_SIZE -
@@ -35,6 +34,10 @@ process_t *new_process(function_t function) {
     process->context = context;
 
     process->g_context = get_context_id();
+
+    process->l_child = NULL;
+    process->r_child = NULL;
+    process->parent = NULL;
 
     return process;
 }

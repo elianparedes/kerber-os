@@ -2,28 +2,25 @@
 #include <divzero.h>
 #include <fibonacci.h>
 #include <help.h>
+#include <inforeg.h>
 #include <invalidopcode.h>
 #include <kerberos.h>
 #include <kstdio.h>
 #include <kstring.h>
 #include <primes.h>
-#include <fibonacci.h>
-#include <time.h>
-#include <divzero.h>
-#include <invalidopcode.h>
-#include <inforeg.h>
-#include <clear.h>
-#include <kerberos.h>
 #include <printmem.h>
+#include <time.h>
 
 #define LINE_LENGTH 512
 #define TOKEN_LENGTH 512
 #define MAX_PROC_COUNT 2
 
-#define PROMPT_SYMBOL '>'
+#define PROMPT_SYMBOL "> "
 #define PIPE_SYMBOL '|'
 
 #define BACKSPACE_KEY 8
+#define PAUSE_KEY 'p'
+#define SIGINT_KEY 'c'
 
 typedef struct process {
     char name[TOKEN_LENGTH];
@@ -34,7 +31,9 @@ typedef struct process {
 
 static enum exit_status { FAILURE, SUCCESS };
 
-static enum layout_mode { FULLSCREEN, SPLITSCREEN };
+typedef enum layout_mode { FULLSCREEN = 0, SPLITSCREEN } layout_mode_t;
+
+static layout_mode_t current_layout_mode = FULLSCREEN;
 
 static char ctrl_pressed = 0;
 
@@ -120,7 +119,7 @@ static int parse_command(char **src, char *main, char *arg) {
 static void read_input(char *buffer) {
     char c;
     unsigned int offset = 0;
-    putchar(PROMPT_SYMBOL);
+    printf(PROMPT_SYMBOL);
     while ((c = getchar()) != '\n') {
         if (c == BACKSPACE_KEY) {
             if (offset) {
@@ -148,19 +147,18 @@ static int run_command(char *main) {
 
     else if (strcmp(main, "time") == 0)
         return _run(&time);
+
     else if (strcmp(main, "divzero") == 0)
         return _run(&divzero);
+
     else if (strcmp(main, "kerberos") == 0)
         return _run(&kerberos);
 
     else if (strcmp(main, "invalidopcode") == 0)
-        _run(&invalidopcode);
+        return _run(&invalidopcode);
+
     else if (strcmp(main, "inforeg") == 0)
-        _run(&inforeg);
-    else if (strcmp(main, "clear") == 0)
-        _run(&clear);
-     else if (strcmp(main, "kerberos") == 0)
-        _run(&kerberos);
+        return _run(&inforeg);
 
     else if (strcmp(main, "clear") == 0) {
         // temporary workaround. clear command should not be used with pipe
@@ -172,12 +170,21 @@ static int run_command(char *main) {
     return -1;
 }
 
+static void switch_layout(layout_mode_t mode) {
+    if (current_layout_mode != mode) {
+        current_layout_mode = mode;
+        _switch_screen_mode(mode);
+    }
+}
+
 int shell() {
     char cmd_buff[LINE_LENGTH], token_buff[TOKEN_LENGTH];
     static unsigned int pcount = 0;
     static process_t children[MAX_PROC_COUNT];
 
     _cntrl_listener(&ctrl_pressed);
+
+    kerberos();  // show welcome screen
 
     while (1) {
         if (pcount == 0) {
@@ -193,6 +200,8 @@ int shell() {
                 }
             }
 
+            switch_layout(command_count - 1);
+
             for (size_t i = 0; i < command_count; i++) {
                 process_t p = children[i];
                 int pid = run_command(p.main);
@@ -200,21 +209,31 @@ int shell() {
                     children[i].pid = pid;
                     strcpy(p.name, p.main);
                     pcount++;
-                } else {
-                    printf("[command ");
-                    printf(p.main);
-                    printf(" not found]\n\n", p.main);
-                }
+                } else
+                    printf("[command %s not found]\n\n", p.main);
             }
+
         } else {
-            if (ctrl_pressed && getchar() == 'c') {
-                while (pcount) {
-                    int pid = children[--pcount].pid;
-                    _kill(pid);
-                    printf("\n[process %d terminated]\n\n", pid);
+            char c;
+            if (ctrl_pressed && (c = getchar())) {
+                if (c == SIGINT_KEY) {
+                    switch_layout(FULLSCREEN);
+                    while (pcount) {
+                        int pid = children[--pcount].pid;
+                        _kill(pid);
+                        printf("\n[process %s (%d) terminated]\n",
+                               children[pcount].main, pid);
+                    }
+                    putchar('\n');
+
+                } else if (c == PAUSE_KEY) {
+                    for (int i = 0; i < pcount; i++) {
+                        int pid = children[i].pid;
+                        _pause(pid);
+                    }
                 }
             } else {
-                if (_running(0) == 0) pcount = 0;
+                if (!_running(0)) pcount = 0;
             }
         }
     }

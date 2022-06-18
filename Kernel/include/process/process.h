@@ -1,12 +1,19 @@
 #ifndef _PROCESS_H_
 #define _PROCESS_H_
 
-#include <stdint.h>
+#include <graphics.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include <graphics.h>
+#include <stdint.h>
 
 #define K_PROCESS_STACK_SIZE 1024 * 4
+
+typedef enum pstatus {
+    PAUSED = 0,
+    READY = 1
+} pstatus_t;
+
+typedef int pid_t;
 
 typedef struct context {
     uint64_t r15;
@@ -38,15 +45,17 @@ typedef struct process process_t;
 
 typedef struct process {
     uint8_t k_stack[K_PROCESS_STACK_SIZE];
-    context_t * context;
-    int pid;
-	process_t *children;
+    context_t *context;
+    pid_t pid;
+    pstatus_t status;
+    process_t *l_child;
+    process_t *r_child;
     process_t *parent;
-	context_id_t g_context;
+    context_id_t g_context;
 } process_t;
 
 typedef void (*function_t)();
 
-process_t * new_process(function_t function);
+process_t *new_process(function_t function);
 
 #endif /* _PROCESS_H_ */

@@ -24,6 +24,7 @@ enum STD {STDIN, STDOUT, STDERR};
 #define SYSCALL_RUN 66
 #define SYSCALL_DELETE_CHAR 46
 #define SYSCALL_KILL 62
+#define SYSCALL_PAUSE 75
 #define SYSCALL_RUNNING 67
 
 /**
@@ -72,6 +73,9 @@ int sys_run(void *main);
 int sys_running(int pid);
 
 void sys_kill(int pid);
+
+void sys_pause(int pid);
+
 uint8_t sys_get_mem(uint8_t * address, uint8_t * buffer, uint16_t count);
 
 #endif
