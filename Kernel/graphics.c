@@ -113,12 +113,12 @@ void create_bottom_module(){
     print_string(" REG SNAPSHOT ");
 
     col += strlen(" REG SNAPSHOT ");
-    col += 5;
+    col += 6;
     move_cursor((position_t){bottom_line.first_row,col});
-    print_string(" SHIFT+TAB ");
-    col += strlen(" SHIFT+TAB ");
-    set_background_color(bottom_line.first_row,col,bottom_line.first_row,col+strlen(" SWITCH FOCUS"),CYAN);
-    print_string(" SWITCH FOCUS ");
+    print_string(" CTRL+TAB ");
+    col += strlen(" CTRL+TAB ");
+    set_background_color(bottom_line.first_row,col,bottom_line.first_row,col+strlen(" TOGGLE FOCUS"),CYAN);
+    print_string(" TOGGLE FOCUS ");
 
 }
 
@@ -263,9 +263,11 @@ void gfocus(context_id_t target){
         other_screen = LEFT;
 
     area_t bkup = contexts[target].area;
-    area_t other_area = contexts[other_screen].area;
+    area_t other_area = {contexts[other_screen].area.width+2,
+                  contexts[other_screen].area.height+2,
+                  contexts[other_screen].area.first_col-1,
+                  contexts[other_screen].area.first_row-1};
 
-    area_t other_area = {other_area.width+2,other_area.height+2,other_area.first_col-1,other_area.first_row-1};
     set_working_area(other_area);
     move_cursor((position_t){other_area.first_row,other_area.first_col+1});
     set_foreground_color(other_area.first_row,other_area.first_col+1,other_area.first_row,other_area.first_col+1+3,WHITE);
