@@ -31,7 +31,7 @@ enum STD {STDIN, STDOUT, STDERR};
  * 
  * @param fd file descriptor (not implemented)
  * @param buffer structure to copy to
- * @param count number of bytes
+ * @param count number of bytes to read
  * @return uint16_t numbers of bytes read
  */
 uint16_t read(int fd, char * buffer, uint16_t count);
@@ -41,11 +41,18 @@ uint16_t read(int fd, char * buffer, uint16_t count);
  * 
  * @param fd file descriptor (not implemented)
  * @param buffer structure to write from
- * @param count number of bytes
+ * @param count number of bytes to write
  * @return uint16_t numbers of bytes written
  */
 uint16_t write(int fd, char * buffer, uint16_t count);
 
+/**
+ * @brief fills @struct_time given with time information 
+ * 
+ * @param struct_time struct pointer containing year, month, day, hour, minutes and seconds
+ * @param utc_offset offset to change hour
+ * @return uint8_t SUCCESS if no error occured
+ */
 uint8_t sys_gettime(time_t * struct_time, int utc_offset);
 
 void sys_exit(int error_code);
@@ -72,6 +79,15 @@ int sys_run(void *main);
 int sys_running(int pid);
 
 void sys_kill(int pid);
-uint8_t sys_get_mem(uint8_t * address, uint8_t * buffer, uint16_t count);
+
+/**
+ * @brief copies memory starting from @address up to @count bytes to @buffer
+ * 
+ * @param address pointer to a memory address
+ * @param buffer structure to write to
+ * @param count number of bytes to copy
+ * @return uint16_t number of bytes copied to buffer
+ */
+uint16_t sys_get_mem(uint8_t * address, uint8_t * buffer, uint16_t count);
 
 #endif
