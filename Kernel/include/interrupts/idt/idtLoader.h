@@ -2,7 +2,7 @@
 #define _IDT_LOADER_H_
 
 #include <defs.h>
-#include <interrupts/interrupts.h>
+#include <interrupts.h>
 
 void load_idt();
 

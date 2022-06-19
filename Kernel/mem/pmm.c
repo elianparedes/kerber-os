@@ -1,4 +1,4 @@
-#include <mem/pmm.h>
+#include <pmm.h>
 #include <stddef.h>
 #include <naiveConsole.h> // temporary import
 

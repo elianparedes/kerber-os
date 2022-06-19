@@ -3,7 +3,7 @@
 
 /* Kernel utilities */
 #include <stdint.h>
-#include <interrupts/syscalls.h>
+#include <syscalls.h>
 #include <stddef.h>
 #include <stdarg.h>
 

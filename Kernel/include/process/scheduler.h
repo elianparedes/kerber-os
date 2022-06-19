@@ -1,7 +1,7 @@
 #ifndef _SCHEDULER_H_
 #define _SCHEDULER_H_
 
-#include <process/process.h>
+#include <process.h>
 #include <stdbool.h>
 #include <stdint.h>
 

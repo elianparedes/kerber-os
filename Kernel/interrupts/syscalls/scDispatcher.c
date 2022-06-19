@@ -1,5 +1,5 @@
-#include <interrupts/scDispatcher.h>
-#include <interrupts/syscalls.h>
+#include <scDispatcher.h>
+#include <syscalls.h>
 #include <naiveConsole.h>
 
 uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,

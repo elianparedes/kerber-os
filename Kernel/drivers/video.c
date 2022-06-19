@@ -1,4 +1,4 @@
-#include <drivers/video.h>
+#include <video.h>
 
 #define VIDEO_ADDRESS 0xB8000
 

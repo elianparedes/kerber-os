@@ -1,5 +1,5 @@
-#include <interrupts/exceptions.h>
-#include <interrupts/interrupts.h>
+#include <exceptions.h>
+#include <interrupts.h>
 #include <registers.h>
 
 #define ZERO_EXCEPTION_ID 0

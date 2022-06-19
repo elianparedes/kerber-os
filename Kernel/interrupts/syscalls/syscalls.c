@@ -1,8 +1,8 @@
-#include <drivers/keyboard.h>
-#include <drivers/video.h>
-#include <interrupts/interrupts.h>
-#include <interrupts/syscalls.h>
-#include <process/scheduler.h>
+#include <keyboard.h>
+#include <video.h>
+#include <interrupts.h>
+#include <syscalls.h>
+#include <scheduler.h>
 #include <registers.h>
 
 #define ADDRESS_LIMIT 0xFFFFFFFF

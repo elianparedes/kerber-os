@@ -1,6 +1,6 @@
-#include <interrupts/idtLoader.h>
-#include <mem/pmm.h>
-#include <process/scheduler.h>
+#include <idtLoader.h>
+#include <pmm.h>
+#include <scheduler.h>
 
 #define PID_ERR -1
 #define MAX_TERM_COUNT 2

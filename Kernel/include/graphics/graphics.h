@@ -1,7 +1,7 @@
 #ifndef _GRAPHICS_H_
 #define _GRAPHICS_H_
 
-#include <drivers/video.h>
+#include <video.h>
 #include <lib.h>
 #include <rtc.h>
 

@@ -3,7 +3,7 @@
 #include <fibonacci.h>
 #include <help.h>
 #include <inforeg.h>
-#include <invalidopcode.h>
+#include <invopcode.h>
 #include <kerberos.h>
 #include <kstdbool.h>
 #include <kstdio.h>
@@ -73,8 +73,8 @@ static int run_command(char *name, char *arg) {
     else if (strcmp(name, "kerberos") == 0)
         return _run(kerberos, NULL);
 
-    else if (strcmp(name, "invalidopcode") == 0)
-        return _run(invalidopcode, NULL);
+    else if (strcmp(name, "invopcode") == 0)
+        return _run(invopcode, NULL);
 
     else if (strcmp(name, "inforeg") == 0)
         return _run(inforeg, NULL);

@@ -1,5 +1,5 @@
-#include <process/process.h>
-#include <mem/pmm.h>
+#include <process.h>
+#include <pmm.h>
 
 #define P_INIT_EFLAGS 0x202
 #define P_INIT_CS 0x8

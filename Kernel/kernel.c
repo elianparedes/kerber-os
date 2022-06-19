@@ -1,14 +1,14 @@
-#include <stdint.h>
-#include <string.h>
+#include <keyboard.h>
+#include <idtLoader.h>
+#include <time.h>
 #include <lib.h>
+#include <pmm.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
-#include <interrupts/time.h>
-#include <interrupts/idtLoader.h>
-#include <process/process.h>
-#include <process/scheduler.h>
-#include <drivers/keyboard.h>
-#include <mem/pmm.h>
+#include <process.h>
+#include <scheduler.h>
+#include <stdint.h>
+#include <string.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -19,106 +19,98 @@ extern uint8_t endOfKernel;
 
 static const uint64_t PageSize = 0x1000;
 
-static void * const sampleCodeModuleAddress = (void*)0x400000;
-static void * const sampleDataModuleAddress = (void*)0x500000;
+static void *const sampleCodeModuleAddress = (void *)0x400000;
+static void *const sampleDataModuleAddress = (void *)0x500000;
 
 typedef int (*EntryPoint)();
 
-
-void clearBSS(void * bssAddress, uint64_t bssSize)
-{
-	memset(bssAddress, 0, bssSize);
+void clearBSS(void *bssAddress, uint64_t bssSize) {
+    memset(bssAddress, 0, bssSize);
 }
 
-void sync_tickprint(char p_ltr){
-	int prev = ticks_elapsed();
-	while (1){
-		int new = ticks_elapsed();
-		if (prev != new){
-			ncPrintChar(p_ltr);
-			ncPrintChar(' ');
-			prev = new;
-		}
-	}
+void sync_tickprint(char p_ltr) {
+    int prev = ticks_elapsed();
+    while (1) {
+        int new = ticks_elapsed();
+        if (prev != new) {
+            ncPrintChar(p_ltr);
+            ncPrintChar(' ');
+            prev = new;
+        }
+    }
 }
 
-void processAFunction(){
-	sync_tickprint('A');
+void processAFunction() {
+    sync_tickprint('A');
 }
 
-void processBFunction(){
-	sync_tickprint('B');
+void processBFunction() {
+    sync_tickprint('B');
 }
 
-void * getStackBase()
-{
-	return (void*)(
-		(uint64_t)&endOfKernel
-		+ PageSize * 8				//The size of the stack itself, 32KiB
-		- sizeof(uint64_t)			//Begin at the top of the stack
-	);
+void *getStackBase() {
+    return (void *)((uint64_t)&endOfKernel +
+                    PageSize * 8       // The size of the stack itself, 32KiB
+                    - sizeof(uint64_t) // Begin at the top of the stack
+    );
 }
 
-void * initializeKernelBinary()
-{
-	char buffer[10];
-	
+void *initializeKernelBinary() {
+    char buffer[10];
 
-	ncPrint("[x64BareBones]");
-	ncNewline();
+    ncPrint("[x64BareBones]");
+    ncNewline();
 
-	ncPrint("CPU Vendor:");
-	ncPrint(cpuVendor(buffer));
-	ncNewline();
+    ncPrint("CPU Vendor:");
+    ncPrint(cpuVendor(buffer));
+    ncNewline();
 
-	ncPrint("[Loading modules]");
-	ncNewline();
-	void * moduleAddresses[] = {
-		sampleCodeModuleAddress,
-		sampleDataModuleAddress
-	};
+    ncPrint("[Loading modules]");
+    ncNewline();
+    void *moduleAddresses[] = {sampleCodeModuleAddress,
+                               sampleDataModuleAddress};
 
-	loadModules(&endOfKernelBinary, moduleAddresses);
-	ncPrint("[Done]");
-	ncNewline();
-	ncNewline();
+    loadModules(&endOfKernelBinary, moduleAddresses);
+    ncPrint("[Done]");
+    ncNewline();
+    ncNewline();
 
-	ncPrint("[Initializing kernel's binary]");
-	ncNewline();
+    ncPrint("[Initializing kernel's binary]");
+    ncNewline();
 
-	clearBSS(&bss, &endOfKernel - &bss);
+    clearBSS(&bss, &endOfKernel - &bss);
 
-	ncNewline();
-	ncPrint("  endOfKernel: 0x");
-	ncPrintHex((uint64_t)&endOfKernel);
-	ncNewline();
-	ncPrint("  text: 0x");
-	ncPrintHex((uint64_t)&text);
-	ncNewline();
-	ncPrint("  rodata: 0x");
-	ncPrintHex((uint64_t)&rodata);
-	ncNewline();
-	ncPrint("  data: 0x");
-	ncPrintHex((uint64_t)&data);
-	ncNewline();
-	ncPrint("  bss: 0x");
-	ncPrintHex((uint64_t)&bss);
-	ncNewline();
+    ncNewline();
+    ncPrint("  endOfKernel: 0x");
+    ncPrintHex((uint64_t)&endOfKernel);
+    ncNewline();
+    ncPrint("  text: 0x");
+    ncPrintHex((uint64_t)&text);
+    ncNewline();
+    ncPrint("  rodata: 0x");
+    ncPrintHex((uint64_t)&rodata);
+    ncNewline();
+    ncPrint("  data: 0x");
+    ncPrintHex((uint64_t)&data);
+    ncNewline();
+    ncPrint("  bss: 0x");
+    ncPrintHex((uint64_t)&bss);
+    ncNewline();
 
-	ncPrint("[Done]");
-	ncNewline();
-	ncNewline();
-	return getStackBase();
+    ncPrint("[Done]");
+    ncNewline();
+    ncNewline();
+    return getStackBase();
 }
 
-int main()
-{	
-	init_pmm(); // init physical memory manager
-	load_idt();
+int main() {
+    init_pmm(); // init physical memory manager
+    load_idt();
 
-	((EntryPoint)sampleCodeModuleAddress)();
+    ((EntryPoint)sampleCodeModuleAddress)();
 
-	while(1);
+    while (1)
+        ;
 
-	return 0;
+    return 0;
 }

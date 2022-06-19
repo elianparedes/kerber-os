@@ -1,5 +1,5 @@
-#include <drivers/keyboard.h>
-#include <process/scheduler.h>
+#include <keyboard.h>
+#include <scheduler.h>
 
 #define KBD_ENCODER_PORT 0x60
 #define KBD_CTRL_PORT 0x64
