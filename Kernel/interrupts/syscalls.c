@@ -68,7 +68,7 @@ void sys_switch_screen_mode(int mode) {
 
 void sys_clear_screen() { clear_screen(); }
 
-int sys_run(void* main) { return add_process(main); }
+int sys_run(void* main, char* arg) { return add_process(main, arg); }
 
 void sys_delete_char() {
     process_t* current_process = get_current_process();

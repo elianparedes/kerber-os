@@ -76,9 +76,9 @@ uint8_t sys_cntrl_listener(char* listener);
 
 void sys_delete_char();
 
-int sys_run(void* main);
+int sys_run(void* main, char* arg);
 
-void sys_wait(int child, int *pstatus);
+void sys_wait(int child, int* pstatus);
 
 void sys_kill(int pid);
 

@@ -8,10 +8,7 @@
 
 #define K_PROCESS_STACK_SIZE 1024 * 4
 
-typedef enum pstatus {
-    PAUSED = 0,
-    READY = 1
-} pstatus_t;
+typedef enum pstatus { PAUSED = 0, READY = 1 } pstatus_t;
 
 typedef int pid_t;
 
@@ -54,8 +51,8 @@ typedef struct process {
     context_id_t g_context;
 } process_t;
 
-typedef void (*function_t)();
+typedef void (*function_t)(char *);
 
-process_t *new_process(function_t function);
+process_t *new_process(function_t function, char *arg);
 
 #endif /* _PROCESS_H_ */

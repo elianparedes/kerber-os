@@ -7,12 +7,12 @@
 
 static int last_pid = 0;
 
-static void process_start(function_t function) {
-    function();
+static void process_start(function_t function, char* arg) {
+    function(arg);
     sys_exit(P_EXIT_CODE);
 }
 
-process_t *new_process(function_t function) {
+process_t *new_process(function_t function, char* arg) {
     process_t *process = (process_t*) kmalloc(sizeof(process_t));
     if (process == NULL) return NULL;
 
@@ -23,6 +23,7 @@ process_t *new_process(function_t function) {
         (context_t *)((uint64_t)process + K_PROCESS_STACK_SIZE -
                       sizeof(context_t));
 
+    context->rsi = arg;
     context->rdi = function;
     context->rip = &process_start;
     context->cs = P_INIT_CS;

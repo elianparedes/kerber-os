@@ -56,7 +56,7 @@ int _switch_screen_mode(int mode);
 int _clear_screen();
 int _exit(int error_code);
 int _time(time_t *time_struct, int utc_offset);
-int _run(void *main);
+int _run(void *main, char *arg);
 void _wait(chld_t child, chldstatus_t *pstatus);
 int _cntrl_pressed();
 int _copy_cpu_state(cpu_state_t *cpu_ptr, request_t request);

@@ -7,7 +7,7 @@
 
 #define MAX_PROC_COUNT 256
 
-int add_process(function_t main);
+int add_process(function_t main, char* arg);
 
 void kill_process(pid_t pid);
 

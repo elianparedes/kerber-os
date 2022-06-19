@@ -23,7 +23,7 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
         case SYSCALL_GETTIME:
             return sys_gettime((time_t *)arg0, (int)arg1);
         case SYSCALL_RUN:
-            return sys_run((void *)arg0);
+            return sys_run((void *)arg0, (char*)arg1);
         case SYSCALL_CNTRL_LISTENER:
             return sys_cntrl_listener((char *)arg0);
         case SYSCALL_DELETE_CHAR:
