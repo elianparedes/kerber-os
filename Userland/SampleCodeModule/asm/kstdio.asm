@@ -2,7 +2,7 @@ GLOBAL _read
 GLOBAL _write
 GLOBAL _time
 GLOBAL _run
-GLOBAL _running
+GLOBAL _wait
 GLOBAL _switch_screen_mode
 GLOBAL _clear_screen
 GLOBAL _exit
@@ -51,8 +51,8 @@ _run:
     int 0x80
     ret
 
-_running:
-    mov rax, SYSCALL_RUNNING_ID
+_wait:
+    mov rax, SYSCALL_WAIT_ID
     int 0x80
     ret
 
@@ -102,7 +102,7 @@ SYSCALL_COPY_CPU_STATE equ 7
 SYSCALL_EXIT_ID equ 60
 SYSCALL_GETTIME_ID equ 96
 SYSCALL_RUN_ID equ 66
-SYSCALL_RUNNING_ID equ 67
+SYSCALL_WAIT_ID equ 67
 SYSCALL_DELETE_CHAR_ID equ 46
 SYSCALL_KILL_ID equ 62
 SYSCALL_PAUSE_ID equ 75 

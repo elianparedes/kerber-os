@@ -7,7 +7,7 @@
 
 #define ADDRESS_LIMIT 0xFFFFFFFF
 
-enum DISTRIBUTION {FULL_DISTRIBUTION=0, SPLIT_DISTRIBUTION};
+enum DISTRIBUTION { FULL_DISTRIBUTION = 0, SPLIT_DISTRIBUTION };
 
 uint16_t read(int fd, char* buffer, uint16_t count) {
     // file descriptors not implemented
@@ -90,32 +90,41 @@ uint8_t sys_cntrl_listener(char* listener) {
 
 void sys_kill(int pid) { kill_process(pid); }
 
-int sys_running(int pid) {
-    return get_current_process()->l_child != NULL ||
-           get_current_process()->r_child != NULL;
+void sys_wait(int child, int* pstatus) {
+    if (child > 1) {
+        *pstatus = -1;
+        return;
+    }
+
+    process_t* process = get_current_process();
+    if (child == 0)
+        *pstatus = process->l_child != NULL;
+    else if (child == 1)
+        *pstatus = process->r_child != NULL;
 }
 
 void sys_pause(int pid) {
     process_t* process = get_process(pid);
-    if (process != NULL) process->status = !process->status;
+    if (process != NULL)
+        process->status = !process->status;
     return;
 }
 
-uint16_t sys_get_mem(uint8_t * address, uint8_t * buffer, uint16_t count){
+uint16_t sys_get_mem(uint8_t* address, uint8_t* buffer, uint16_t count) {
     int i;
-    for (i=0; i < count ; i++){
-        if (address > ADDRESS_LIMIT){
+    for (i = 0; i < count; i++) {
+        if (address > ADDRESS_LIMIT) {
             return i;
         }
-        buffer[i]=(*address);
+        buffer[i] = (*address);
         address++;
     }
     return i;
 }
 
-void sys_focus(int pid){
+void sys_focus(int pid) {
     process_t* process = get_process(pid);
-    if (process != NULL){
-
+    if (process != NULL) {
+        gfocus(process->g_context);
     }
 }

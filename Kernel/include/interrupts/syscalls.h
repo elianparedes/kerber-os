@@ -25,7 +25,7 @@ enum STD { STDIN, STDOUT, STDERR };
 #define SYSCALL_DELETE_CHAR 46
 #define SYSCALL_KILL 62
 #define SYSCALL_PAUSE 75
-#define SYSCALL_RUNNING 67
+#define SYSCALL_WAIT 67
 #define SYSCALL_FOCUS 77
 
 /**
@@ -78,7 +78,7 @@ void sys_delete_char();
 
 int sys_run(void* main);
 
-int sys_running(int pid);
+void sys_wait(int child, int *pstatus);
 
 void sys_kill(int pid);
 
