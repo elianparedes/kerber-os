@@ -270,7 +270,7 @@ void gfocus(context_id_t target){
 
     set_working_area(other_area);
     move_cursor((position_t){other_area.first_row,other_area.first_col+1});
-    set_foreground_color(other_area.first_row,other_area.first_col+1,other_area.first_row,other_area.first_col+1+3,WHITE);
+    set_foreground_color(other_area.first_row,other_area.first_col+1,other_area.first_row,other_area.first_col+1+3,LIGHT_GRAY);
     print_char(HZ_LINE);
     print_char(HZ_LINE);
     print_char(HZ_LINE);
@@ -279,7 +279,7 @@ void gfocus(context_id_t target){
     set_working_area(new_area);
 
     move_cursor((position_t){new_area.first_row,new_area.first_col+1});
-    set_foreground_color(new_area.first_row,new_area.first_col+1,new_area.first_row,new_area.first_col+1+3,CYAN);
+    set_foreground_color(new_area.first_row,new_area.first_col+1,new_area.first_row,new_area.first_col+1+2,CYAN);
     print_char(SQUARE);
     print_char(SQUARE);
     print_char(SQUARE);
