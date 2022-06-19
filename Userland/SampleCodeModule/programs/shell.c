@@ -13,17 +13,17 @@
 #include <test_inforeg.h>
 #include <time.h>
 
-#define LINE_LENGTH 512
-#define TOKEN_LENGTH 512
+#define LINE_LENGTH    512
+#define TOKEN_LENGTH   512
 #define MAX_PROC_COUNT 2
 
-#define PROMPT_SYMBOL '>'
-#define PIPE_SYMBOL '|'
+#define PROMPT_SYMBOL  '>'
+#define PIPE_SYMBOL    '|'
 
-#define BACKSPACE_KEY 8
-#define PAUSE_KEY 'p'
-#define SIGINT_KEY 'c'
-#define FOCUS_KEY 9
+#define BACKSPACE_KEY  8
+#define PAUSE_KEY      'p'
+#define SIGINT_KEY     'c'
+#define FOCUS_KEY      9
 
 typedef struct process {
     char name[TOKEN_LENGTH];
@@ -35,9 +35,15 @@ typedef struct process {
 static process_t children[MAX_PROC_COUNT];
 static int fidx = -1;
 
-static enum exit_status { FAILURE, SUCCESS };
+static enum exit_status {
+    FAILURE,
+    SUCCESS
+};
 
-typedef enum layout_mode { FULLSCREEN = 0, SPLITSCREEN } layout_mode_t;
+typedef enum layout_mode {
+    FULLSCREEN = 0,
+    SPLITSCREEN
+} layout_mode_t;
 
 static layout_mode_t current_layout_mode = FULLSCREEN;
 
@@ -51,24 +57,34 @@ void invalid_command(char *cmd_name) {
 static int run_command(char *name, char *arg) {
     if (strcmp(name, "help") == 0)
         return _run(help, arg);
+
     else if (strcmp(name, "fibonacci") == 0)
         return _run(fibonacci, NULL);
+
     else if (strcmp(name, "primes") == 0)
         return _run(primes, NULL);
+
     else if (strcmp(name, "time") == 0)
         return _run(time, NULL);
+
     else if (strcmp(name, "divzero") == 0)
         return _run(divzero, NULL);
+
     else if (strcmp(name, "kerberos") == 0)
         return _run(kerberos, NULL);
+
     else if (strcmp(name, "invalidopcode") == 0)
         return _run(invalidopcode, NULL);
+
     else if (strcmp(name, "inforeg") == 0)
         return _run(inforeg, NULL);
+
     else if (strcmp(name, "testinforeg") == 0)
         return _run(testinforeg, NULL);
+
     else if (strcmp(name, "printmem") == 0)
         return _run(printmem, arg);
+
     else if (strcmp(name, "clear") == 0) {
         // temporary workaround.
         // clear command should not be used with pipe operator
@@ -87,7 +103,12 @@ static int run_command(char *name, char *arg) {
  * @see https://stackoverflow.com/questions/4547570/tokenizing-a-string-in-c
  */
 static int gettoken(char **src, char *token, char delimiter) {
-    enum { START, STEP, ERROR, DONE } state = START;
+    enum {
+        START,
+        STEP,
+        ERROR,
+        DONE
+    } state = START;
 
     size_t i = 0;
 
@@ -127,8 +148,19 @@ static int gettoken(char **src, char *token, char delimiter) {
 }
 
 static int parse_command(char **src, char *main, char *arg) {
-    enum { START, COMMAND, ARGUMENT, ERROR, DONE } state = START;
+    enum {
+        START,
+        COMMAND,
+        ARGUMENT,
+        ERROR,
+        DONE
+    } state = START;
+
     char token[TOKEN_LENGTH];
+
+    // flush buffers
+    main[0] = '\0';
+    arg[0] = '\0';
 
     while (1) {
         int res = gettoken(&src, token, ' ');
@@ -192,7 +224,8 @@ static void read_input(char *buffer) {
 }
 
 void focus_next() {
-    do fidx = (fidx + 1) % MAX_PROC_COUNT;
+    do
+        fidx = (fidx + 1) % MAX_PROC_COUNT;
     while (children[fidx].status == TERMINATED);
     _focus(children[fidx].pid);
 }
@@ -205,14 +238,16 @@ bool chld_running() {
     return false;
 }
 
-void sigint_msg() { printf("\n[ process terminated ]\n"); }
+void sigint_msg() {
+    printf("\n[ process terminated ]\n");
+}
 
 int shell() {
     char cmd_buff[LINE_LENGTH], token_buff[TOKEN_LENGTH];
     unsigned int pcount = 0;
     _cntrl_listener(&ctrl_pressed);
 
-    kerberos();  // show welcome screen
+    kerberos(); // show welcome screen
 
     while (1) {
         if (!chld_running()) {
@@ -227,9 +262,10 @@ int shell() {
 
             unsigned int command_count = 0;
             while (gettoken(&input, token_buff, PIPE_SYMBOL) != -1) {
-                if (command_count <= MAX_PROC_COUNT) {
+                if (command_count < MAX_PROC_COUNT) {
                     parse_command(&token_buff, children[command_count].name,
                                   children[command_count].arg);
+                    token_buff[0] = '\0';
                     command_count++;
                 }
             }
@@ -237,8 +273,9 @@ int shell() {
             if (command_count > 0) {
                 switch_layout(command_count - 1);
 
-                // fullscreen: the focused process is the one that is running
-                // splitscreen: visual feedback is enabled after first key press
+                // fullscreen: the focused process is the one that
+                // is running splitscreen: visual feedback is
+                // enabled after first key press
                 if (current_layout_mode == FULLSCREEN)
                     fidx = 0;
                 else
@@ -250,20 +287,18 @@ int shell() {
                         run_command(children[i].name, children[i].arg);
                 }
             }
-
         } else {
             char c;
             if (ctrl_pressed && (c = getchar())) {
                 if (fidx != -1 && c == SIGINT_KEY) {
                     _kill(children[fidx].pid);
 
-                    // when the process is killed, the status of it should be
-                    // force updated
+                    // when the process is killed, the status
+                    // of it should be force updated
                     children[fidx].status = TERMINATED;
 
                     if (chld_running())
                         focus_next();
-
                 } else if (fidx != -1 && c == PAUSE_KEY)
                     _pause(children[fidx].pid);
 
