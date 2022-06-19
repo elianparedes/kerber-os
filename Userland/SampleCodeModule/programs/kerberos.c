@@ -1,6 +1,5 @@
 #include <kstdio.h>
 
-
 void kerberos() {
     puts("`MMF' `YMM'                *MM                           .g8\"\"8q.    .M\"\"\"bgd"); 
     puts(" MM   .M'                   MM                         .dP'    `YM. ,MI    \"Y"); 
@@ -14,12 +13,12 @@ void kerberos() {
     puts(" v2.0 //****************************************//   ,___/\\_/\\ \\  ~     /    ");    
     puts(" Available commands:                                 \\     ~  \\ )   XXX      ");
     puts("                                                       XXX     /    /\\_/\\___,");
-    puts(" help:            shows available programs                \\o-o/-o-o/   ~    /");
-    puts(" time:            displays system day and hour            ) /     \\    XXX  ");
-    puts(" fibonacci:       prints fibonacci sequence              _|    / \\ \\_/      ");
-    puts(" primes:          prints prime numbers                ,-/   _  \\_/   \\      ");
-    puts(" [c1] | [c2]:     runs [c1] & [c2] in splitscreen     / (   /____,__|  )     ");
-    puts("                                                     (  |_ (    )  \\) _|     ");
+    puts(" help           clear             kerberos                \\o-o/-o-o/   ~    /");
+    puts(" time           inforeg           clock                   ) /     \\    XXX  ");
+    puts(" fibonacci      test-inforeg      divzero                _|    / \\ \\_/      ");
+    puts(" primes         printmem          invopcode           ,-/   _  \\_/   \\      ");
+    puts("                                                      / (   /____,__|  )     ");
+    puts(" Type \"help [command]\" for more information          (  |_ (    )  \\) _|     ");
     puts("                                                    _/ _)   \\   \\__/   (_    ");
     puts("//**********************************************// (,-(,(,(,/      \\,),),)   ");
 }
