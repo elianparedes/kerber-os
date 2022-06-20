@@ -10,7 +10,7 @@
 int main() {
     _clear_screen();
     _switch_screen_mode(FULLSCREEN);
-    _run(&shell, NULL);
+    _run(shell, NULL);
 
     return 0xDEADBEEF;
 }

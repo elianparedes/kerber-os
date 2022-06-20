@@ -1,14 +1,14 @@
 #ifndef _PMM_H
 #define _PMM_H
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 void init_pmm();
 
-uint64_t * kmalloc(size_t size);
+uint64_t *kmalloc(size_t size);
 
-void kfree(uint64_t * ptr);
+void kfree(uint64_t *ptr);
 
 /**
  * temporary function for debugging

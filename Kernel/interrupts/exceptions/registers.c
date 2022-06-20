@@ -4,31 +4,30 @@ int snapshot = 0;
 cpu_state_t cpu_state_kbd;
 cpu_state_t cpu_state_exception;
 
-
-static void copy(cpu_state_t * from , cpu_state_t * dest){
-        dest->r15 = from->r15;
-        dest->r14 = from->r14;
-        dest->r13 = from->r13;
-        dest->r12 = from->r12;
-        dest->r11 = from->r11;
-        dest->r10 = from->r10;
-        dest->r9 = from->r9;
-        dest->r8 = from->r8;
-        dest->rax = from->rax;
-        dest->rbp = from->rbp;
-        dest->rbx = from->rbx;
-        dest->rcx = from->rcx;
-        dest->rdi = from->rdi;
-        dest->rdx = from->rdx;
-        dest->rflags = from->rflags;
-        dest->rip = from->rip;
-        dest->rsi = from->rsi;
-        dest->rsp = from->rsp;
+static void copy(cpu_state_t *from, cpu_state_t *dest) {
+    dest->r15 = from->r15;
+    dest->r14 = from->r14;
+    dest->r13 = from->r13;
+    dest->r12 = from->r12;
+    dest->r11 = from->r11;
+    dest->r10 = from->r10;
+    dest->r9 = from->r9;
+    dest->r8 = from->r8;
+    dest->rax = from->rax;
+    dest->rbp = from->rbp;
+    dest->rbx = from->rbx;
+    dest->rcx = from->rcx;
+    dest->rdi = from->rdi;
+    dest->rdx = from->rdx;
+    dest->rflags = from->rflags;
+    dest->rip = from->rip;
+    dest->rsi = from->rsi;
+    dest->rsp = from->rsp;
 }
 
-void save_cpu_state(cpu_state_t * cpu, request_t request){
-    if(request == EXCEPTION){
-        copy(cpu,&cpu_state_exception);
+void save_cpu_state(cpu_state_t *cpu, request_t request) {
+    if (request == EXCEPTION) {
+        copy(cpu, &cpu_state_exception);
         /*
         cpu_state_exception.r15 = cpu->r15;
         cpu_state_exception.r14 = cpu->r14;
@@ -49,10 +48,10 @@ void save_cpu_state(cpu_state_t * cpu, request_t request){
         cpu_state_exception.rsi = cpu->rsi;
         cpu_state_exception.rsp = cpu->rsp;
         */
-    } else{
-    if(!snapshot)
-        snapshot = 1;
-        copy(cpu,&cpu_state_kbd);
+    } else {
+        if (!snapshot)
+            snapshot = 1;
+        copy(cpu, &cpu_state_kbd);
         /*
         cpu_state_kbd.r15 = cpu->r15;
         cpu_state_kbd.r14 = cpu->r14;
@@ -73,11 +72,10 @@ void save_cpu_state(cpu_state_t * cpu, request_t request){
         cpu_state_kbd.rsi = cpu->rsi;
         cpu_state_kbd.rsp = cpu->rsp;*/
     }
-    
 }
 
-int copy_cpu_state(cpu_state_t* cpu_ptr,request_t request){
-    if(request == EXCEPTION){
+int copy_cpu_state(cpu_state_t *cpu_ptr, request_t request) {
+    if (request == EXCEPTION) {
         cpu_ptr->r15 = cpu_state_exception.r15;
         cpu_ptr->r14 = cpu_state_exception.r14;
         cpu_ptr->r13 = cpu_state_exception.r13;
@@ -97,9 +95,8 @@ int copy_cpu_state(cpu_state_t* cpu_ptr,request_t request){
         cpu_ptr->rsi = cpu_state_exception.rsi;
         cpu_ptr->rsp = cpu_state_exception.rsp;
         return 1;
-    }
-    else{
-        if(!snapshot)
+    } else {
+        if (!snapshot)
             return 0;
         cpu_ptr->r15 = cpu_state_kbd.r15;
         cpu_ptr->r14 = cpu_state_kbd.r14;

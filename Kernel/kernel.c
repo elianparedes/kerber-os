@@ -1,14 +1,14 @@
-#include <keyboard.h>
 #include <idtLoader.h>
-#include <time.h>
+#include <keyboard.h>
 #include <lib.h>
-#include <pmm.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
+#include <pmm.h>
 #include <process.h>
 #include <scheduler.h>
 #include <stdint.h>
 #include <string.h>
+#include <time.h>
 
 extern uint8_t text;
 extern uint8_t rodata;

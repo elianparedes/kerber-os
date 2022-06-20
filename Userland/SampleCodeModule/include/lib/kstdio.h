@@ -4,16 +4,22 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define STDIN 0
-#define STDOUT 1
-#define STDERR 2
+#define STDIN           0
+#define STDOUT          1
+#define STDERR          2
 
-#define REG_SIZE 16
+#define REG_SIZE        16
 #define REGISTERS_COUNT 18
 
-typedef enum chld { LEFT_CHD = 0, RIGHT_CHD } chld_t;
+typedef enum chld {
+    LEFT_CHD = 0,
+    RIGHT_CHD
+} chld_t;
 
-typedef enum chldstatus { TERMINATED, RUNNING } chldstatus_t;
+typedef enum chldstatus {
+    TERMINATED,
+    RUNNING
+} chldstatus_t;
 
 typedef struct time {
     uint64_t year;
@@ -48,7 +54,9 @@ typedef struct cpu_state {
     uint64_t rax;
 } cpu_state_t;
 
-typedef enum { KBD_PRINT_REG = 1 } request_t;
+typedef enum {
+    KBD_PRINT_REG = 1
+} request_t;
 
 int _read(int fd, char *buffer, size_t count);
 int _write(int fd, char *buffer, size_t count);

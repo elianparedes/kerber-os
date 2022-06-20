@@ -1,6 +1,6 @@
 #include <clear.h>
 #include <kstdio.h>
 
-void clear(){
+void clear() {
     _clear_screen();
 }

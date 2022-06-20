@@ -1,3 +1,3 @@
-int divzero(){
-    return 1/0;
+int divzero() {
+    return 1 / 0;
 }

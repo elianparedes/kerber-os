@@ -2,7 +2,7 @@
 #include <pmm.h>
 #include <scheduler.h>
 
-#define PID_ERR -1
+#define PID_ERR        -1
 #define MAX_TERM_COUNT 2
 
 typedef struct node node_t;
@@ -62,7 +62,8 @@ int add_process(function_t main, char *arg) {
 static process_t *free_process(int pid) {
     node_t *aux_node = front_node;
 
-    while (aux_node->next->process->pid != pid) aux_node = aux_node->next;
+    while (aux_node->next->process->pid != pid)
+        aux_node = aux_node->next;
 
     node_t *target_node = aux_node->next;
 
@@ -107,15 +108,17 @@ void kill_process(int pid) {
     gprint_new_line(target->g_context);
     gprint_string("[ process terminated ]", target->g_context);
     gprint_new_line(target->g_context);
-
 }
 
-process_t *get_current_process() { return current_node->process; }
+process_t *get_current_process() {
+    return current_node->process;
+}
 
 process_t *get_process(pid_t pid) {
     node_t *aux_node = front_node;
 
-    while (aux_node->next->process->pid != pid) aux_node = aux_node->next;
+    while (aux_node->next->process->pid != pid)
+        aux_node = aux_node->next;
 
     return aux_node->next->process;
 }

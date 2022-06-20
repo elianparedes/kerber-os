@@ -8,7 +8,10 @@
 
 #define K_PROCESS_STACK_SIZE 1024 * 4
 
-typedef enum pstatus { PAUSED = 0, READY = 1 } pstatus_t;
+typedef enum pstatus {
+    PAUSED = 0,
+    READY = 1
+} pstatus_t;
 
 typedef int pid_t;
 

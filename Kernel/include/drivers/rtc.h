@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-typedef struct time{
+typedef struct time {
     uint64_t year;
     uint64_t month;
     uint64_t day;
@@ -12,11 +12,25 @@ typedef struct time{
     uint64_t seconds;
 } time_t;
 
-typedef enum {SEC = 0, MIN = 2, HOUR = 4,DAY_WEEK = 6 , DAY_MONTH = 7 , MONTH = 8, YEAR = 9} TIME;
+typedef enum {
+    SEC = 0,
+    MIN = 2,
+    HOUR = 4,
+    DAY_WEEK = 6,
+    DAY_MONTH = 7,
+    MONTH = 8,
+    YEAR = 9
+} TIME;
 
-typedef enum {BCD=0,DECIMAL} BASE_MODE;
+typedef enum {
+    BCD = 0,
+    DECIMAL
+} BASE_MODE;
 
-typedef enum {HS_12=0,HS_24} HS_MODE;
+typedef enum {
+    HS_12 = 0,
+    HS_24
+} HS_MODE;
 
 void set_UTC_offset(int utc_offset);
 
