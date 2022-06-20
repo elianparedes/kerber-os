@@ -32,7 +32,29 @@ typedef struct cpu_state {
 
 } cpu_state_t;
 
+/**
+ * @brief 
+ * 
+ * @param cpu 
+ * @param request 
+ */
 void save_cpu_state(cpu_state_t *cpu, request_t request);
+
+/**
+ * @brief Get the cpu state object
+ * 
+ * @return cpu_state_t* 
+ */
 cpu_state_t *get_cpu_state();
+
+/** 
+ * TODO: Fill function comments
+ * @brief Dumps all the cpu registers values inside struct passed by reference
+ * 
+ * @param cpu_ptr struct to write to
+ * @param request 
+ * @return int 
+ */
 int copy_cpu_state(cpu_state_t *cpu_ptr, request_t request);
+
 #endif

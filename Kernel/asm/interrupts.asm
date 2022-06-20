@@ -25,7 +25,8 @@ EXTERN save_cpu_state
 EXTERN syscall_dispatcher
 EXTERN kbd_is_save_reg_shortcut
 EXTERN gsnapshot
-SECTION .text
+
+section .text
 
 %macro pushState 0
 	push rax

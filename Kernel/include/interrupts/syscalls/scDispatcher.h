@@ -3,8 +3,18 @@
 
 #include <stdint.h>
 
-// id (%rax) arg0 (%rdi) arg1 (%rsi) arg2 (%rdx) arg3 (%r10)
-// arg4 (%r8) arg5 (%r9)
+/**
+ * @brief Manages all syscalls.
+ *
+ * @param arg0 rdi 64-bit CPU register
+ * @param arg1 rsi 64-bit CPU register
+ * @param arg2 rdx 64-bit CPU register
+ * @param arg3 r10 64-bit CPU register
+ * @param arg4 r8 64-bit CPU register
+ * @param arg5 r9 64-bit CPU register
+ * @param id rax 64-bit CPU register
+ * @return uint8_t the return value of the syscall that was executed
+ */
 uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
                            uint64_t arg3, uint64_t arg4, uint64_t arg5,
                            uint64_t id);
