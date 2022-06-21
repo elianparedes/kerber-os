@@ -11,7 +11,7 @@ static void help_cmds() {
     puts(" primes      printmem       invopcode");
     puts("");
     puts("Type \"help [command]\" for information about a specific command.");
-    puts("Try \"help help\".");
+    puts("Use \"help all\" to display a brief description of each command.");
     puts("");
 }
 

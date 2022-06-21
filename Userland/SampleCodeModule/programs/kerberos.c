@@ -9,17 +9,17 @@ void kerberos() {
     puts(" MM   `MM. YM.    ,  MM     MM.   ,M9 YM.    ,  MM     `Mb.    ,dP' Mb     dM"); 
     puts(".MML.   MMb.`Mbmmd'.JMML.   P^YbmdP'   `Mbmmd'.JMML.     `\"bmmd\"'   P\"Ybmmd\" ");
     puts("");
-    puts("                                                               /\\_/\\____,    ");         
-    puts(" v2.0 //****************************************//   ,___/\\_/\\ \\  ~     /    ");    
-    puts(" Available commands:                                 \\     ~  \\ )   XXX      ");
-    puts("                                                       XXX     /    /\\_/\\___,");
-    puts(" help           clear             kerberos                \\o-o/-o-o/   ~    /");
-    puts(" time           inforeg           clock                   ) /     \\    XXX  ");
-    puts(" fibonacci      test-inforeg      divzero                _|    / \\ \\_/      ");
-    puts(" primes         printmem          invopcode           ,-/   _  \\_/   \\      ");
-    puts("                                                      / (   /____,__|  )     ");
-    puts(" Type \"help [command]\" for more information          (  |_ (    )  \\) _|     ");
+    puts(" v2.0 //****************************************//             /\\_/\\____,    ");         
+    puts(" Available commands:                                 ,___/\\_/\\ \\  ~     /    ");    
+    puts("                                                     \\     ~  \\ )   XXX      ");
+    puts(" help           clear             kerberos             XXX     /    /\\_/\\___,");
+    puts(" time           inforeg           clock                   \\o-o/-o-o/   ~    /");
+    puts(" fibonacci      test-inforeg      divzero                 ) /     \\    XXX  ");
+    puts(" primes         printmem          invopcode              _|    / \\ \\_/      ");
+    puts("                                                      ,-/   _  \\_/   \\      ");
+    puts(" Type \"help [command]\" for more information.        / (   /____,__|  )     ");
+    puts(" Use \"help all\" to list all commands.                (  |_ (    )  \\) _|     ");
     puts("                                                    _/ _)   \\   \\__/   (_    ");
     puts("//**********************************************// (,-(,(,(,/      \\,),),)   ");
 }
-
+                                                                    
