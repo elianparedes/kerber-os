@@ -49,7 +49,7 @@ int printf(char *str, ...) {
                     break;
                 }
                 case 'x': {
-                    uitoa(va_arg(vl, uint64_t), tmp, 16);
+                    ltoa(va_arg(vl, uint64_t), tmp, 16);
                     strcpy(&buff[j], tmp);
                     j += strlen(tmp);
                     break;
