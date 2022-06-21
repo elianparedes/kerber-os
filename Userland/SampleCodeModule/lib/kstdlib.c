@@ -42,7 +42,7 @@ char *itoa(int num, char *str, int base) {
     return str;
 }
 
-char *uitoa(uint64_t num, char *str, int base) {
+char *ltoa(long num, char *str, int base) {
     int i = 0;
     int isNegative = 0;
 
