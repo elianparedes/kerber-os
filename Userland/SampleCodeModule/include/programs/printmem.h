@@ -2,6 +2,6 @@
 #define _PRINTMEM_H_
 #include <stdint.h>
 
-void printmem(uint8_t *address);
+void printmem(char *arg);
 
 #endif /* _PRINTMEM_H_ */
