@@ -6,9 +6,9 @@ static void help_cmds() {
     puts("Available commands:");
     puts("");
     puts(" help        clear          kerberos");
-    puts(" time        inforeg        clock");
+    puts(" time        inforeg        invopcode");
     puts(" fibonacci   test-inforeg   divzero");
-    puts(" primes      printmem       invopcode");
+    puts(" primes      printmem       ");
     puts("");
     puts("Type \"help [command]\" for information about a specific command.");
     puts("Use \"help all\" to display a brief description of each command.");
@@ -20,7 +20,6 @@ static void help_all() {
     puts("Commands:");
     puts("    clear           Clears the screen.");
     puts("    time            Displays system day and hour.");
-    puts("    clock           Displays real time clock.");
     puts("    fibonacci       Prints fibonacci sequence.");
     puts("    primes          Prints prime numbers.");
     puts("    printmem        Prints memory values from given address.");
@@ -105,13 +104,6 @@ static void help_clear() {
     puts("");
 }
 
-static void help_clock() {
-    puts("");
-    puts("Command:");
-    puts("    clock           Displays real time clock.");
-    puts("");
-}
-
 static void help_printmem() {
     puts("");
     puts("Command:");
@@ -164,9 +156,6 @@ void help(char *arg) {
 
     else if (strcmp("time", arg) == 0)
         help_time();
-
-    else if (strcmp("clock", arg) == 0)
-        help_clock();
 
     else if (strcmp("fibonacci", arg) == 0)
         help_fibonacci();

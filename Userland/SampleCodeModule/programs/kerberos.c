@@ -13,9 +13,9 @@ void kerberos() {
     puts(" Available commands:                                 ,___/\\_/\\ \\  ~     /    ");    
     puts("                                                     \\     ~  \\ )   XXX      ");
     puts(" help           clear             kerberos             XXX     /    /\\_/\\___,");
-    puts(" time           inforeg           clock                   \\o-o/-o-o/   ~    /");
+    puts(" time           inforeg           invopcode               \\o-o/-o-o/   ~    /");
     puts(" fibonacci      test-inforeg      divzero                 ) /     \\    XXX  ");
-    puts(" primes         printmem          invopcode              _|    / \\ \\_/      ");
+    puts(" primes         printmem                                 _|    / \\ \\_/      ");
     puts("                                                      ,-/   _  \\_/   \\      ");
     puts(" Type \"help [command]\" for more information.        / (   /____,__|  )     ");
     puts(" Use \"help all\" to list all commands.                (  |_ (    )  \\) _|     ");
