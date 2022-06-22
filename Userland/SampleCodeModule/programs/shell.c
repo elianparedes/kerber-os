@@ -79,7 +79,7 @@ static int run_command(char *name, char *arg) {
     else if (strcmp(name, "inforeg") == 0)
         return _run(inforeg, NULL);
 
-    else if (strcmp(name, "testinforeg") == 0)
+    else if (strcmp(name, "test-inforeg") == 0)
         return _run(testinforeg, NULL);
 
     else if (strcmp(name, "printmem") == 0)
