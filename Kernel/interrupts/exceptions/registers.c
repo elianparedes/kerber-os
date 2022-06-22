@@ -28,7 +28,6 @@ static void copy(cpu_state_t *from, cpu_state_t *dest) {
 void save_cpu_state(cpu_state_t *cpu, request_t request) {
     if (request == EXCEPTION) {
         copy(cpu, &cpu_state_exception);
-        */
     } else {
         if (!snapshot)
             snapshot = 1;
