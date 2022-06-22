@@ -27,7 +27,7 @@ void fibonacci(char *arg) {
             next = n1 + n2;
             i = 0;
         }
-        printf("fibonacci [%d]      %d\n", i, next);
+        printf("fibonacci [%d]:     %d\n", i, next);
         n1 = n2;
         n2 = next;
         next = n1 + n2;
