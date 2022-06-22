@@ -28,26 +28,6 @@ void clearBSS(void *bssAddress, uint64_t bssSize) {
     memset(bssAddress, 0, bssSize);
 }
 
-void sync_tickprint(char p_ltr) {
-    int prev = ticks_elapsed();
-    while (1) {
-        int new = ticks_elapsed();
-        if (prev != new) {
-            ncPrintChar(p_ltr);
-            ncPrintChar(' ');
-            prev = new;
-        }
-    }
-}
-
-void processAFunction() {
-    sync_tickprint('A');
-}
-
-void processBFunction() {
-    sync_tickprint('B');
-}
-
 void *getStackBase() {
     return (void *)((uint64_t)&endOfKernel +
                     PageSize * 8       // The size of the stack itself, 32KiB
