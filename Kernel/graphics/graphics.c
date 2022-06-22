@@ -66,7 +66,6 @@ area_t create_window(area_t area) {
 
     move_cursor((position_t){area.first_row, area.first_col});
     set_working_area(area);
-    // set_background_color(area.first_row,area.first_col,area.first_row+area.height-1,area.first_col+area.width-1,LIGHT_GRAY);
     set_foreground_color(area.first_row, area.first_col,
                          area.first_row + area.height - 1,
                          area.first_col + area.width - 1, LIGHT_GRAY);
