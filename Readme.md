@@ -1,6 +1,6 @@
 # KerberOS
 
-64-bit multiprocessing operative system capable of running console programs. This project is built on top of [x64BareBones](https://bitbucket.org/RowDaBoat/x64barebones/wiki/Home).
+64-bit operative system with multitasking capabilities built on top of [x64BareBones](https://bitbucket.org/RowDaBoat/x64barebones/wiki/Home).
 
 <p align="center">
   <img width="600" src="https://user-images.githubusercontent.com/70670549/174647354-4fb9ae44-78f0-4839-aa49-88d345e46572.gif">
