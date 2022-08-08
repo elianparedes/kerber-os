@@ -49,7 +49,7 @@ To boot the OS, type the following command inside project root directory:
    ```
     
 # Developing
-Most of the header files in this project are docummented using Javadoc-style comments. Code format was set using [Clang-Format](https://clang.llvm.org/docs/ClangFormatStyleOptions.html) formatter with the following rules:
+Most of the header files in this project are documented using Javadoc-style comments. Code format was set using [Clang-Format](https://clang.llvm.org/docs/ClangFormatStyleOptions.html) formatter with the following rules:
 ```
 { 
   BasedOnStyle: LLVM,
