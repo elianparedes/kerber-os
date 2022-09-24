@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <exceptions.h>
 #include <interrupts.h>
 #include <registers.h>
@@ -31,7 +33,7 @@ static void format_reg_str(char *dest, uint64_t reg) {
 static void show_registers(char *error_message, int exception_id) {
     gclear_screen(get_current_process()->g_context);
 
-    printf(error_message);
+    printf("%s",error_message);
     printf(" - CODE=%d\n", exception_id);
 
     char reg_str[REG_SIZE + 3];
@@ -48,7 +50,7 @@ static void show_registers(char *error_message, int exception_id) {
 
     for (int i = 0; i < REGISTERS_COUNT; i++) {
         format_reg_str(reg_str, regs_values[i]);
-        printf(registers_strings[i]);
+        printf("%s",registers_strings[i]);
         puts(reg_str);
     }
 }

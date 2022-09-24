@@ -15,3 +15,10 @@
 .vscode
 .bash_history
 .gdb_history
+
+#PVStudio
+*.tasks*
+strace_out
+*.log
+*.lic
+.config

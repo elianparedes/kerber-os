@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <lib.h>
 
 void swap(char *c1, char *c2) {
@@ -174,6 +176,12 @@ int printf(char *str, ...) {
                     itoa(va_arg(vl, int), tmp, 16);
                     strcpy(&buff[j], tmp);
                     j += strlen(tmp);
+                    break;
+                }
+                case 's': {
+                    char *src = va_arg(vl, char *);
+                    strcpy(&buff[j], src);
+                    j += strlen(src);
                     break;
                 }
             }
