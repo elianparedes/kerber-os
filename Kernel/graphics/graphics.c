@@ -141,15 +141,15 @@ void create_bottom_module() {
 
 context_id_t get_context_id() {
     switch (current_distribution) {
-        case FULL_DISTRIBUTION:
-            return FULL;
-
         case SPLIT_DISTRIBUTION:
             if (allocated_windows_count == 0) {
                 allocated_windows_count++;
                 return LEFT;
             } else
                 return RIGHT;
+        default:
+            return FULL;
+
     }
 }
 
@@ -204,7 +204,7 @@ void full_screen_distribution() {
     create_line(top_line, CYAN);
     set_foreground_color(0, 0, 0, MAX_COLS - 1, WHITE);
     print_string(" KerberOS");
-    area_t bottom_line = {MAX_COLS, 1, 0, MAX_ROWS - 1};
+
 
     create_bottom_module();
     move_cursor(contexts[2].last_cursor_pos);

@@ -22,22 +22,11 @@ static uint8_t *current_video = (uint8_t *)VIDEO_ADDRESS;
 
 static area_t work_area = {
     .width = MAX_COLS, .height = MAX_ROWS, .first_col = 0, .first_row = 0};
-/*
-static uint8_t width = MAX_COLS;
-static uint8_t height = MAX_ROWS;
-static uint8_t first_col = 0;
-static uint8_t first_row = 0;*/
 
 static int cursor_row = 0;
 static int cursor_col = 0;
 static int cursor_enable = 0;
 static int scroll_enable = 0;
-
-/**
- * TODO: Incluir este link que es de donde "copiamos" el codigo
- * https://wiki.osdev.org/Text_Mode_Cursor#Moving_the_Cursor_2
- **/
-
 static void update_current_video() {
     current_video = video + cursor_row * 2 * MAX_COLS + cursor_col * 2;
 }
@@ -57,17 +46,6 @@ static void update_cursor_position() {
     outb(CRTC_DATA_PORT, (uint8_t)(pos >> 8));
 }
 
-static void copy_line(int line) {
-
-    uint8_t *aux_video_ptr = LINE_ADDRESS(line);
-
-    for (int j = work_area.first_col; j < work_area.width; j++) {
-        aux_video_ptr[j + MAX_COLS * 2] =
-            j % 2 ? ((aux_video_ptr[j] & 0x0F) |
-                     (aux_video_ptr[j + MAX_COLS * 2] & 0xF0))
-                  : aux_video_ptr[j];
-    }
-}
 
 void enable_cursor(uint8_t cursor_start, uint8_t cursor_end) {
     outb(CRTC_ADRESS_PORT, CURSOR_START_REGISTER);
@@ -111,13 +89,6 @@ void print_char(const char c) {
 
     int current_col = CURRENT_COL();
     int current_line = CURRENT_LINE();
-    /*
-        if((current_col > 2*(work_area.first_col + work_area.width -1))
-        || (current_col < 2*work_area.first_col)
-        || (current_line > work_area.first_row + work_area.height -1)
-        || (current_line < work_area.first_row))
-            return;
-    */
     if (current_col == (2 * (work_area.first_col + work_area.width - 1)) &&
         (work_area.height == 1)) {
         clear_line(current_line);
@@ -148,7 +119,6 @@ void print_char(const char c) {
 
 void print_new_line() {
 
-    int current_col = CURRENT_COL();
     int current_line = CURRENT_LINE();
 
     if (current_line == (work_area.first_row + work_area.height - 1))

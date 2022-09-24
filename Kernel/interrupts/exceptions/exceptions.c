@@ -7,8 +7,8 @@
 #define REG_SIZE                    16
 #define REGISTERS_COUNT             18
 
-void division_exception();
-void opcode_exception();
+static void zero_division_exception();
+static void opcode_exception();
 
 cpu_state_t registers;
 
@@ -29,7 +29,6 @@ static void format_reg_str(char *dest, uint64_t reg) {
 }
 
 static void show_registers(char *error_message, int exception_id) {
-    process_t *process = get_current_process();
     gclear_screen(get_current_process()->g_context);
 
     printf(error_message);
@@ -66,11 +65,11 @@ void exceptionDispatcher(int exception) {
     exit_process();
 }
 
-void zero_division_exception() {
+static void zero_division_exception() {
     show_registers("Divide by Zero Exception", ZERO_EXCEPTION_ID);
 }
 
-void opcode_exception() {
+static void opcode_exception() {
 
     show_registers("Invalid Op Code Exception", INVALID_OPCODE_EXCEPTION_ID);
 }

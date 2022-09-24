@@ -1,7 +1,7 @@
 #include <inforeg.h>
 #include <kstdio.h>
-
-// cpu_state_t registers;
+#include <kstdlib.h>
+#include <kstring.h>
 
 static void format_reg_str(char *dest, uint64_t reg) {
     dest[0] = '0';
