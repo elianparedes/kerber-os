@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <kstdio.h>
 
 void time() {
@@ -7,6 +9,6 @@ void time() {
     printf("%d/%d/%d\n", current_time.day, current_time.month,
            current_time.year);
     printf("Current time:\n");
-    printf("%d:%d:%d\n", current_time.hour, current_time.minutes,
-           current_time.seconds);
+    printf("%d:%d:%d\n", (uint32_t)current_time.hour, (uint32_t)current_time.minutes,
+           (uint32_t)current_time.seconds);
 }

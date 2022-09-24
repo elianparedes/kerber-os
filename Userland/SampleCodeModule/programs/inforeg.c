@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <inforeg.h>
 #include <kstdio.h>
 #include <kstdlib.h>
@@ -35,7 +37,7 @@ static void show_registers(cpu_state_t registers) {
     printf("Last snapshot taken:\n");
     for (int i = 0; i < REGISTERS_COUNT; i++) {
         format_reg_str(reg_str, regs_values[i]);
-        printf(registers_strings[i]);
+        printf("%s",registers_strings[i]);
         puts(reg_str);
     }
 }
