@@ -19,9 +19,9 @@ extern void _force_schedule();
  * This method should be called while IF flag is set to 0.
  *
  * @param rsp stack pointer of current process to be saved
- * @return uint64_t* stack pointer value of new context
+ * @return context_t* stack pointer value of new context
  */
-uint64_t *schedule(uint64_t *rsp);
+context_t *schedule(context_t *rsp);
 
 /**
  * @brief Creates and adds a new process to the queue. If this function is

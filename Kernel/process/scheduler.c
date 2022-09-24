@@ -123,7 +123,7 @@ process_t *get_process(pid_t pid) {
     return aux_node->next->process;
 }
 
-uint64_t *schedule(uint64_t *rsp) {
+context_t *schedule(context_t *rsp) {
     if (process_count == 0)
         return rsp;
 

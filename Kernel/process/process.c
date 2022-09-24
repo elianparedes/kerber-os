@@ -24,13 +24,13 @@ process_t *new_process(function_t function, char *arg) {
         (context_t *)((uint64_t)process + K_PROCESS_STACK_SIZE -
                       sizeof(context_t));
 
-    context->rsi = arg;
-    context->rdi = function;
-    context->rip = &process_start;
+    context->rsi = (uint64_t)arg;
+    context->rdi = (uint64_t)function;
+    context->rip = (uint64_t)&process_start;
     context->cs = P_INIT_CS;
     context->eflags = P_INIT_EFLAGS;
 
-    context->rsp = context;
+    context->rsp = (uint64_t)context;
     context->ss = 0x0;
 
     process->context = context;
