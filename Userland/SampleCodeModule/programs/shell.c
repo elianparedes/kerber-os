@@ -29,7 +29,7 @@ typedef struct process {
     char name[TOKEN_LENGTH];
     char arg[TOKEN_LENGTH];
     int pid;
-    int status;
+    chldstatus_t status;
 } process_t;
 
 static process_t children[MAX_PROC_COUNT];
@@ -122,7 +122,7 @@ static int gettoken(char **src, char *token, char delimiter) {
                     token[i++] = *(*src)++;
                     state = STEP;
                 } else {
-                    *(*src)++;
+                    (*src)++;
                 }
                 break;
             case STEP:
@@ -130,7 +130,7 @@ static int gettoken(char **src, char *token, char delimiter) {
                     token[i++] = *(*src)++;
                 } else {
                     token[i++] = '\0';
-                    *(*src)++;
+                    (*src)++;
                     state = DONE;
                 }
                 break;
@@ -244,7 +244,6 @@ void sigint_msg() {
 
 int shell() {
     char cmd_buff[LINE_LENGTH], token_buff[TOKEN_LENGTH];
-    unsigned int pcount = 0;
     _cntrl_listener(&ctrl_pressed);
 
     kerberos(); // show welcome screen
