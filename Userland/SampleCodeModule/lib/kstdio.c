@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <kstdio.h>
 #include <kstdlib.h>
+#include <kstring.h>
 #include <stdarg.h>
 
 char getchar() {
@@ -11,7 +12,7 @@ char getchar() {
 }
 
 int putchar(int character) {
-    _write(STDOUT, &character, 1);
+    _write(STDOUT, (char *)&character, 1);
     return character;
 }
 
@@ -80,7 +81,7 @@ int printf(char *str, ...) {
 int scanf(char *str, ...) {
     va_list vl;
     int i = 0, j = 0, ret = 0;
-    char buff[100] = {0}, tmp[20], c;
+    char buff[100] = {0}, c;
     c = '\0';
     char *out_loc;
     while (c != '\n') {

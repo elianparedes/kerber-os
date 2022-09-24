@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <help.h>
 #include <kstdio.h>
+#include <kstring.h>
 
 static void help_cmds() {
     puts("");

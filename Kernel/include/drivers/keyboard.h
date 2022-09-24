@@ -1,6 +1,8 @@
 #ifndef _KEYBOARD_H_
 #define _KEYBOARD_H_
 
+#define BUFFER_SIZE 512
+
 #include <lib.h>
 
 /**
@@ -32,7 +34,7 @@ void kbd_clear_buffer();
  * 
  * @return char* 
  */
-char *kbd_get_buffer();
+void kbd_get_buffer(char * buffer_ret);
 
 /**
  * @brief 
@@ -74,6 +76,6 @@ uint8_t kbd_is_save_reg_shortcut();
  * 
  * @param listener 
  */
-void kbd_sets_cntrl_listener(char *listener);
+void kbd_sets_cntrl_listener(uint8_t *listener);
 
 #endif

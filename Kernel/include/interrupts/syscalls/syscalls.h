@@ -94,7 +94,7 @@ void sys_clear_screen();
  * @param listener pointer to be used as flag
  * @return uint8_t SUCCESS if no error occured
  */
-uint8_t sys_cntrl_listener(char *listener);
+uint8_t sys_cntrl_listener(uint8_t *listener);
 
 /**
  * @brief Calls the graphics manager to delete a character from screen and move

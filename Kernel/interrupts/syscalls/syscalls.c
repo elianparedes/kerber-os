@@ -24,7 +24,8 @@ uint16_t read(int fd, char *buffer, uint16_t count) {
     while (count > kbd_get_current_index()) {
     }
     _cli();
-    char *aux = kbd_get_buffer();
+    char aux[BUFFER_SIZE];
+    kbd_get_buffer(aux);
     uint16_t i;
     for (i = 0; i < count; i++) {
         buffer[i] = aux[i];
@@ -96,7 +97,7 @@ int sys_copy_cpu_state(cpu_state_t *cpu_ptr, request_t request) {
     return copy_cpu_state(cpu_ptr, request);
 }
 
-uint8_t sys_cntrl_listener(char *listener) {
+uint8_t sys_cntrl_listener(uint8_t *listener) {
     kbd_sets_cntrl_listener(listener);
     return SUCCESS;
 }

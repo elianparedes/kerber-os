@@ -7,8 +7,8 @@
 
 void printmem(char *arg) {
     uint8_t buffer[PRINT_SIZE];
-    uint8_t *endp;
-    uint8_t *address = strtol(arg, &endp, 16);
+    char *endp;
+    uint8_t *address = (uint8_t *)strtol(arg, &endp, 16);
 
     // if endpointer isn't zero,
     // then the argument is not a hexadecimal number
@@ -18,7 +18,7 @@ void printmem(char *arg) {
     }
 
     uint16_t copied = _get_mem(address, buffer, PRINT_SIZE);
-    uint8_t *current_address = address;
+    char *current_address = address;
     for (int i = 0; i < copied; i++) {
         if (i % 8 == 0) {
             printf("%s0x%x | ", i == 0 ? "" : "\n", current_address);

@@ -22,7 +22,6 @@ enum KBD_CTRL_CMD {
     KBD_CTRL_CMD_ENABLE = 0xAE
 };
 
-#define BUFFER_SIZE        512
 #define KBD_SIZE           90
 
 #define MAYUS_OFFSET       ('a' - 'A')
@@ -254,10 +253,13 @@ void kbd_handler() {
     buffer[index] = 0;
 }
 
-char *kbd_get_buffer() {
+ void kbd_get_buffer(char * buffer_ret) {
+    /*
     char toReturn[BUFFER_SIZE];
     memcpy(toReturn, buffer, index);
     return toReturn;
+    */
+   memcpy(buffer_ret, buffer, index);
 }
 
 void kbd_clear_buffer() {
@@ -286,7 +288,7 @@ char kbd_get_rm_last_key() {
     return 0;
 }
 
-void kbd_sets_cntrl_listener(char *listener) {
+void kbd_sets_cntrl_listener(uint8_t *listener) {
     cntrl_listener = listener;
 }
 
