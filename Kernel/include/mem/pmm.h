@@ -18,14 +18,14 @@ void init_pmm();
  * @return uint64_t* pointer to the allocated memory, or NULL if the request
  * fails.
  */
-uint64_t *kmalloc(size_t size);
+void *kmalloc(size_t size);
 
 /**
  * @brief Deallocates the memory previously allocated by a call kmalloc.
  *
  * @param ptr pointer to a memory block previously allocated with kmalloc.
  */
-void kfree(uint64_t *ptr);
+void kfree(void *ptr);
 
 /**
  * @brief Dumps the blocks allocated in memory on the screen for debugging
