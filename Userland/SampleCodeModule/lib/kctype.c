@@ -1,3 +1,5 @@
+#include <kctype.h>
+
 int isspace(int c) {
     return c == ' ';
 }

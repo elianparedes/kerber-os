@@ -1,5 +1,6 @@
 #include <help.h>
 #include <kstdio.h>
+#include <kstring.h>
 
 static void help_cmds() {
     puts("");
