@@ -127,7 +127,7 @@ void sys_pause(int pid) {
 uint16_t sys_get_mem(uint8_t *address, uint8_t *buffer, uint16_t count) {
     int i;
     for (i = 0; i < count; i++) {
-        if (address > ADDRESS_LIMIT) {
+        if ((uint64_t)address > ADDRESS_LIMIT) {
             return i;
         }
         buffer[i] = (*address);

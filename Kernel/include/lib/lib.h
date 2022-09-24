@@ -52,9 +52,27 @@ void outb(uint16_t port, uint8_t value);
  * @brief
  *
  * @param port
+ * @param value
+ */
+void outw(uint16_t port, uint16_t value);
+
+/**
+ * TODO: Fill function comments
+ * @brief
+ *
+ * @param port
  * @return uint8_t
  */
 uint8_t inb(uint16_t port);
+
+/**
+ * TODO: Fill function comments
+ * @brief
+ *
+ * @param port
+ * @return uint16_t
+ */
+uint16_t inw(uint16_t port);
 
 /**
  * TODO: Fill function comments

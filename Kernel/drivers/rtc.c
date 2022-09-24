@@ -64,6 +64,8 @@ uint64_t get_hour() {
         case HS_24:
             hour = get_time(HOUR) + (rtc_utc_offset) + 24;
             return hour % 24;
+        default:
+            return 0;
     }
 }
 

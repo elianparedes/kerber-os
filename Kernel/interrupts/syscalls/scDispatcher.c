@@ -5,7 +5,6 @@
 uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
                            uint64_t arg3, uint64_t arg4, uint64_t arg5,
                            uint64_t id) {
-    int syscall_id = (int)id;
     switch (id) {
         case SYSCALL_READ:
             return read((int)arg0, (char *)arg1, arg2);
@@ -39,7 +38,7 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
             sys_wait((int)arg0, (int *)arg1);
             break;
         case SYSCALL_GET_MEM:
-            return sys_get_mem((uint64_t *)arg0, (uint8_t *)arg1,
+            return sys_get_mem((uint8_t *)arg0, (uint8_t *)arg1,
                                (uint16_t)arg2);
         case SYSCALL_COPY_CPU_STATE:
             return sys_copy_cpu_state((cpu_state_t *)arg0, (request_t)arg1);
