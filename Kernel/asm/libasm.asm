@@ -1,6 +1,8 @@
 GLOBAL cpuVendor
 GLOBAL outb
+GLOBAL outw
 GLOBAL inb
+GLOBAL inw
 
 GLOBAL _rtc_time
 GLOBAL _set_hour12_mode
@@ -40,10 +42,22 @@ outb:
     out     dx, al
     ret
 
+outw:
+    mov     rdx, rdi
+    mov     rax, rsi
+    out     dx, ax
+    ret
+
 inb:
     xor     rax, rax
     mov     rdx, rdi
     in      al, dx
+    ret
+
+inw:
+    xor     rax, rax
+    mov     rdx, rdi
+    in      ax, dx
     ret
 
 _rtc_time:
