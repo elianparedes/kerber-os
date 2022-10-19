@@ -10,6 +10,9 @@ GLOBAL _set_hour24_mode
 GLOBAL _set_decimal_mode
 GLOBAL _set_BCD_mode
 
+GLOBAL _xadd
+GLOBAL _xchg
+
 section .text
 	
 cpuVendor:
@@ -124,6 +127,16 @@ _set_BCD_mode:
 	mov rsp, rbp
 	pop rbp
 ret
+
+_xadd:
+  mov rax, rsi
+  lock xadd [rdi], eax
+  ret
+
+_xchg:
+  mov rax, rsi
+  xchg [rdi], eax
+  ret
 
 section .bss
 aux resb 1
