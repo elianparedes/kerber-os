@@ -1,14 +1,14 @@
 #ifndef _SEMAPHORE_H_
 #define _SEMAPHORE_H_
 
-typedef struct sem_t sem_t;
+typedef struct sem * sem_ptr;
 
-sem_t sem_open(const char *, int value);
+sem_ptr sem_open(const char *, int value);
 
-int sem_wait(sem_t*);
+int sem_wait(sem_ptr semaphore);
  
-int sem_post(sem_t*);
+int sem_post(sem_ptr semaphore);
 
-int sem_close(sem_t*);
+int sem_close(sem_ptr semaphore);
 
 #endif
