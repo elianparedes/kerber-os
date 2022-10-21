@@ -1,3 +1,4 @@
+/*
 #ifndef _SEMAPHORE_H_
 #define _SEMAPHORE_H_
 
@@ -12,3 +13,4 @@ int sem_post(sem_ptr semaphore);
 int sem_close(sem_ptr semaphore);
 
 #endif
+*/

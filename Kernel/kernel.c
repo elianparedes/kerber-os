@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <idtLoader.h>
 #include <keyboard.h>
+#include <graphics.h>
 #include <lib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
@@ -11,6 +12,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <time.h>
+#include <syscall.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -85,11 +87,29 @@ void *initializeKernelBinary() {
     return getStackBase();
 }
 
+void printer(char to_print){
+    for (size_t i = 0; i < 5500; i++)
+    {
+        gprint_char(to_print,get_context_id());
+    }
+    exit_process();
+}
+
+void kernel_shell(){
+    add_process(sync_tickprint_A,'A');
+    add_process(sync_tickprint_B,'B');
+    add_process(sync_tickprint_C,'C');
+    while(1){
+
+    }
+}
+
 int main() {
     init_pmm(); // init physical memory manager
     load_idt();
 
-    ((EntryPoint)sampleCodeModuleAddress)();
+    full_screen_distribution();
+    add_process(kernel_shell,NULL);
 
     while (1)
         ;

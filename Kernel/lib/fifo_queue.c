@@ -57,6 +57,6 @@ void *dequeue(fifo_queue *queue)
     if (queue->front == NULL)
         queue->rear = NULL;
 
-    free(ret_node);
+    kfree(ret_node);
     return data;
 }

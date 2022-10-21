@@ -1,4 +1,4 @@
-#include <semaphore/semaphore.h>
+/*#include <semaphore/semaphore.h>
 #include <process.h>
 #include <pmm.h>
 
@@ -61,4 +61,4 @@ int sem_post(sem_ptr sem){
 
 int sem_close(sem_ptr sem){
     kfree(sem);
-}
+}*/
