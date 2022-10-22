@@ -72,3 +72,13 @@ void remove(list *list, void *data)
 {
     list->start = delete_helper(list, list->start, data);
 }
+
+void * find(list * list, void * data){
+    node * node= list->start;
+    while (node != NULL){
+        if (list->comp_funct(node->data, data))
+            return node;
+        node=node->next;
+    }
+    return NULL;
+}
