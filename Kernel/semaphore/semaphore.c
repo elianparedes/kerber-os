@@ -1,5 +1,5 @@
-/*#include <semaphore/semaphore.h>
-#include <process.h>
+#include <semaphore/semaphore.h>
+#include <scheduler.h>
 #include <pmm.h>
 #include <fifo_queue.h>
 
@@ -13,10 +13,8 @@ typedef struct sem
     fifo_queue_ptr fifo_queue;
 } sem;
 
-static list;
-
-int _xadd(int * var_ptr  , int value);
-int _xchg(int * var_ptr  , int value);
+extern int _xadd(int * var_ptr  , int value);
+extern int _xchg(int * var_ptr  , int value);
 
 int lock = 0;
 
@@ -42,7 +40,7 @@ static void wakeup(sem_ptr sem){
     }
 }
 
-sem_ptr sem_open(const char * name, int value){
+sem_ptr sem_open(char * name, int value){
     sem_ptr new_sem = kmalloc(sizeof(sem));
     new_sem->name = name;
     new_sem->value=value;
@@ -53,20 +51,49 @@ sem_ptr sem_open(const char * name, int value){
 
 int sem_wait(sem_ptr sem){
     acquire(&lock);
-    if(xadd(sem->value, -1) <= 0){
+    if(_xadd(&(sem->value), -1) <= 0){
         sleep(sem);
     }
     release(&lock);
+
+    /**
+     * TODO: 
+     * @return 0 on success
+     * -1 on error
+     *  EINVAL sem is not a valid semaphore. (Unix sets errno)
+    */
+    return 0;
 }
  
 int sem_post(sem_ptr sem){
     acquire(&lock);
-    if (xadd(sem->value, 1) > 0){
+    if (_xadd(&(sem->value), 1) > 0){
         wakeup(sem);
     }
     release(&lock);
+
+    /**
+     * TODO: 
+     * @return 0 on success
+     * -1 on error
+     *  EINVAL sem is not a valid semaphore. (Unix sets errno)
+     * EOVERFLOW
+        The maximum allowable value for a semaphore would be exceeded.
+    */
+    return 0;
 }
 
 int sem_close(sem_ptr sem){
     kfree(sem);
-}*/
+
+    /**
+     * TODO: 
+     * @return 0 on success
+     * -1 on error
+     *  EINVAL sem is not a valid semaphore. (Unix sets errno)
+     * EOVERFLOW
+        The maximum allowable value for a semaphore would be exceeded.
+    */
+
+    return 0;
+}
