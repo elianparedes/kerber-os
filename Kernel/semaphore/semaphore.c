@@ -16,8 +16,6 @@ typedef struct sem
 extern int _xadd(int * var_ptr  , int value);
 extern int _xchg(int * var_ptr  , int value);
 
-int lock = 0;
-
 // spinlock 
 static void acquire(int *lock){
   while(_xchg(lock, 1) != 0);
@@ -50,11 +48,11 @@ sem_ptr sem_open(char * name, int value){
 }
 
 int sem_wait(sem_ptr sem){
-    acquire(&lock);
+    acquire(&sem->lock);
     if(_xadd(&(sem->value), -1) <= 0){
         sleep(sem);
     }
-    release(&lock);
+    release(&sem->lock);
 
     /**
      * TODO: 
@@ -66,11 +64,11 @@ int sem_wait(sem_ptr sem){
 }
  
 int sem_post(sem_ptr sem){
-    acquire(&lock);
+    acquire(&sem->lock);
     if (_xadd(&(sem->value), 1) > 0){
         wakeup(sem);
     }
-    release(&lock);
+    release(&sem->lock);
 
     /**
      * TODO: 
