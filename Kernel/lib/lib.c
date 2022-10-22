@@ -55,6 +55,14 @@ char *strcpy(char *dest, const char *src) {
     return dest;
 }
 
+int strcmp(const char *str1, const char *str2) {
+    while (*str1 && (*str1 == *str2)) {
+        str1++;
+        str2++;
+    }
+    return *str1 - *str2;
+}
+
 void *memset(void *destination, int32_t c, uint64_t length) {
     uint8_t chr = (uint8_t)c;
     char *dst = (char *)destination;

@@ -11,6 +11,8 @@ typedef struct list
 {
     struct node * start;
     struct node * end;
+    //function that will compare node->data with argument "data" for deletion
+    int (*comp_funct)(void*, void*);
 } list;
 
 static node *delete_helper(list *list, node *node, void *data)
@@ -19,7 +21,7 @@ static node *delete_helper(list *list, node *node, void *data)
     {
         return NULL;
     }
-    if (node->data == data)
+    if (list->comp_funct(node->data,data))
     {
         struct node * ret_node = node->next;
         kfree(node);
@@ -41,11 +43,12 @@ static node *create_node(void *data)
     return new_node;
 }
 
-list *new_linked_list()
+list *new_linked_list(int (*comp_funct)(void *, void *))
 {
     list *new_list = kmalloc(sizeof(list));
     new_list->start = NULL;
     new_list->end = NULL;
+    new_list->comp_funct=comp_funct;
     return new_list;
 }
 
