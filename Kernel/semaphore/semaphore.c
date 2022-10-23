@@ -27,9 +27,11 @@ static void release(int *lock){
 
 static void sleep(sem_ptr sem){
     process_t * current_proc = get_current_process();
-    current_proc->status=PAUSED;
     enqueue(sem->fifo_queue, current_proc);
+    current_proc->status=PAUSED;
+    _force_schedule();
 }
+
 
 static void wakeup(sem_ptr sem){
     process_t * process = (process_t *)dequeue(sem->fifo_queue);
@@ -49,7 +51,8 @@ sem_ptr sem_open(char * name, int value){
 
 int sem_wait(sem_ptr sem){
     acquire(&sem->lock);
-    if(_xadd(&(sem->value), -1) <= 0){
+    sem->value--;
+    if(sem->value < 0){
         sleep(sem);
     }
     release(&sem->lock);
@@ -65,7 +68,8 @@ int sem_wait(sem_ptr sem){
  
 int sem_post(sem_ptr sem){
     acquire(&sem->lock);
-    if (_xadd(&(sem->value), 1) > 0){
+    sem->value++;
+    if(sem->value >= 0){
         wakeup(sem);
     }
     release(&sem->lock);

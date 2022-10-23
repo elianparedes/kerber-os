@@ -13,6 +13,7 @@
 #include <string.h>
 #include <time.h>
 #include <syscall.h>
+#include <semaphore/semaphore.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -87,18 +88,57 @@ void *initializeKernelBinary() {
     return getStackBase();
 }
 
-void printer(char to_print){
-    for (size_t i = 0; i < 5500; i++)
-    {
-        gprint_char(to_print,get_context_id());
+int my_yield(){
+    return 0;
+}
+
+void slowInc(int64_t *p, int64_t inc){
+  uint64_t aux = *p;
+  my_yield(); //This makes the race condition highly probable
+  aux += inc;
+  *p = aux;
+}
+
+
+int64_t counter = 0;
+sem_ptr sem;
+
+void process_a(){
+
+    for(int i = 0 ; i < 1000000 ; i++){
+        sem_wait(sem);
+        counter++;
+        sem_post(sem);
+    }
+    exit_process();
+    
+}
+
+void process_b(){
+
+    for(int i = 0 ; i < 1000000 ; i++){
+        sem_wait(sem);
+        counter--;
+        sem_post(sem);
     }
     exit_process();
 }
 
 void kernel_shell(){
-    add_process(sync_tickprint_A,'A');
-    add_process(sync_tickprint_B,'B');
-    add_process(sync_tickprint_C,'C');
+
+    sem = sem_open("my_sem",1);
+
+    add_process(process_a,NULL);
+    add_process(process_b,NULL);
+
+    int prev = ticks_elapsed();
+    int new = prev;
+        while(new - prev < 200){
+            new = ticks_elapsed();
+        }
+
+    printf("El valor del counter es: %d",counter);
+
     while(1){
 
     }
