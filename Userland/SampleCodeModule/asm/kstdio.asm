@@ -91,6 +91,21 @@ _focus:
     int 0x80
     ret
 
+_sem_init:
+    mov rax, SYSCALL_SEM_INIT_ID
+    int 0x80
+    ret
+
+_sem_wait:
+    mov rax, SYSCALL_SEM_WAIT_ID
+    int 0x80
+    ret
+
+_sem_post:
+    mov rax, SYSCALL_SEM_POST_ID
+    int 0x80
+    ret
+
 section .rodata
 SYSCALL_READ_ID equ 0
 SYSCALL_WRITE_ID equ 1
@@ -106,6 +121,10 @@ SYSCALL_WAIT_ID equ 67
 SYSCALL_DELETE_CHAR_ID equ 46
 SYSCALL_KILL_ID equ 62
 SYSCALL_PAUSE_ID equ 75 
-SYSCALL_FOCUS_ID equ 77   
+SYSCALL_FOCUS_ID equ 77
+;;Semaphores id
+SYSCALL_SEM_INIT_ID equ 70
+SYSCALL_SEM_WAIT_ID equ 71
+SYSCALL_SEM_POST_ID equ 72
 
 KBD_PRINT_REG equ 1

@@ -18,6 +18,8 @@ GLOBAL _exception6Handler
 GLOBAL _syscall_master_handler
 GLOBAL _force_schedule
 
+GLOBAL _force_timer_int
+
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 EXTERN schedule
@@ -134,6 +136,10 @@ _cli:
 
 _sti:
 	sti
+	ret
+
+_force_timer_int:
+	int 20h
 	ret
 
 picMasterMask:

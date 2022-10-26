@@ -110,4 +110,6 @@ extern void picSlaveMask(uint8_t mask);
  */
 extern void haltcpu(void);
 
+extern void _force_timer_int(void);
+
 #endif /* INTERRUPS_H_ */

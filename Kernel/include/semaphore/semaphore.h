@@ -1,8 +1,12 @@
-
 #ifndef _SEMAPHORE_H_
 #define _SEMAPHORE_H_
 
+#define MAX_SEM_VALUE 10
+#define MAX_SEMAPHORES 100
+
 typedef struct sem * sem_ptr;
+
+void init_sem_list();
 
 sem_ptr sem_open(char *, int value);
 

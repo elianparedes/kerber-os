@@ -29,18 +29,21 @@ static void *const sampleDataModuleAddress = (void *)0x500000;
 
 typedef int (*EntryPoint)();
 
-void clearBSS(void *bssAddress, uint64_t bssSize) {
+void clearBSS(void *bssAddress, uint64_t bssSize)
+{
     memset(bssAddress, 0, bssSize);
 }
 
-void *getStackBase() {
+void *getStackBase()
+{
     return (void *)((uint64_t)&endOfKernel +
                     PageSize * 8       // The size of the stack itself, 32KiB
                     - sizeof(uint64_t) // Begin at the top of the stack
     );
 }
 
-void *initializeKernelBinary() {
+void *initializeKernelBinary()
+{
     char buffer[10];
 
     ncPrint("[x64BareBones]");
@@ -88,35 +91,37 @@ void *initializeKernelBinary() {
     return getStackBase();
 }
 
-int my_yield(){
+int my_yield()
+{
     return 0;
 }
 
-void slowInc(int64_t *p, int64_t inc){
-  uint64_t aux = *p;
-  my_yield(); //This makes the race condition highly probable
-  aux += inc;
-  *p = aux;
+void slowInc(int64_t *p, int64_t inc)
+{
+    uint64_t aux = *p;
+    my_yield(); // This makes the race condition highly probable
+    aux += inc;
+    *p = aux;
 }
-
 
 int64_t counter = 0;
 sem_ptr sem;
 
-void process_a(){
-
-    for(int i = 0 ; i < 1000000 ; i++){
+void process_a()
+{
+    for (int i = 0; i < 10; i++)
+    {
         sem_wait(sem);
         counter++;
         sem_post(sem);
     }
     exit_process();
-    
 }
 
-void process_b(){
-
-    for(int i = 0 ; i < 1000000 ; i++){
+void process_b()
+{
+    for (int i = 0; i < 10; i++)
+    {
         sem_wait(sem);
         counter--;
         sem_post(sem);
@@ -124,32 +129,45 @@ void process_b(){
     exit_process();
 }
 
-void kernel_shell(){
+void kernel_shell()
+{
 
-    sem = sem_open("my_sem",1);
+    sem = sem_open("my_sem", 1);
 
-    add_process(process_a,NULL);
-    add_process(process_b,NULL);
+    for (int i = 0; i < 16; i++)
+    {
+        add_process(process_a, NULL);
+        add_process(process_b, NULL);
+    }
+
+    sem_wait(sem);
+    counter++;
+    sem_post(sem);
 
     int prev = ticks_elapsed();
     int new = prev;
-        while(new - prev < 200){
-            new = ticks_elapsed();
-        }
+    while (new - prev < 400)
+    {
+        new = ticks_elapsed();
+    }
 
-    printf("El valor del counter es: %d",counter);
+    printf("El valor final del counter es: %d \n", counter);
 
-    while(1){
-
+    while (1)
+    {
     }
 }
 
-int main() {
+int main()
+{
     init_pmm(); // init physical memory manager
     load_idt();
-
+    void init_sem_list();
+    
     full_screen_distribution();
-    add_process(kernel_shell,NULL);
+    add_process(kernel_shell, NULL);
+    
+    //((EntryPoint)sampleCodeModuleAddress)();
 
     while (1)
         ;

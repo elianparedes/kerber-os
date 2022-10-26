@@ -123,4 +123,6 @@ size_t strlen(const char *str);
  */
 char *strcat(char *destination, const char *source);
 
+int strcmp(const char *str1, const char *str2);
+
 #endif /* _LIB_H_ */

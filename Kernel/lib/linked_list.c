@@ -1,27 +1,38 @@
 #include <pmm.h>
 #include <linked_list.h>
 
-typedef struct node
+typedef struct node_list_t
 {
     void *data;
-    struct node *next;
-} node;
+    struct node_list_t *next;
+} node_list_t;
 
-typedef struct list
+typedef struct list_t
 {
-    struct node * start;
-    struct node * end;
-} list;
+    struct node_list_t * start;
+    struct node_list_t * end;
+    //function that will compare node->data with argument "data" for deletion
+    int (*comp_funct)(void*, void*);
+} list_t;
 
-static node *delete_helper(list *list, node *node, void *data)
+list_t * new_linked_list(int (*comp_funct)(void *, void *))
+{
+    list_t *new_list = kmalloc(sizeof(list_t));
+    new_list->start = NULL;
+    new_list->end = NULL;
+    new_list->comp_funct=comp_funct;
+    return new_list;
+}
+
+static node_list_t *delete_helper(list_t *list, node_list_t *node, void *data)
 {
     if (node == NULL)
     {
         return NULL;
     }
-    if (node->data == data)
+    if (list->comp_funct(node->data,data))
     {
-        struct node * ret_node = node->next;
+        struct node_list_t * ret_node = node->next;
         kfree(node);
         return ret_node;
     }
@@ -33,25 +44,17 @@ static node *delete_helper(list *list, node *node, void *data)
     return node;
 }
 
-static node *create_node(void *data)
+static node_list_t *create_node(void *data)
 {
-    node *new_node = (node *)kmalloc(sizeof(node));
+    node_list_t *new_node = (node_list_t *)kmalloc(sizeof(node_list_t));
     new_node->data = data;
     new_node->next = NULL;
     return new_node;
 }
 
-list *new_linked_list()
+void add(list_t * list, void *data)
 {
-    list *new_list = kmalloc(sizeof(list));
-    new_list->start = NULL;
-    new_list->end = NULL;
-    return new_list;
-}
-
-void add(list *list, void *data)
-{
-    node *new_node = create_node(data);
+    node_list_t *new_node = create_node(data);
 
     if (list->start == NULL)
     {
@@ -65,7 +68,24 @@ void add(list *list, void *data)
     }
 }
 
-void remove(list *list, void *data)
+void remove(list_t *list, void *data)
 {
     list->start = delete_helper(list, list->start, data);
+}
+
+void * find(list_t * list, void * data, int (*comp_funct)(void *, void *)){
+    int (*funct)(void*, void*);
+    if (comp_funct == NULL){
+        funct = list->comp_funct;
+    }
+    else{
+        funct= comp_funct;
+    }
+    node_list_t * node= list->start;
+    while (node != NULL){
+        if (funct(node->data, data))
+            return node;
+        node=node->next;
+    }
+    return NULL;
 }
