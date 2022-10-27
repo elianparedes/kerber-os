@@ -6,6 +6,7 @@
 #include <scheduler.h>
 #include <syscalls.h>
 #include <video.h>
+#include <semaphore/semaphore.h>
 
 #define ADDRESS_LIMIT 0xFFFFFFFF
 
@@ -143,4 +144,16 @@ void sys_focus(int pid) {
     if (process != NULL) {
         gfocus(process->g_context);
     }
+}
+
+sem_ptr sys_sem_open(char * name, int value){
+    return sem_open(name, value);
+}
+
+int sys_sem_wait(sem_ptr sem){
+    return sem_wait(sem);
+}
+
+int sys_sem_post(sem_ptr sem){
+    return sem_post(sem);
 }

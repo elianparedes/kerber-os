@@ -4,8 +4,9 @@
 typedef struct sem * sem_ptr;
 
 // Semaphore syscalls
-int _sem_init(char * name, int value);
+sem_ptr _sem_open(char * name, int value);
 int _sem_wait(sem_ptr sem);
 int _sem_post(sem_ptr sem);
+int _sem_close(sem_ptr sem);
 
 #endif

@@ -14,6 +14,7 @@
 #include <printmem.h>
 #include <test_inforeg.h>
 #include <time.h>
+#include <testsync.h>
 
 #define LINE_LENGTH    512
 #define TOKEN_LENGTH   512
@@ -86,6 +87,13 @@ static int run_command(char *name, char *arg) {
 
     else if (strcmp(name, "printmem") == 0)
         return _run(printmem, arg);
+    /*
+    TODO: fix 
+    else if (strcmp(name, "testsync") == 0){
+        char *argv[] = {"5", "use_sem", "0"};
+        return _run(test_sync, argv);
+    }
+    */
 
     else if (strcmp(name, "clear") == 0) {
         // temporary workaround.

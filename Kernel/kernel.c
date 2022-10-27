@@ -109,7 +109,7 @@ sem_ptr sem;
 
 void process_a()
 {
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 100; i++)
     {
         sem_wait(sem);
         counter++;
@@ -120,7 +120,7 @@ void process_a()
 
 void process_b()
 {
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 100; i++)
     {
         sem_wait(sem);
         counter--;
@@ -134,19 +134,13 @@ void kernel_shell()
 
     sem = sem_open("my_sem", 1);
 
-    for (int i = 0; i < 16; i++)
-    {
-        add_process(process_a, NULL);
-        add_process(process_b, NULL);
-    }
-
-    sem_wait(sem);
-    counter++;
-    sem_post(sem);
+    add_process(process_a, NULL);
+    add_process(process_b, NULL);
+    
 
     int prev = ticks_elapsed();
     int new = prev;
-    while (new - prev < 400)
+    while (new - prev < 200)
     {
         new = ticks_elapsed();
     }
@@ -162,12 +156,12 @@ int main()
 {
     init_pmm(); // init physical memory manager
     load_idt();
-    void init_sem_list();
+    init_sem_list();
     
     full_screen_distribution();
-    add_process(kernel_shell, NULL);
+    //add_process(kernel_shell, NULL);
     
-    //((EntryPoint)sampleCodeModuleAddress)();
+    ((EntryPoint)sampleCodeModuleAddress)();
 
     while (1)
         ;

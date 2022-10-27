@@ -13,6 +13,10 @@ GLOBAL _kill
 GLOBAL _get_mem
 GLOBAL _pause
 GLOBAL _focus
+GLOBAL _sem_open
+GLOBAL _sem_wait
+GLOBAL _sem_post
+GLOBAL _sem_close
 
 section .text
 
@@ -91,8 +95,8 @@ _focus:
     int 0x80
     ret
 
-_sem_init:
-    mov rax, SYSCALL_SEM_INIT_ID
+_sem_open:
+    mov rax, SYSCALL_SEM_OPEN_ID
     int 0x80
     ret
 
@@ -103,6 +107,11 @@ _sem_wait:
 
 _sem_post:
     mov rax, SYSCALL_SEM_POST_ID
+    int 0x80
+    ret
+
+_sem_close:
+    mov rax, SYSCALL_SEM_CLOSE_ID
     int 0x80
     ret
 
@@ -122,9 +131,9 @@ SYSCALL_DELETE_CHAR_ID equ 46
 SYSCALL_KILL_ID equ 62
 SYSCALL_PAUSE_ID equ 75 
 SYSCALL_FOCUS_ID equ 77
-;;Semaphores id
-SYSCALL_SEM_INIT_ID equ 70
+SYSCALL_SEM_OPEN_ID equ 70
 SYSCALL_SEM_WAIT_ID equ 71
 SYSCALL_SEM_POST_ID equ 72
+SYSCALL_SEM_CLOSE_ID equ 73
 
 KBD_PRINT_REG equ 1

@@ -5,6 +5,7 @@
 #include <fifo_queue.h>
 #include <linked_list.h>
 #include <lib.h>
+#include <graphics.h>
 
 #define MAX_PROCESS 50
 
@@ -24,8 +25,7 @@ extern int _xchg(int *var_ptr, int value);
 static int comparison_function(void *semaphore, void *name)
 {
     sem *sem_test = (sem *)semaphore;
-    char *name_test = (char *)name;
-    if (strcmp(sem_test->name, name) == 0)
+    if (strcmp(sem_test->name, (char *)name) == 0)
     {
         return 1;
     }
@@ -67,7 +67,7 @@ void init_sem_list()
 sem_ptr sem_open(char *name, int value)
 {
     sem_ptr sem_find;
-    if ((sem_find = find(sem_list, name, NULL)) != NULL)
+    if ((sem_find = find(sem_list, (void *)name, NULL)) == NULL)
     {
         sem_ptr new_sem = kmalloc(sizeof(sem));
         new_sem->name = name;
