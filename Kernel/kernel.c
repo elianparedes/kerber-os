@@ -13,6 +13,7 @@
 #include <string.h>
 #include <time.h>
 #include <syscall.h>
+#include "tests/lib/test_lib.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -87,11 +88,24 @@ void *initializeKernelBinary() {
     return getStackBase();
 }
 
+void kernel_shell()
+{
+    
+    test_linked_list();
+
+    while (1)
+    {
+    }
+}
+
 int main() {
     init_pmm(); // init physical memory manager
     load_idt();
 
-    ((EntryPoint)sampleCodeModuleAddress)();
+    full_screen_distribution();
+    add_process(kernel_shell, NULL);
+
+    //((EntryPoint)sampleCodeModuleAddress)();
 
     while (1)
         ;
