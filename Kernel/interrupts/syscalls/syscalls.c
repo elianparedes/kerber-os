@@ -144,3 +144,7 @@ void sys_focus(int pid) {
         gfocus(process->g_context);
     }
 }
+
+void sys_sched_yield(){
+    _force_schedule();
+}

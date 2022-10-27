@@ -31,6 +31,7 @@ enum STD {
 #define SYSCALL_PAUSE              75
 #define SYSCALL_WAIT               67
 #define SYSCALL_FOCUS              77
+#define SYSCALL_SCHED_YIELD 24
 
 /**
  * @brief Reads up to count bytes from keyboard and copies them to buffer
@@ -151,5 +152,7 @@ void sys_pause(int pid);
  * @param pid process id of the target process
  */
 void sys_focus(int pid);
+
+void sys_sched_yield();
 
 #endif

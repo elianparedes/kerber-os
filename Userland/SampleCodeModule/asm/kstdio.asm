@@ -13,6 +13,7 @@ GLOBAL _kill
 GLOBAL _get_mem
 GLOBAL _pause
 GLOBAL _focus
+GLOBAL _sched_yield
 
 section .text
 
@@ -91,6 +92,11 @@ _focus:
     int 0x80
     ret
 
+_sched_yield:
+    mov rax, SYSCALL_SCHED_YIELD_ID
+    int 0x80
+    ret
+
 section .rodata
 SYSCALL_READ_ID equ 0
 SYSCALL_WRITE_ID equ 1
@@ -107,5 +113,6 @@ SYSCALL_DELETE_CHAR_ID equ 46
 SYSCALL_KILL_ID equ 62
 SYSCALL_PAUSE_ID equ 75 
 SYSCALL_FOCUS_ID equ 77   
+SYSCALL_SCHED_YIELD_ID equ 24
 
 KBD_PRINT_REG equ 1
