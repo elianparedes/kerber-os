@@ -58,7 +58,7 @@ void to_begin(list_t l){
 }
 
 int hasNext(list_t l){
-    return l->current->next != NULL;
+    return l->current != NULL;
 }
 
 void * next(list_t l){
