@@ -87,29 +87,11 @@ void *initializeKernelBinary() {
     return getStackBase();
 }
 
-void printer(char to_print){
-    for (size_t i = 0; i < 5500; i++)
-    {
-        gprint_char(to_print,get_context_id());
-    }
-    exit_process();
-}
-
-void kernel_shell(){
-    add_process(sync_tickprint_A,'A');
-    add_process(sync_tickprint_B,'B');
-    add_process(sync_tickprint_C,'C');
-    while(1){
-
-    }
-}
-
 int main() {
     init_pmm(); // init physical memory manager
     load_idt();
 
-    full_screen_distribution();
-    add_process(kernel_shell,NULL);
+    ((EntryPoint)sampleCodeModuleAddress)();
 
     while (1)
         ;
