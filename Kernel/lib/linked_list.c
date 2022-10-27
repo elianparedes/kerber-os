@@ -11,6 +11,7 @@ typedef struct list
 {
     struct node * start;
     struct node * end;
+    struct node * current;
     //function that will compare node->data with argument "data" for deletion
     int (*comp_funct)(void*, void*);
 } list;
@@ -50,6 +51,20 @@ list *new_linked_list(int (*comp_funct)(void *, void *))
     new_list->end = NULL;
     new_list->comp_funct=comp_funct;
     return new_list;
+}
+
+void to_begin(list_t l){
+    l->current = l->start;
+}
+
+int hasNext(list_t l){
+    return l->current->next != NULL;
+}
+
+void * next(list_t l){
+    void * element = l->current->data;
+    l->current = l->current->next;
+    return element;
 }
 
 void add(list *list, void *data)
