@@ -51,14 +51,14 @@ int create_pipe(char * name, int pipe_dataD[2]){
         return -1;
     }
 
-    pipe_t pipe = kmalloc(sizeof(pipe));
-    pipe->name = name;
-    pipe->nread = 0;
-    pipe->nwrite = 0;
+    pipe_t newPipe = kmalloc(sizeof(pipe));
+    newPipe->name = name;
+    newPipe->nread = 0;
+    newPipe->nwrite = 0;
 
-    add(pipe_list,(void *)pipe);
+    add(pipe_list,(void *)newPipe);
 
-    set_data_descriptors(pipe,pipe_dataD);
+    set_data_descriptors(newPipe,pipe_dataD);
 
     return 0;
 }
