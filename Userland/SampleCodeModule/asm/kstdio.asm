@@ -13,6 +13,7 @@ GLOBAL _kill
 GLOBAL _get_mem
 GLOBAL _pause
 GLOBAL _focus
+GLOBAL _wait2
 
 section .text
 
@@ -91,6 +92,12 @@ _focus:
     int 0x80
     ret
 
+_wait2:
+    mov rax, SYSCALL_WAIT2_ID
+    int 0x80
+    ret
+
+
 section .rodata
 SYSCALL_READ_ID equ 0
 SYSCALL_WRITE_ID equ 1
@@ -103,6 +110,7 @@ SYSCALL_EXIT_ID equ 60
 SYSCALL_GETTIME_ID equ 96
 SYSCALL_RUN_ID equ 66
 SYSCALL_WAIT_ID equ 67
+SYSCALL_WAIT2_ID equ 68
 SYSCALL_DELETE_CHAR_ID equ 46
 SYSCALL_KILL_ID equ 62
 SYSCALL_PAUSE_ID equ 75 

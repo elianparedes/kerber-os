@@ -30,6 +30,7 @@ enum STD {
 #define SYSCALL_KILL               62
 #define SYSCALL_PAUSE              75
 #define SYSCALL_WAIT               67
+#define SYSCALL_WAIT2              68
 #define SYSCALL_FOCUS              77
 
 /**
@@ -74,7 +75,7 @@ void sys_switch_screen_mode(int mode);
 
 /**
  * TODO: Fill function comments
- * @brief 
+ * @brief
  *
  * @param cpu_ptr
  * @param request
@@ -151,5 +152,7 @@ void sys_pause(int pid);
  * @param pid process id of the target process
  */
 void sys_focus(int pid);
+
+void sys_wait2();
 
 #endif

@@ -1,5 +1,6 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+#include <fifo_queue.h>
 #include <idtLoader.h>
 #include <pmm.h>
 #include <scheduler.h>
@@ -19,6 +20,34 @@ static node_t *front_node = NULL;
 static node_t *rear_node = NULL;
 
 static uint64_t process_count = 0;
+
+void wait_process() {
+    process_t *current_process = get_current_process();
+    if (current_process->l_child != NULL || current_process->r_child != NULL)
+        sleep(current_process);
+    else
+        return;
+}
+
+void sleep(uint64_t channel) {
+    process_t *current_process = get_current_process();
+    current_process->channel = channel;
+    current_process->status = PAUSED;
+    _force_schedule();
+}
+
+void wakeup(uint64_t channel) {
+    node_t *aux_node = front_node;
+
+    do {
+        if (aux_node->process->channel == channel) {
+            aux_node->process->status = READY;
+            return;
+        }
+
+        aux_node = aux_node->next;
+    } while (aux_node != front_node);
+}
 
 static bool enqueue_process(process_t *process) {
     node_t *node = kmalloc(sizeof(node_t));
@@ -93,13 +122,16 @@ static process_t *free_process(int pid) {
 }
 
 void exit_process() {
+    process_t *current_process = get_current_process();
 
-    free_process(current_node->process->pid);
+    if (current_process->parent != NULL)
+        wakeup(current_process->parent);
+
+    free_process(current_process->pid);
     _force_schedule();
 }
 
 void kill_process(int pid) {
-
     process_t *target = free_process(pid);
 
     // the right way of doing this would be with signals and their handlers

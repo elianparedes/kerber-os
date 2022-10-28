@@ -47,6 +47,9 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
         case SYSCALL_FOCUS:
             sys_focus((int)arg0);
             break;
+        case SYSCALL_WAIT2:
+            sys_wait2();
+            break;
         default:
             return 0;
     }
