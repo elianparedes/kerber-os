@@ -13,7 +13,7 @@
 #include <string.h>
 #include <time.h>
 #include <syscall.h>
-#include "tests/lib/test_lib.h"
+#include <pipe/pipe.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -88,10 +88,25 @@ void *initializeKernelBinary() {
     return getStackBase();
 }
 
+void process_a(){
+    int pipe_data[2];
+    int code = open_pipe("my_pipe",pipe_data);
+}
+
 void kernel_shell()
 {
     
-    test_linked_list();
+    init_pipes();
+
+    int pipe_data[2];
+    create_pipe("my_pipe",pipe_data);
+    printf("%d\n",pipe_data[0]);
+    write(pipe_data[1],"Hola\n",6);
+    char buffer[256] = {0};
+    read(pipe_data[0],buffer,6);
+    printf("%s",buffer);
+
+    add_process(process_a,NULL);
 
     while (1)
     {
@@ -101,6 +116,7 @@ void kernel_shell()
 int main() {
     init_pmm(); // init physical memory manager
     load_idt();
+
 
     full_screen_distribution();
     add_process(kernel_shell, NULL);

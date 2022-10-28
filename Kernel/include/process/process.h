@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <lib/dataDescriptor.h>
 
 #define K_PROCESS_STACK_SIZE 1024 * 4
 
@@ -52,6 +53,8 @@ typedef struct process {
     process_t *r_child;
     process_t *parent;
     context_id_t g_context;
+    dataDescriptor_t dataDescriptors[128];
+    size_t dataD_index;
 } process_t;
 
 typedef void (*function_t)(char *);

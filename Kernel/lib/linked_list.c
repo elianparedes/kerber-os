@@ -92,7 +92,7 @@ void * find(list * list, void * data){
     node * node= list->start;
     while (node != NULL){
         if (list->comp_funct(node->data, data))
-            return node;
+            return node->data;
         node=node->next;
     }
     return NULL;
