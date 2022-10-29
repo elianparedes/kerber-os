@@ -6,6 +6,7 @@
 #include <scheduler.h>
 #include <syscalls.h>
 #include <video.h>
+#include <semaphore/semaphore.h>
 
 #define ADDRESS_LIMIT 0xFFFFFFFF
 
@@ -149,6 +150,18 @@ void sys_sched_yield() {
     _force_schedule();
 }
 
-void sys_wait2() {
+void sys_wait2(){
     return wait_process();
+}
+
+sem_ptr sys_sem_open(char * name, int value){
+    return sem_open(name, value);
+}
+
+int sys_sem_wait(sem_ptr sem){
+    return sem_wait(sem);
+}
+
+int sys_sem_post(sem_ptr sem){
+    return sem_post(sem);
 }
