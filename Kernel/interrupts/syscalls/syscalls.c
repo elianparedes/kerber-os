@@ -145,8 +145,10 @@ void sys_focus(int pid) {
     }
 }
 
-void sys_sched_yield(){
+void sys_sched_yield() {
     _force_schedule();
+}
+
 void sys_wait2() {
     return wait_process();
 }
