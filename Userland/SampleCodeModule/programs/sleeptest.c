@@ -4,20 +4,30 @@
 
 #define MAX 10
 
+void child2() {
+    for (size_t i = 0; i < 3; i++) {
+        printf("from child2: %d\n", i);
+    }
+}
+
 void child() {
-    for (size_t i = 0; i < MAX; i++) {
-        printf("Print: %d\n", i);
+    for (size_t i = 0; i < 1; i++) {
+        printf("from child1: %d\n", i);
+        _run(child2, NULL);
+        _wait2();
     }
 }
 
 void sleeptest() {
     int pid = 0;
-    while (1) {
+    int i = 0;
+    while (i < MAX) {
         if ((pid = _run(child, NULL)) > 0) {
             printf("Process created %d\n", pid);
             printf("Sleeping...\n");
             _wait2();
-            printf("Opa...\n");
+            printf("children terminated...\n");
         }
+        i++;
     }
 }

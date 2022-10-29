@@ -11,6 +11,9 @@
 #Object files
 *.o
 
+#GDB files
+.gdbinit
+
 #VSCode
 .vscode
 .bash_history
