@@ -1,8 +1,8 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+#include <graphics.h>
 #include <idtLoader.h>
 #include <keyboard.h>
-#include <graphics.h>
 #include <lib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
@@ -11,8 +11,8 @@
 #include <scheduler.h>
 #include <stdint.h>
 #include <string.h>
-#include <time.h>
 #include <syscall.h>
+#include <time.h>
 
 extern uint8_t text;
 extern uint8_t rodata;

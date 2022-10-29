@@ -49,6 +49,8 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
             break;
         case SYSCALL_SCHED_YIELD:
             sys_sched_yield();
+        case SYSCALL_WAIT2:
+            sys_wait2();
             break;
         default:
             return 0;

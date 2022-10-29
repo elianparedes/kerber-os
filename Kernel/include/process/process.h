@@ -52,6 +52,7 @@ typedef struct process {
     process_t *r_child;
     process_t *parent;
     context_id_t g_context;
+    uint64_t channel;
 } process_t;
 
 typedef void (*function_t)(char *);

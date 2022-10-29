@@ -12,6 +12,7 @@
 #include <kstring.h>
 #include <primes.h>
 #include <printmem.h>
+#include <sleeptest.h>
 #include <test_inforeg.h>
 #include <time.h>
 
@@ -87,6 +88,9 @@ static int run_command(char *name, char *arg) {
     else if (strcmp(name, "printmem") == 0)
         return _run(printmem, arg);
 
+    else if (strcmp(name, "sleeptest") == 0)
+        return _run(sleeptest, NULL);
+
     else if (strcmp(name, "clear") == 0) {
         // temporary workaround.
         // clear command should not be used with pipe operator
@@ -95,6 +99,7 @@ static int run_command(char *name, char *arg) {
         current_layout_mode = FULLSCREEN;
         return 256;
     }
+
     return _run(invalid_command, name);
 }
 

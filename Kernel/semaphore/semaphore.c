@@ -1,7 +1,7 @@
 /*#include <semaphore/semaphore.h>
-#include <process.h>
-#include <pmm.h>
 #include <fifo_queue.h>
+#include <pmm.h>
+#include <process.h>
 
 #define MAX_PROCESS 50
 
@@ -20,7 +20,7 @@ int _xchg(int * var_ptr  , int value);
 
 int lock = 0;
 
-// spinlock 
+// spinlock
 static void acquire(int *lock){
   while(_xchg(lock, 1) != 0);
 }
@@ -58,7 +58,7 @@ int sem_wait(sem_ptr sem){
     }
     release(&lock);
 }
- 
+
 int sem_post(sem_ptr sem){
     acquire(&lock);
     if (xadd(sem->value, 1) > 0){
