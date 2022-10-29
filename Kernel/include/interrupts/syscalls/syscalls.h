@@ -34,6 +34,12 @@ enum STD {
 #define SYSCALL_FOCUS              77
 #define SYSCALL_SCHED_YIELD 24
 
+#define SYSCALL_SEM_OPEN 70
+#define SYSCALL_SEM_WAIT 71
+#define SYSCALL_SEM_POST 72
+
+typedef struct sem * sem_ptr;
+
 /**
  * @brief Reads up to count bytes from keyboard and copies them to buffer
  *
@@ -156,5 +162,10 @@ void sys_focus(int pid);
 
 void sys_sched_yield();
 void sys_wait2();
+sem_ptr sys_sem_open(char * name, int value);
+
+int sys_sem_wait(sem_ptr sem);
+
+int sys_sem_post(sem_ptr sem);
 
 #endif

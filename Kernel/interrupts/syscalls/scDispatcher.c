@@ -51,6 +51,14 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
             sys_sched_yield();
         case SYSCALL_WAIT2:
             sys_wait2();
+        case SYSCALL_SEM_OPEN:
+            return sys_sem_open((char *)arg0, (int)arg1);
+            break;
+        case SYSCALL_SEM_WAIT:
+            return sys_sem_wait((sem_ptr)arg0);
+            break;
+        case SYSCALL_SEM_POST:
+            return sys_sem_post((sem_ptr)arg0);
             break;
         default:
             return 0;
