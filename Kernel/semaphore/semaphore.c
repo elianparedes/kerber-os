@@ -86,7 +86,9 @@ int sem_wait(sem_ptr sem)
     if (sem->value < 0)
     {
         sleep(sem);
-        _force_timer_int();
+        release(&sem->lock);
+        
+        _force_schedule();
     }
     release(&sem->lock);
 
@@ -104,7 +106,7 @@ int sem_post(sem_ptr sem)
     acquire(&sem->lock);
     sem->value++;
     if (sem->value >= 0)
-    {
+    {   
         wakeup(sem);
     }
     release(&sem->lock);
