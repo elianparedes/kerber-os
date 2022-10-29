@@ -1,8 +1,8 @@
 #ifndef _SEMAPHORE_H_
 #define _SEMAPHORE_H_
 
-#define MAX_SEM_VALUE 10
-#define MAX_SEMAPHORES 100
+#define MAX_SEM_VALUE 5
+#define MAX_SEMAPHORES 15
 
 typedef struct sem * sem_ptr;
 

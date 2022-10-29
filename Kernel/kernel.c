@@ -94,7 +94,7 @@ void *initializeKernelBinary()
 int main() {
     init_pmm(); // init physical memory manager
     load_idt();
-
+    init_sem_list();
     ((EntryPoint)sampleCodeModuleAddress)();
 
     while (1)

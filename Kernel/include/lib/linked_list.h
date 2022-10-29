@@ -8,7 +8,7 @@ list_ptr new_linked_list(int (*comp_funct)(void *, void *));
 
 void add(list_ptr list, void * data);
 
-void remove(list_ptr list, void * data);
+int remove(list_ptr list, void * data);
 
 void * find(list_ptr list, void * data, int (*comp_funct)(void *, void *));
 

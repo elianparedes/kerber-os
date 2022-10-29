@@ -1,23 +1,21 @@
 #include <semaphore/semaphore.h>
 #include <scheduler.h>
 #include <pmm.h>
-#include <interrupts.h>
-#include <fifo_queue.h>
 #include <linked_list.h>
 #include <lib.h>
-#include <graphics.h>
 
-#define MAX_PROCESS 50
+#define ERROR -1
+#define SUCCESS 0
 
 typedef struct sem
 {
     char *name;
     int value;
     int lock;
-    fifo_queue_ptr fifo_queue;
 } sem;
 
 static list_ptr sem_list;
+static int sem_count;
 
 extern int _xadd(int *var_ptr, int value);
 extern int _xchg(int *var_ptr, int value);
@@ -43,22 +41,6 @@ static void release(int *lock)
     _xchg(lock, 0);
 }
 
-static void sleep(sem_ptr sem)
-{
-    process_t *current_proc = get_current_process();
-    enqueue(sem->fifo_queue, current_proc);
-    current_proc->status = PAUSED;
-}
-
-static void wakeup(sem_ptr sem)
-{
-    process_t *process = (process_t *)dequeue(sem->fifo_queue);
-    if (process != NULL)
-    {
-        process->status = READY;
-    }
-}
-
 void init_sem_list()
 {
     sem_list = new_linked_list(comparison_function);
@@ -69,11 +51,15 @@ sem_ptr sem_open(char *name, int value)
     sem_ptr sem_find;
     if ((sem_find = find(sem_list, (void *)name, NULL)) == NULL)
     {
+        if (sem_count + 1 == MAX_SEMAPHORES){
+            return NULL;
+        }
         sem_ptr new_sem = kmalloc(sizeof(sem));
         new_sem->name = name;
         new_sem->value = value;
         new_sem->lock = 0;
-        new_sem->fifo_queue = new_fifo_queue();
+        add(sem_list, new_sem);
+        sem_count++;
         return new_sem;
     }
     return sem_find;
@@ -85,55 +71,33 @@ int sem_wait(sem_ptr sem)
     sem->value--;
     if (sem->value < 0)
     {
-        sleep(sem);
+        //TODO: check
         release(&sem->lock);
-        
-        _force_schedule();
+        sleep(sem);
     }
     release(&sem->lock);
-
-    /**
-     * TODO:
-     * @return 0 on success
-     * -1 on error
-     *  EINVAL sem is not a valid semaphore. (Unix sets errno)
-     */
-    return 0;
+    return SUCCESS;
 }
 
 int sem_post(sem_ptr sem)
 {
     acquire(&sem->lock);
-    sem->value++;
-    if (sem->value >= 0)
-    {   
-        wakeup(sem);
+    if (sem->value + 1 == MAX_SEM_VALUE){
+        release(&sem->lock);
+        return ERROR;
     }
+    sem->value++;
+    wakeup(sem);
     release(&sem->lock);
-
-    /**
-     * TODO:
-     * @return 0 on success
-     * -1 on error
-     *  EINVAL sem is not a valid semaphore. (Unix sets errno)
-     * EOVERFLOW
-        The maximum allowable value for a semaphore would be exceeded.
-    */
-    return 0;
+    return SUCCESS;
 }
 
 int sem_close(sem_ptr sem)
 {
+    if (remove(sem_list, sem) == ERROR){
+        return ERROR;
+    }
     kfree(sem);
-    remove(sem_list, sem);
-    /**
-     * TODO:
-     * @return 0 on success
-     * -1 on error
-     *  EINVAL sem is not a valid semaphore. (Unix sets errno)
-     * EOVERFLOW
-        The maximum allowable value for a semaphore would be exceeded.
-    */
-
-    return 0;
+    sem_count--;
+    return SUCCESS;
 }

@@ -1,6 +1,9 @@
 #include <pmm.h>
 #include <linked_list.h>
 
+#define ERROR -1
+#define SUCCESS 0
+
 typedef struct node_list_t
 {
     void *data;
@@ -84,9 +87,13 @@ void add(list_t *list, void *data)
     }
 }
 
-void remove(list_t *list, void *data)
+int remove(list_t *list, void *data)
 {
     list->start = delete_helper(list, list->start, data);
+    if (list->start == NULL){
+        return ERROR;
+    }
+    return SUCCESS;
 }
 
 void * find(list_t * list, void * data, int (*comp_funct)(void *, void *)){
@@ -100,7 +107,7 @@ void * find(list_t * list, void * data, int (*comp_funct)(void *, void *)){
     node_list_t * node= list->start;
     while (node != NULL){
         if (funct(node->data, data))
-            return node;
+            return node->data;
         node=node->next;
     }
     return NULL;
