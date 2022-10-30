@@ -95,6 +95,11 @@ void *initializeKernelBinary()
 void process_a(){
     int pipe_data[2];
     int code = open_pipe("my_pipe",pipe_data);
+    if(code == -1)
+        puts("Hubo error");
+    char buffer[256] = {0};
+    read(pipe_data[0],buffer,19);
+    printf("%s",buffer);
 }
 
 void kernel_shell()
@@ -105,10 +110,7 @@ void kernel_shell()
     int pipe_data[2];
     create_pipe("my_pipe",pipe_data);
     printf("%d\n",pipe_data[0]);
-    write(pipe_data[1],"Hola\n",6);
-    char buffer[256] = {0};
-    read(pipe_data[0],buffer,6);
-    printf("%s",buffer);
+    write(pipe_data[1],"Hola soy la shell\n",19);
 
     add_process(process_a,NULL);
 

@@ -50,7 +50,7 @@ void close_dataDescriptor(dataDescriptor_t dataD){
         return;
 
     if(dataD->mode == PIPE_T)
-        close_pipe(dataD->pipe,dataD->mode);
+        close_pipe(dataD->pipe,dataD->mode == WRITE_MODE);
     
     kfree(dataD);
 }

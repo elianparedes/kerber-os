@@ -25,6 +25,6 @@ int open_pipe(char * name , int pipe_dataD[2]);
  */
 int piperead(pipe_t pipe, char * buffer, int count);
 int pipewrite(pipe_t pipe, const char * buffer, int count);
-void close_pipe(pipe_t pipe, mode_t mode);
+void close_pipe(pipe_t pipe, int writable);
 
 #endif
