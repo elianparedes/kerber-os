@@ -44,10 +44,10 @@ process_t *new_process(function_t function, char *arg) {
     process->parent = NULL;
 
     /* Creates stdin in dataDescriptor 0*/
-    process->dataDescriptors[0] = create_dataDescriptor(STD_T,true,false);
+    process->dataDescriptors[0] = create_dataDescriptor(STD_T,READ_MODE);
 
     /* Creates stdout in dataDescriptor 0*/
-    process->dataDescriptors[1] = create_dataDescriptor(STD_T,false,true);
+    process->dataDescriptors[1] = create_dataDescriptor(STD_T,WRITE_MODE);
 
     process->dataD_index = 2;
 
