@@ -23,7 +23,7 @@ static uint64_t process_count = 0;
 
 void wait_process() {
     process_t *current_process = get_current_process();
-    if (current_process->l_child != NULL || current_process->r_child != NULL)
+    if (size(current_process->children))
         sleep(current_process);
     else
         return;
@@ -78,11 +78,9 @@ int add_process(function_t main, char *arg) {
 
     if (enqueue_process(process)) {
         if (current_node != NULL) {
-            if (current_node->process->l_child == NULL)
-                current_node->process->l_child = process;
-
-            else if (current_node->process->r_child == NULL)
-                current_node->process->r_child = process;
+            
+            // add new process to children list of current process
+            add(current_node->process->children, process);
         }
         process->parent = current_node->process;
         return process->pid;
@@ -120,12 +118,8 @@ static process_t *free_process(int pid) {
     if (front_node == target_node)
         front_node = target_node->next;
 
-    // tells the parent that the children process ends
-    if (target_node->process->parent->l_child == target_node->process)
-        target_node->process->parent->l_child = NULL;
-
-    else if (target_node->process->parent->r_child == target_node->process)
-        target_node->process->parent->r_child = NULL;
+    // remove process from parent's children list
+    remove(target_node->process->parent->children, pid);
 
     kfree(target_node->process);
     kfree(target_node);
