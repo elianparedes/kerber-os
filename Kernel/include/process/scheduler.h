@@ -8,6 +8,12 @@
 #define MAX_PROC_COUNT 256
 
 /**
+ * @brief set current process in wait status
+ * 
+ */
+void wait_process();
+
+/**
  * @brief Saves the CPU state in the current process and switches to the next
  * one in the queue. This method should be called while IF flag is set to 0.
  *
@@ -63,5 +69,9 @@ process_t *get_current_process();
  * process could not be found
  */
 process_t *get_process(pid_t pid);
+
+void sleep(uint64_t channel);
+
+void wakeup(uint64_t channel);
 
 #endif /* _SCHEDULER_H_ */

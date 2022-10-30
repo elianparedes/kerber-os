@@ -9,7 +9,7 @@
 
 static int last_pid = 0;
 
-static void process_start(function_t function, char *arg) {
+static void start(function_t function, char *arg) {
     function(arg);
     sys_exit(P_EXIT_CODE);
 }
@@ -28,7 +28,7 @@ process_t *new_process(function_t function, char *arg) {
 
     context->rsi = (uint64_t)arg;
     context->rdi = (uint64_t)function;
-    context->rip = (uint64_t)&process_start;
+    context->rip = (uint64_t)&start;
     context->cs = P_INIT_CS;
     context->eflags = P_INIT_EFLAGS;
 
@@ -36,6 +36,7 @@ process_t *new_process(function_t function, char *arg) {
     context->ss = 0x0;
 
     process->context = context;
+    process->channel = NULL;
 
     process->g_context = get_context_id();
 

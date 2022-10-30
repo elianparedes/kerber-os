@@ -18,6 +18,8 @@ GLOBAL _exception6Handler
 GLOBAL _syscall_master_handler
 GLOBAL _force_schedule
 
+GLOBAL _force_timer_int
+
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 EXTERN schedule
@@ -136,6 +138,10 @@ _sti:
 	sti
 	ret
 
+_force_timer_int:
+	int 20h
+	ret
+
 picMasterMask:
 	push rbp
     mov rbp, rsp
@@ -148,7 +154,7 @@ picSlaveMask:
 	push    rbp
     mov     rbp, rsp
     mov     ax, di  ; ax = mascara de 16 bits
-    out	0A1h,al
+    out		0A1h,al
     pop     rbp
     retn
 
@@ -186,15 +192,8 @@ _exception6Handler:
 	exceptionHandler 6
 
 _force_schedule:
-	cli
-	pushState
-
-	mov rdi, rsp
-	call schedule
-	mov rsp, rax
-
-	popState
-	iretq
+	int 20h
+	ret
 
 _syscall_master_handler:
 	cli
@@ -215,10 +214,11 @@ _syscall_master_handler:
 	push r15
 
 	mov rcx, r10
+
 	push rax
 	call syscall_dispatcher 
-
 	pop rbx
+
 	mov rbx,rax
 	mov al, 20h
 	out 20h, al

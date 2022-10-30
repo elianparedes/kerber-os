@@ -4,7 +4,7 @@
 #include <pmm.h>
 #include <stddef.h>
 
-#define SIZE      (1024 * 256)
+#define SIZE      (1024 * 64)
 #define BASE_ADDR 0x600000
 
 typedef union header {
@@ -23,7 +23,7 @@ void init_pmm() {
     // insert the end of space header
 
     current_header =
-        current_header + 1 + (current_header->size & -0x1) / sizeof(header_t);
+        current_header + 1 + (current_header->size & ~0x1) / sizeof(header_t);
     current_header->size = 0;
     current_header->alloced = 1;
 }
@@ -97,9 +97,9 @@ void kfree(void *ptr) {
                          (current_header->size & ~0x1) / sizeof(header_t);
     }
 
-    
+
     //print end header
-    
+
     ncPrint("[ ");
     ncPrintHex(current_header);
     ncPrintChar(' ');

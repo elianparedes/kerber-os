@@ -55,6 +55,7 @@ typedef struct process {
     context_id_t g_context;
     dataDescriptor_t dataDescriptors[128];
     size_t dataD_index;
+    uint64_t channel;
 } process_t;
 
 typedef void (*function_t)(char *);
