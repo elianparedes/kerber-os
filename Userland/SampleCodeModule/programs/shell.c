@@ -98,7 +98,7 @@ static int run_command(char *name, char *arg) {
     else if (strcmp(name, "sleeptest") == 0){
         return _run(sleeptest, NULL);
     }
-    else if (strcmp(name, "printsems") ==0){
+    else if (strcmp(name, "sem") ==0){
         return _run(printsems, NULL);
     }
 
