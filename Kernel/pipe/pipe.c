@@ -10,8 +10,8 @@ typedef struct pipe
 {
     char *name;
     char data[PIPE_SIZE];
-    int nwrite;
-    int nread;
+    unsigned int nwrite;
+    unsigned int nread;
     int readopen;
     int writeopen;
 } pipe;
@@ -108,8 +108,13 @@ int pipewrite(pipe_t pipe, const char *buffer, int count)
     int i;
     for (i = 0; i < count; i++)
     {
-        pipe->data[pipe->nwrite++] = buffer[i];
+        while(pipe->nwrite == pipe->nread + PIPE_SIZE){
+            wakeup(&pipe->nread);
+            sleep(&pipe->nwrite);
+        }
+        pipe->data[pipe->nwrite++ % PIPE_SIZE] = buffer[i];
     }
+    wakeup(&pipe->nread);
     return i;
 }
 
@@ -119,11 +124,18 @@ int piperead(pipe_t pipe, char *buffer, int count)
     if (pipe == NULL || buffer == NULL || count < 0)
         return -1;
 
+    while(pipe->nread == pipe->nwrite){
+        sleep(&pipe->nread);
+    }  
+
     int i;
-    for (i = 0; i < count; i++)
-    {
-        buffer[i] = pipe->data[pipe->nread++];
+    for (i = 0; i < count; i++){
+        if(pipe->nread == pipe->nwrite)
+            break;
+        buffer[i] = pipe->data[pipe->nread++ % PIPE_SIZE];
     }
+
+    wakeup(&pipe->nwrite);
 
     return i;
 }
@@ -145,8 +157,8 @@ void close_pipe(pipe_t pipe, int writable)
         }
     }
 
-    if (pipe->readopen == 0 && pipe->writeopen == 0){
-        remove(pipe_list, pipe);
+    if (pipe->readopen == 0 && pipe->writeopen == 0 && pipe->nread == pipe->nwrite){
+        remove(pipe_list, pipe->name);
         kfree(pipe);
     }
 

@@ -16,13 +16,19 @@ enum DISTRIBUTION
     SPLIT_DISTRIBUTION
 };
 
-uint16_t read(int fd, char *buffer, uint16_t count)
+int16_t read(int fd, char *buffer, uint16_t count)
 {
     if (fd < 0)
         return -1;
 
     process_t *current_process = get_current_process();
+
+    if(fd >= current_process->dataD_index )
+        return -1;
+
     dataDescriptor_t dataD = current_process->dataDescriptors[fd];
+    if(getMode_dataDescriptor(dataD) != READ_MODE)
+        return -1;
 
     pipe_t pipe;
     uint16_t i;
@@ -52,14 +58,21 @@ uint16_t read(int fd, char *buffer, uint16_t count)
     }
 }
 
-uint16_t write(int fd, char *buffer, uint16_t count)
+int16_t write(int fd, char *buffer, uint16_t count)
 {
 
     if (fd < 0)
         return -1;
 
     process_t *current_process = get_current_process();
+
+    if(fd >= current_process->dataD_index )
+        return -1;
+
     dataDescriptor_t dataD = current_process->dataDescriptors[fd];
+    if(getMode_dataDescriptor(dataD) != WRITE_MODE)
+        return -1;
+
     pipe_t pipe;
     context_id_t gc;
     uint16_t i;

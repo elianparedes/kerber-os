@@ -138,6 +138,9 @@ static process_t *free_process(int pid) {
 void exit_process() {
     process_t *current_process = get_current_process();
 
+    close_dataDescriptor(current_process->dataDescriptors[0]);
+    close_dataDescriptor(current_process->dataDescriptors[1]);
+    
     if (current_process->pid > 0 && current_process->parent != NULL)
         wakeup(current_process->parent);
 

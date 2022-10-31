@@ -48,7 +48,7 @@ typedef struct sem * sem_ptr;
  * @param count number of bytes to read
  * @return uint16_t numbers of bytes read
  */
-uint16_t read(int fd, char *buffer, uint16_t count);
+int16_t read(int fd, char *buffer, uint16_t count);
 
 /**
  * @brief Writes up to count bytes from buffer and copies them to screen
@@ -58,7 +58,7 @@ uint16_t read(int fd, char *buffer, uint16_t count);
  * @param count number of bytes to write
  * @return uint16_t numbers of bytes written
  */
-uint16_t write(int fd, char *buffer, uint16_t count);
+int16_t write(int fd, char *buffer, uint16_t count);
 
 /**
  * @brief Fills struct_time given with time information

@@ -30,6 +30,10 @@ DATA_TYPE getDataType_dataDescriptor(dataDescriptor_t dataD){
     return dataD->type;
 }
 
+mode_t getMode_dataDescriptor(dataDescriptor_t dataD){
+    return dataD->mode;
+}
+
 pipe_t getPipe_dataDescriptor(dataDescriptor_t dataD){
     if( dataD == NULL || dataD->type != PIPE_T)
         return NULL;
@@ -49,7 +53,7 @@ void close_dataDescriptor(dataDescriptor_t dataD){
     if(dataD == NULL)
         return;
 
-    if(dataD->mode == PIPE_T)
+    if(dataD->type == PIPE_T)
         close_pipe(dataD->pipe,dataD->mode == WRITE_MODE);
     
     kfree(dataD);

@@ -28,6 +28,8 @@ pipe_t getPipe_dataDescriptor(dataDescriptor_t dataD);
  */
 DATA_TYPE getDataType_dataDescriptor(dataDescriptor_t dataD);
 
+mode_t getMode_dataDescriptor(dataDescriptor_t dataD);
+
 void close_dataDescriptor(dataDescriptor_t dataD);
 
 #endif
