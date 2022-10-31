@@ -36,18 +36,19 @@ void sleep(uint64_t channel) {
     _force_schedule();
 }
 
-void wakeup(uint64_t channel) {
+int wakeup(uint64_t channel) {
     node_t *aux_node = front_node;
 
     do {
         if (aux_node->process->channel == channel) {
             aux_node->process->status = READY;
             aux_node->process->channel = NULL;
-            return;
+            return aux_node->process->pid;
         }
 
         aux_node = aux_node->next;
     } while (aux_node != front_node);
+    return PID_ERR;
 }
 
 static bool enqueue_process(process_t *process) {

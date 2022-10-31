@@ -5,6 +5,7 @@
 #define MAX_SEMAPHORES 15
 
 typedef struct sem * sem_ptr;
+typedef struct copy_sem copy_sem_t;
 
 void init_sem_list();
 
@@ -15,5 +16,7 @@ int sem_wait(sem_ptr semaphore);
 int sem_post(sem_ptr semaphore);
 
 int sem_close(sem_ptr semaphore);
+
+int get_semaphores(copy_sem_t *sems[]);
 
 #endif

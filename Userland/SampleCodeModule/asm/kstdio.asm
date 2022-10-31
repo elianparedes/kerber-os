@@ -19,6 +19,9 @@ GLOBAL _sem_open
 GLOBAL _sem_wait
 GLOBAL _sem_post
 GLOBAL _sem_close
+GLOBAL _get_semaphores
+GLOBAL _malloc
+GLOBAL _free
 
 section .text
 
@@ -127,13 +130,31 @@ _sem_close:
     int 0x80
     ret
 
+_get_semaphores:
+    mov rax, SYSCALL_GET_SEMS_ID
+    int 0x80
+    ret
+
+_malloc:
+    mov rax, SYSCALL_MALLOC_ID
+    int 0x80
+    ret
+
+_free:
+    mov rax, SYSCALL_FREE_ID
+    int 0x80
+    ret
+
+
 section .rodata
 SYSCALL_READ_ID equ 0
 SYSCALL_WRITE_ID equ 1
 SYSCALL_SWITCH_SCREEN_MODE_ID equ 4
 SYSCALL_CLEAR_SCREEN_ID equ 5
 SYSCALL_CNTRL_LISTENER_ID equ 6
+SYSCALL_MALLOC_ID equ 9
 SYSCALL_GET_MEM_ID equ 10
+SYSCALL_FREE_ID equ 11
 SYSCALL_COPY_CPU_STATE equ 7
 SYSCALL_EXIT_ID equ 60
 SYSCALL_GETTIME_ID equ 96
@@ -149,5 +170,6 @@ SYSCALL_SEM_OPEN_ID equ 70
 SYSCALL_SEM_WAIT_ID equ 71
 SYSCALL_SEM_POST_ID equ 72
 SYSCALL_SEM_CLOSE_ID equ 73
+SYSCALL_GET_SEMS_ID equ 74
 
 KBD_PRINT_REG equ 1

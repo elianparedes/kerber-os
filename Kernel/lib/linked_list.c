@@ -62,7 +62,7 @@ void to_begin(list_t * l){
 }
 
 int hasNext(list_t * l){
-    return l->current->next != NULL;
+    return l->current != NULL;
 }
 
 void * next(list_t * l){
@@ -90,9 +90,6 @@ void add(list_t *list, void *data)
 int remove(list_t *list, void *data)
 {
     list->start = delete_helper(list, list->start, data);
-    if (list->start == NULL){
-        return ERROR;
-    }
     return SUCCESS;
 }
 
@@ -111,4 +108,17 @@ void * find(list_t * list, void * data, int (*comp_funct)(void *, void *)){
         node=node->next;
     }
     return NULL;
+}
+
+static void free_list_helper(node_list_ptr node){
+    if (node == NULL){
+        return;
+    }
+    free_list_helper(node->next);
+    kfree(node);
+}
+
+void free_list(list_ptr list){
+    free_list_helper(list->start);
+    kfree(list);
 }

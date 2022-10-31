@@ -16,6 +16,7 @@
 #include <test_inforeg.h>
 #include <time.h>
 #include <testsync.h>
+#include <printsems.h>
 
 #define LINE_LENGTH    512
 #define TOKEN_LENGTH   512
@@ -94,8 +95,12 @@ static int run_command(char *name, char *arg) {
     else if (strcmp(name, "testnosync") == 0){
         return _run(test_sync, "0");
     }
-    else if (strcmp(name, "sleeptest") == 0)
+    else if (strcmp(name, "sleeptest") == 0){
         return _run(sleeptest, NULL);
+    }
+    else if (strcmp(name, "printsems") ==0){
+        return _run(printsems, NULL);
+    }
 
     else if (strcmp(name, "clear") == 0) {
         // temporary workaround.

@@ -4,6 +4,7 @@
 #include <registers.h>
 #include <rtc.h>
 #include <stdint.h>
+#include <stddef.h>
 
 #define ERROR   -1
 #define SUCCESS 0
@@ -22,6 +23,8 @@ enum STD {
 #define SYSCALL_CNTRL_LISTENER     6
 #define SYSCALL_GET_MEM            10
 #define SYSCALL_COPY_CPU_STATE     7
+#define SYSCALL_MALLOC 9
+#define SYSCALL_FREE 11
 
 #define SYSCALL_EXIT               60
 #define SYSCALL_GETTIME            96
@@ -37,8 +40,11 @@ enum STD {
 #define SYSCALL_SEM_OPEN 70
 #define SYSCALL_SEM_WAIT 71
 #define SYSCALL_SEM_POST 72
+#define SYSCALL_SEM_CLOSE 73
+#define SYSCALL_GET_SEMS 74
 
 typedef struct sem * sem_ptr;
+typedef struct copy_sem copy_sem_t;
 
 /**
  * @brief Reads up to count bytes from keyboard and copies them to buffer
@@ -161,11 +167,22 @@ void sys_pause(int pid);
 void sys_focus(int pid);
 
 void sys_sched_yield();
+
 void sys_wait2();
+
+//Semaphore syscalls
 sem_ptr sys_sem_open(char * name, int value);
 
 int sys_sem_wait(sem_ptr sem);
 
 int sys_sem_post(sem_ptr sem);
+
+int sys_sem_close(sem_ptr sem);
+
+int sys_get_semaphores(copy_sem_t * sems[]);
+
+void * sys_malloc(size_t size);
+
+void sys_free(void *ptr);
 
 #endif

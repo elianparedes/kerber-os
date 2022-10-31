@@ -7,6 +7,7 @@
 #include <syscalls.h>
 #include <video.h>
 #include <semaphore/semaphore.h>
+#include <pmm.h>
 
 #define ADDRESS_LIMIT 0xFFFFFFFF
 
@@ -164,4 +165,20 @@ int sys_sem_wait(sem_ptr sem){
 
 int sys_sem_post(sem_ptr sem){
     return sem_post(sem);
+}
+
+int sys_sem_close(sem_ptr sem){
+    return sem_close(sem);
+}
+
+int sys_get_semaphores(copy_sem_t * sems[]){
+    return get_semaphores(sems);
+}
+
+void * sys_malloc(size_t size){
+    return kmalloc(size);
+}
+
+void sys_free(void *ptr){
+    kfree(ptr);
 }
