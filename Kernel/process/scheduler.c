@@ -21,12 +21,31 @@ static node_t *rear_node = NULL;
 
 static uint64_t process_count = 0;
 
+static process_t *free_process(int pid);
+
+static int process_wstatus(process_t *process, pstatus_t status) {
+    return process->status == status;
+}
+
 void wait_process() {
     process_t *current_process = get_current_process();
-    if (size(current_process->children))
-        sleep(current_process);
-    else
+
+    // if no children, return
+    if (size(current_process->children) <= 0)
         return;
+
+    while (1) {
+        list_ptr children_list = current_process->children;
+
+        process_t *terminated_child =
+            find(children_list, PAUSED, process_wstatus);
+        if (terminated_child != NULL) {
+            free_process(terminated_child->pid);
+            return;
+        }
+
+        sleep(current_process);
+    }
 }
 
 void sleep(uint64_t channel) {
@@ -78,17 +97,16 @@ int add_process(function_t main, char *arg) {
 
     if (enqueue_process(process)) {
         if (current_node != NULL) {
-            
             // add new process to children list of current process
             add(current_node->process->children, process);
+            process->parent = current_node->process;
         }
-        process->parent = current_node->process;
+
         return process->pid;
     }
 
     return PID_ERR;
 }
-
 node_t *get_node_before(pid_t pid) {
     node_t *aux_node = front_node;
 
@@ -135,7 +153,11 @@ void exit_process() {
     if (current_process->pid > 0 && current_process->parent != NULL)
         wakeup(current_process->parent);
 
-    free_process(current_process->pid);
+    // leave process as terminated. Parent will clean it up on wait
+    current_process->status = PAUSED;
+    current_process->exit_status = 0;
+
+    // free_process(current_process->pid);
 
     _force_schedule();
 }

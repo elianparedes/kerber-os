@@ -26,6 +26,7 @@ process_t *new_process(function_t function, char *arg) {
     process->pid = last_pid++;
     process->status = READY;
     process->children = new_linked_list(process_compare);
+    process->exit_status = -1;
 
     context_t *context =
         (context_t *)((uint64_t)process + K_PROCESS_STACK_SIZE -

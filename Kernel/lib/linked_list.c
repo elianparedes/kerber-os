@@ -94,7 +94,7 @@ void *find(list_t *list, void *data, int (*comp_funct)(void *, void *)) {
     node_list_t *node = list->start;
     while (node != NULL) {
         if (funct(node->data, data))
-            return node;
+            return node->data;
         node = node->next;
     }
     return NULL;

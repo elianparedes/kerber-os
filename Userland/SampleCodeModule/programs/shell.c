@@ -302,7 +302,10 @@ int shell() {
             }
         }
 
-        _wait2();
+        for (size_t i = 0; i < command_count; i++)
+        {
+            _wait2();
+        }
     }
 
     return 0;
