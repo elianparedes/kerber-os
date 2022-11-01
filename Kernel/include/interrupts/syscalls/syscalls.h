@@ -38,6 +38,10 @@ enum STD {
 #define SYSCALL_SEM_WAIT 71
 #define SYSCALL_SEM_POST 72
 
+#define SYSCALL_CLOSE 50
+#define SYSCALL_CREATE_PIPE 51
+#define SYSCALL_OPEN_PIPE 52
+
 typedef struct sem * sem_ptr;
 
 /**
@@ -167,5 +171,11 @@ sem_ptr sys_sem_open(char * name, int value);
 int sys_sem_wait(sem_ptr sem);
 
 int sys_sem_post(sem_ptr sem);
+
+void sys_close(unsigned int fd);
+
+int sys_create_pipe(char * name, int fd[2]);
+
+int sys_open_pipe(char * name, int fd[2]);
 
 #endif

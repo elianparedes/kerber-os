@@ -109,12 +109,12 @@ int pipewrite(pipe_t pipe, const char *buffer, int count)
     for (i = 0; i < count; i++)
     {
         while(pipe->nwrite == pipe->nread + PIPE_SIZE){
-            wakeup(&pipe->nread);
-            sleep(&pipe->nwrite);
+            wakeup((uint64_t)&pipe->nread);
+            sleep((uint64_t)&pipe->nwrite);
         }
         pipe->data[pipe->nwrite++ % PIPE_SIZE] = buffer[i];
     }
-    wakeup(&pipe->nread);
+    wakeup((uint64_t)&pipe->nread);
     return i;
 }
 
@@ -125,7 +125,7 @@ int piperead(pipe_t pipe, char *buffer, int count)
         return -1;
 
     while(pipe->nread == pipe->nwrite){
-        sleep(&pipe->nread);
+        sleep((uint64_t)&pipe->nread);
     }  
 
     int i;
@@ -135,7 +135,7 @@ int piperead(pipe_t pipe, char *buffer, int count)
         buffer[i] = pipe->data[pipe->nread++ % PIPE_SIZE];
     }
 
-    wakeup(&pipe->nwrite);
+    wakeup((uint64_t)&pipe->nwrite);
 
     return i;
 }
@@ -157,7 +157,7 @@ void close_pipe(pipe_t pipe, int writable)
         }
     }
 
-    if (pipe->readopen == 0 && pipe->writeopen == 0 && pipe->nread == pipe->nwrite){
+    if (pipe->readopen == 0 && pipe->writeopen == 0 && pipe->nread > 0 && pipe->nwrite > 0){
         remove(pipe_list, pipe->name);
         kfree(pipe);
     }

@@ -7,6 +7,7 @@
 #include <syscalls.h>
 #include <video.h>
 #include <semaphore/semaphore.h>
+#include <dataDescriptor.h>
 
 #define ADDRESS_LIMIT 0xFFFFFFFF
 
@@ -234,4 +235,19 @@ int sys_sem_wait(sem_ptr sem){
 
 int sys_sem_post(sem_ptr sem){
     return sem_post(sem);
+}
+
+void sys_close(unsigned int fd){
+    process_t * process = get_current_process();
+    if(fd >= process->dataD_index)
+        return;
+    close_dataDescriptor(process->dataDescriptors[fd]);
+}
+
+int sys_create_pipe(char * name, int fd[2]){
+    return create_pipe(name,fd);
+}
+
+int sys_open_pipe(char * name, int fd[2]){
+    return open_pipe(name,fd);
 }
