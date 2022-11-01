@@ -44,13 +44,12 @@ static int process_comparison_function(void * pid, void * other_pid){
 }
 
 // spinlock
-static void acquire(int *lock)
-{
-    while (_xchg(lock, 1) != 0);
+static void acquire(int *lock) {
+    while (_xchg(lock, 1) != 0)
+        ;
 }
 
-static void release(int *lock)
-{
+static void release(int *lock) {
     _xchg(lock, 0);
 }
 
@@ -59,8 +58,7 @@ void init_sem_list()
     sem_list = new_linked_list(comparison_function);
 }
 
-sem_ptr sem_open(char *name, int value)
-{
+sem_ptr sem_open(char *name, int value) {
     sem_ptr sem_find;
     if ((sem_find = find(sem_list, (void *)name, NULL)) == NULL)
     {
@@ -79,8 +77,7 @@ sem_ptr sem_open(char *name, int value)
     return sem_find;
 }
 
-int sem_wait(sem_ptr sem)
-{
+int sem_wait(sem_ptr sem) {
     acquire(&sem->lock);
     sem->value--;
     if (sem->value < 0)
@@ -95,8 +92,7 @@ int sem_wait(sem_ptr sem)
     return SUCCESS;
 }
 
-int sem_post(sem_ptr sem)
-{
+int sem_post(sem_ptr sem) {
     acquire(&sem->lock);
     if (sem->value + 1 == MAX_SEM_VALUE){
         release(&sem->lock);
