@@ -14,6 +14,10 @@ static void start(function_t function, char *arg) {
     sys_exit(P_EXIT_CODE);
 }
 
+static int process_compare(process_t *process, pid_t pid) {
+    return process->pid == pid;
+}
+
 process_t *new_process(function_t function, char *arg) {
     process_t *process = (process_t *)kmalloc(sizeof(process_t));
     if (process == NULL)
@@ -21,6 +25,8 @@ process_t *new_process(function_t function, char *arg) {
 
     process->pid = last_pid++;
     process->status = READY;
+    process->children = new_linked_list(process_compare);
+    process->exit_status = -1;
 
     context_t *context =
         (context_t *)((uint64_t)process + K_PROCESS_STACK_SIZE -

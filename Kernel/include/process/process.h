@@ -2,6 +2,7 @@
 #define _PROCESS_H_
 
 #include <graphics.h>
+#include <linked_list.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -56,6 +57,8 @@ typedef struct process {
     dataDescriptor_t dataDescriptors[128];
     size_t dataD_index;
     uint64_t channel;
+    list_ptr children;
+    int exit_status;
 } process_t;
 
 typedef void (*function_t)(char *);
@@ -65,7 +68,8 @@ typedef void (*function_t)(char *);
  *
  * @param main main function of the process
  * @param arg argument that the main function receives
- * @return process_t* pointer to the created process, or NULL if the process could not be created
+ * @return process_t* pointer to the created process, or NULL if the process
+ * could not be created
  */
 process_t *new_process(function_t main, char *arg);
 

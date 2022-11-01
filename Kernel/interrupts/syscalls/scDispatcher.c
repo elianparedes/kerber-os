@@ -69,6 +69,18 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
             return sys_create_pipe((char *)arg0, (int *)arg1);
         case SYSCALL_OPEN_PIPE:
             return sys_open_pipe((char *)arg0, (int *)arg1);
+        case SYSCALL_SEM_CLOSE:
+            return sys_sem_close((sem_ptr)arg0);
+            break;
+        case SYSCALL_GET_SEMS:
+            return sys_get_semaphores((copy_sem_t **)arg0);
+            break;
+        case SYSCALL_MALLOC:
+            return sys_malloc((size_t)arg0);
+            break;
+        case SYSCALL_FREE:
+            sys_free((void *)arg0);
+            break;
         default:
             return 0;
     }

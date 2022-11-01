@@ -34,4 +34,6 @@ int hasNext(list_ptr l);
  */
 void * next(list_ptr l);
 
+void free_list(list_ptr list);
+
 #endif 
