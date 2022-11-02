@@ -32,4 +32,6 @@ void close_pipe(pipe_t pipe, int writable);
 
 int info_pipe(char * name, pipe_info_t * info);
 
+int info_all_pipes( pipe_info_t * info_arr[], unsigned int size);
+
 #endif

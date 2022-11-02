@@ -219,11 +219,7 @@ static int copy_pids(list_ptr blocked_pid , int blocked_pid_cpy[] ){
     return count;
 }
 
-int info_pipe(char * name, pipe_info_t * info){
-
-    pipe_t pipe = find(pipe_list,name,NULL);
-    if(pipe == NULL)
-        return -1;
+static void copy_info(pipe_t pipe , pipe_info_t * info){
 
     info->name = pipe->name;
     info->nread = pipe->nread;
@@ -232,6 +228,32 @@ int info_pipe(char * name, pipe_info_t * info){
     info->writeopen = pipe->writeopen;
 
     info->blocked_count = copy_pids(pipe->blocked_pid,info->blocked_pid);
+}
+
+int info_pipe(char * name, pipe_info_t * info){
+
+    pipe_t pipe = find(pipe_list,name,NULL);
+    if(pipe == NULL)
+        return -1;
+
+    copy_info(pipe,info);
     
     return 0;
+}
+
+int info_all_pipes( pipe_info_t * info_arr[] , unsigned int size){
+
+    int count = 0;
+
+    if(pipe_list == NULL)
+        return 0;
+
+    to_begin(pipe_list);
+
+    while (hasNext(pipe_list) && count < size ){
+        copy_info((pipe_t)next(pipe_list),info_arr[count++]);
+    }
+
+    return count;
+    
 }

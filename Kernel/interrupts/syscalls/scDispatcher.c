@@ -74,6 +74,8 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
             break;
         case SYSCALL_INFO_PIPE:
             return sys_info_pipe((char *)arg0 , (pipe_info_t *)arg1);
+        case SYSCALL_INFO_ALL_PIPES:
+            return sys_info_all_pipes((pipe_info_t **)arg0,(unsigned int)arg1);
         case SYSCALL_GET_SEMS:
             return sys_get_semaphores((copy_sem_t **)arg0);
             break;

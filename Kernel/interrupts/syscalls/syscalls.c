@@ -258,6 +258,10 @@ int sys_info_pipe(char * name, pipe_info_t * info){
     return info_pipe(name,info);
 }
 
+int sys_info_all_pipes(pipe_info_t * info[] , unsigned int size){
+    return info_all_pipes(info,size);
+}
+
 int sys_sem_close(sem_ptr sem){
     return sem_close(sem);
 }
