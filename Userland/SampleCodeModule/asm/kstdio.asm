@@ -24,6 +24,7 @@ GLOBAL _create_pipe
 GLOBAL _open_pipe
 GLOBAL _info_pipe
 GLOBAL _info_all_pipes
+GLOBAL _dup2
 GLOBAL _get_semaphores
 GLOBAL _malloc
 GLOBAL _free
@@ -160,6 +161,11 @@ _info_all_pipes:
     int 0x80
     ret
 
+_dup2:
+    mov rax, SYSCALL_DUP2
+    int 0x80
+    ret
+
 _get_semaphores:
     mov rax, SYSCALL_GET_SEMS_ID
     int 0x80
@@ -205,6 +211,7 @@ SYSCALL_CREATE_PIPE equ 51
 SYSCALL_OPEN_PIPE equ 52
 SYSCALL_INFO_PIPE equ 53
 SYSCALL_INFO_ALL_PIPES equ 54
+SYSCALL_DUP2 equ 55
 SYSCALL_GET_SEMS_ID equ 74
 
 KBD_PRINT_REG equ 1

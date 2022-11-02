@@ -79,6 +79,8 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
         case SYSCALL_GET_SEMS:
             return sys_get_semaphores((copy_sem_t **)arg0);
             break;
+        case SYSCALL_DUP2:
+            return sys_dup2((unsigned int)arg0, (unsigned int)arg1);
         case SYSCALL_MALLOC:
             return sys_malloc((size_t)arg0);
             break;

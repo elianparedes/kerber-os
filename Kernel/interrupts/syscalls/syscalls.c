@@ -262,6 +262,10 @@ int sys_info_all_pipes(pipe_info_t * info[] , unsigned int size){
     return info_all_pipes(info,size);
 }
 
+int sys_dup2(unsigned int oldfd , unsigned int newfd){
+    return dup2(oldfd,newfd);
+}
+
 int sys_sem_close(sem_ptr sem){
     return sem_close(sem);
 }

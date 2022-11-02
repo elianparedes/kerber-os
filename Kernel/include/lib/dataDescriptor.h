@@ -32,4 +32,6 @@ mode_t getMode_dataDescriptor(dataDescriptor_t dataD);
 
 void close_dataDescriptor(dataDescriptor_t dataD);
 
+int dup2(unsigned int oldfd , unsigned int newfd);
+
 #endif
