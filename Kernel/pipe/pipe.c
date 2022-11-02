@@ -5,6 +5,7 @@
 #include <scheduler.h>
 
 #define PIPE_SIZE (1024)
+#define EOF -1
 
 typedef struct pipe
 {
@@ -138,14 +139,12 @@ int pipewrite(pipe_t pipe, const char *buffer, int count)
         while(pipe->nwrite == pipe->nread + PIPE_SIZE){
             wakeup_helper((uint64_t)&pipe->nread,pipe->blocked_pid);
             sleep_helper((uint64_t)&pipe->nwrite,pipe->blocked_pid);
-            //wakeup((uint64_t)&pipe->nread);
-            //sleep((uint64_t)&pipe->nwrite);
             
         }
         pipe->data[pipe->nwrite++ % PIPE_SIZE] = buffer[i];
     }
     wakeup_helper((uint64_t)&pipe->nread,pipe->blocked_pid);
-    //wakeup((uint64_t)&pipe->nread);
+
     return i;
 }
 
@@ -153,11 +152,11 @@ int piperead(pipe_t pipe, char *buffer, int count)
 {
 
     if (pipe == NULL || buffer == NULL || count < 0)
-        return -1;
+        return -2;
 
     while(pipe->nread == pipe->nwrite){
         sleep_helper((uint64_t)&pipe->nread,pipe->blocked_pid);
-        //sleep((uint64_t)&pipe->nread);
+
     }  
 
     int i;
@@ -167,7 +166,9 @@ int piperead(pipe_t pipe, char *buffer, int count)
         buffer[i] = pipe->data[pipe->nread++ % PIPE_SIZE];
     }
     wakeup_helper((uint64_t)&pipe->nwrite,pipe->blocked_pid);
-    //wakeup((uint64_t)&pipe->nwrite);
+
+    if(pipe->nread == pipe->nwrite)
+        return EOF;
 
     return i;
 }
