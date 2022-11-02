@@ -46,13 +46,11 @@ enum STD {
 #define SYSCALL_CLOSE 50
 #define SYSCALL_CREATE_PIPE 51
 #define SYSCALL_OPEN_PIPE 52
-
-#define SYSCALL_CLOSE 50
-#define SYSCALL_CREATE_PIPE 51
-#define SYSCALL_OPEN_PIPE 52
+#define SYSCALL_INFO_PIPE 53
 
 typedef struct sem * sem_ptr;
 typedef struct copy_sem copy_sem_t;
+typedef struct pipe_info pipe_info_t;
 
 /**
  * @brief Reads up to count bytes from keyboard and copies them to buffer
@@ -198,5 +196,7 @@ void sys_close(unsigned int fd);
 int sys_create_pipe(char * name, int fd[2]);
 
 int sys_open_pipe(char * name, int fd[2]);
+
+int sys_info_pipe(char * name, pipe_info_t * info);
 
 #endif

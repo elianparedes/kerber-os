@@ -4,6 +4,7 @@
 #include <idtLoader.h>
 #include <pmm.h>
 #include <scheduler.h>
+#include <lib/linked_list.h>
 
 #define PID_ERR        -1
 #define MAX_TERM_COUNT 2

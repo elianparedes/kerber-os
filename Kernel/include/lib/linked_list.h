@@ -36,4 +36,6 @@ void * next(list_ptr l);
 
 void free_list(list_ptr list);
 
+int size(list_ptr l);
+
 #endif 

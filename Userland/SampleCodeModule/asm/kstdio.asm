@@ -22,6 +22,7 @@ GLOBAL _sem_post
 GLOBAL _sem_close
 GLOBAL _create_pipe
 GLOBAL _open_pipe
+GLOBAL _info_pipe
 GLOBAL _get_semaphores
 GLOBAL _malloc
 GLOBAL _free
@@ -148,6 +149,11 @@ _open_pipe:
     int 0x80
     ret
 
+_info_pipe:
+    mov rax, SYSCALL_INFO_PIPE
+    int 0x80
+    ret
+
 _get_semaphores:
     mov rax, SYSCALL_GET_SEMS_ID
     int 0x80
@@ -191,6 +197,7 @@ SYSCALL_SEM_CLOSE_ID equ 73
 SYSCALL_CLOSE equ 50
 SYSCALL_CREATE_PIPE equ 51
 SYSCALL_OPEN_PIPE equ 52
+SYSCALL_INFO_PIPE equ 53
 SYSCALL_GET_SEMS_ID equ 74
 
 KBD_PRINT_REG equ 1

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 typedef struct pipe * pipe_t;
+typedef struct pipe_info pipe_info_t;
 
 /**   
  * @retval 0 on success. -1 if pipe have been already initialized 
@@ -24,7 +25,11 @@ int open_pipe(char * name , int pipe_dataD[2]);
  * @retval the number of bytes readed on success. -1 in error
  */
 int piperead(pipe_t pipe, char * buffer, int count);
+
 int pipewrite(pipe_t pipe, const char * buffer, int count);
+
 void close_pipe(pipe_t pipe, int writable);
+
+int info_pipe(char * name, pipe_info_t * info);
 
 #endif

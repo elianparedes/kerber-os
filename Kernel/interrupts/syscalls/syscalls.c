@@ -9,6 +9,7 @@
 #include <semaphore/semaphore.h>
 #include <dataDescriptor.h>
 #include <pmm.h>
+#include <pipe/pipe.h>
 
 #define ADDRESS_LIMIT 0xFFFFFFFF
 
@@ -251,6 +252,10 @@ int sys_create_pipe(char * name, int fd[2]){
 
 int sys_open_pipe(char * name, int fd[2]){
     return open_pipe(name,fd);
+}
+
+int sys_info_pipe(char * name, pipe_info_t * info){
+    return info_pipe(name,info);
 }
 
 int sys_sem_close(sem_ptr sem){
