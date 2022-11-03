@@ -5,7 +5,7 @@
 
 void test_linked_list(){
     
-    list_t list = new_linked_list(NULL);
+    list_ptr list = new_linked_list(NULL);
     add(list,"Alfredo");
     add(list,"Carlota");
     add(list,"Beatriz");

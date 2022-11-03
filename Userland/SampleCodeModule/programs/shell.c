@@ -19,6 +19,8 @@
 #include <testsync.h>
 #include <time.h>
 #include <infopipe.h>
+#include <test_pipe.h>
+#include <cat.h>
 
 #define LINE_LENGTH    512
 #define TOKEN_LENGTH   512
@@ -104,8 +106,16 @@ static int run_command(char *name, int argc, char *argv[]) {
 
     else if (strcmp(name, "sem") == 0)
         return _run(printsems, argc, argv);
-     else if (strcmp(name, "infopipes") == 0)
+
+     else if (strcmp(name, "pipe") == 0)
         return _run(info_all_pipes,0,NULL);
+
+     else if (strcmp(name, "cat") == 0)
+        return _run(cat,0,NULL);
+        
+     else if (strcmp(name, "testpipes") == 0)
+        return _run(test_pipes,0,NULL);
+
 
     else if (strcmp(name, "clear") == 0) {
         // temporary workaround.

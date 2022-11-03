@@ -34,7 +34,7 @@ int puts(const char *str) {
 int printf(char *str, ...) {
     va_list vl;
     int i = 0, j = 0;
-    char buff[100] = {0}, tmp[20];
+    char buff[1024] = {0}, tmp[20];
     va_start(vl, str);
     while (str && str[i]) {
         if (str[i] == '%') {
