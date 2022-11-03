@@ -1,5 +1,6 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+#include "interrupts/time/time.h"
 #include <fifo_queue.h>
 #include <idtLoader.h>
 #include <pmm.h>
@@ -197,6 +198,10 @@ context_t *schedule(context_t *rsp) {
     if (process_count == 0)
         return rsp;
 
+    /*if (current_node != NULL &&
+        ticks_elapsed() < current_node->process->priority)
+        return rsp;*/
+
     if (current_node != NULL) {
         current_node->process->context = rsp;
 
@@ -207,6 +212,9 @@ context_t *schedule(context_t *rsp) {
 
     } else
         current_node = front_node;
+
+    // set timer ticks to 0
+    //timer_reset();
 
     return current_node->process->context;
 }

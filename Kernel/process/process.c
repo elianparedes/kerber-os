@@ -8,6 +8,7 @@
 #define P_EXIT_CODE   0
 
 static int last_pid = 0;
+static int ticks_by_priority[5] = {1, 2, 3, 5, 8, 13};
 
 static void start(function_t function, int argc, char *argv[]) {
     function(argc, argv);
@@ -26,7 +27,8 @@ process_t *new_process(function_t function, int argc, char *argv[]) {
     process->pid = last_pid++;
     process->status = READY;
     process->children = new_linked_list(process_compare);
-    process->exit_status = -1;
+    process->exit_status = 0;
+    process->priority = ticks_by_priority[5];
 
     context_t *context =
         (context_t *)((uint64_t)process + K_PROCESS_STACK_SIZE -

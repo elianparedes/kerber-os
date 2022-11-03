@@ -49,6 +49,7 @@ void printsems() {
     if (_sem_close(sem1) == ERROR) {
         printf("Error closing semaphore \n");
     };
+
     if (_sem_close(sem2) == ERROR) {
         printf("Error closing semaphore \n");
     }

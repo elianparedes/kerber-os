@@ -56,6 +56,7 @@ typedef struct process {
     uint64_t channel;
     list_ptr children;
     int exit_status;
+    int priority;
 } process_t;
 
 typedef void (*function_t)(int, char *[]);

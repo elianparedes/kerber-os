@@ -14,6 +14,7 @@
 #include <primes.h>
 #include <printmem.h>
 #include <printsems.h>
+#include <schd.h>
 #include <sleeptest.h>
 #include <test_inforeg.h>
 #include <testsync.h>
@@ -62,8 +63,9 @@ static void invalid_command(char *cmd_name) {
 }
 
 static int run_command(char *name, int argc, char *argv[]) {
-    if (strcmp(name, "help") == 0)
+    if (strcmp(name, "help") == 0) {
         return _run(help, argc, argv);
+    }
 
     else if (strcmp(name, "fibonacci") == 0)
         return _run(fibonacci, argc, argv);
@@ -103,6 +105,9 @@ static int run_command(char *name, int argc, char *argv[]) {
 
     else if (strcmp(name, "sem") == 0)
         return _run(printsems, argc, argv);
+
+    else if (strcmp(name, "sched") == 0)
+        return _run(schd, argc, argv);
 
     else if (strcmp(name, "clear") == 0) {
         // temporary workaround.
