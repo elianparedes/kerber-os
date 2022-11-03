@@ -7,20 +7,22 @@
 #include <inforeg.h>
 #include <invopcode.h>
 #include <kerberos.h>
+#include <kmman.h>
 #include <kstdbool.h>
 #include <kstdio.h>
 #include <kstring.h>
 #include <primes.h>
 #include <printmem.h>
+#include <printsems.h>
 #include <sleeptest.h>
 #include <test_inforeg.h>
 #include <testsync.h>
-#include <printsems.h>
 #include <time.h>
 
 #define LINE_LENGTH    512
 #define TOKEN_LENGTH   512
 #define MAX_PROC_COUNT 2
+#define MAX_ARGC       5
 
 #define PROMPT_SYMBOL  '>'
 #define PIPE_SYMBOL    '|'
@@ -50,12 +52,27 @@ typedef enum layout_mode {
     SPLITSCREEN
 } layout_mode_t;
 
+typedef struct cmd {
+    char *name;
+    char *argv[MAX_ARGC];
+    int argc;
+} cmd_t;
+
+typedef struct line {
+    char operator; // '|' or '&'
+    cmd_t *left_cmd;
+    cmd_t *right_cmd;
+} line_t;
+
+static char whitespace[] = " \t\n";
+static char operators[] = "|&";
+
 static layout_mode_t current_layout_mode = FULLSCREEN;
 
 static char ctrl_pressed = 0;
 
 // temporary workaround
-void invalid_command(char *cmd_name) {
+static void invalid_command(char *cmd_name) {
     printf("[ Command %s not found ]\n", cmd_name);
 }
 
@@ -89,16 +106,13 @@ static int run_command(char *name, char *arg) {
 
     else if (strcmp(name, "printmem") == 0)
         return _run(printmem, arg);
-    else if (strcmp(name, "testsync") == 0){
+    else if (strcmp(name, "testsync") == 0) {
         return _run(test_sync, "1");
-    }
-    else if (strcmp(name, "testnosync") == 0){
+    } else if (strcmp(name, "testnosync") == 0) {
         return _run(test_sync, "0");
-    }
-    else if (strcmp(name, "sleeptest") == 0){
+    } else if (strcmp(name, "sleeptest") == 0) {
         return _run(sleeptest, NULL);
-    }
-    else if (strcmp(name, "sem") ==0){
+    } else if (strcmp(name, "sem") == 0) {
         return _run(printsems, NULL);
     }
 
@@ -120,12 +134,12 @@ static int run_command(char *name, char *arg) {
  *
  * @see https://stackoverflow.com/questions/4547570/tokenizing-a-string-in-c
  */
-static int gettoken(char **src, char *token, char delimiter) {
+static int gettoken(char **src, char *token, char *delimiters) {
     enum {
         START,
         STEP,
-        ERROR,
-        DONE
+        DELIM,
+        ERROR
     } state = START;
 
     size_t i = 0;
@@ -136,78 +150,107 @@ static int gettoken(char **src, char *token, char delimiter) {
     while (**src != '\0') {
         switch (state) {
             case START:
-                if (**src != delimiter) {
-                    token[i++] = *(*src)++;
-                    state = STEP;
-                } else {
+                // ignore whitespaces
+                if (strchr(whitespace, **src))
                     (*src)++;
-                }
+
+                // if delimiter is found at first, go to error
+                else if (strchr(delimiters, **src))
+                    state = ERROR;
+
+                // if letter is found, go to next step
+                else
+                    state = STEP;
+
                 break;
             case STEP:
-                if (**src != delimiter) {
+                // fill the buffer until delimiter
+                if (!strchr(delimiters, **src))
                     token[i++] = *(*src)++;
-                } else {
-                    token[i++] = '\0';
-                    (*src)++;
-                    state = DONE;
-                }
+
+                else
+                    state = DELIM;
+
                 break;
-
-            case DONE:
-                return SUCCESS;
-
+            case DELIM:
+                token[i] = '\0';
+                return *(*src)++;
             case ERROR:
-                return FAILURE;
+                return -1;
+            default:
+                break;
         }
     }
 
-    token[i++] = '\0';
-    return SUCCESS;
+    token[i] = '\0';
+    return *(*src);
 }
 
-static int parse_command(char **src, char *main, char *arg) {
-    enum {
-        START,
-        COMMAND,
-        ARGUMENT,
-        ERROR,
-        DONE
-    } state = START;
+static cmd_t *getcmd(char *input) {
+    char *cmdidx = input;
+    char token[TOKEN_LENGTH] = {0};
 
-    char token[TOKEN_LENGTH];
+    cmd_t *cmd = _malloc(sizeof(cmd_t));
+    cmd->argc = 0;
 
-    // flush buffers
-    main[0] = '\0';
-    arg[0] = '\0';
+    // get the name of the command;
+    gettoken(&cmdidx, token, whitespace);
+    cmd->name = _malloc(sizeof(token));
+    strcpy(cmd->name, token);
+    token[0] = '\0';
 
-    while (1) {
-        int res = gettoken(&src, token, ' ');
-        if (res == SUCCESS) {
-            switch (state) {
-                case START:
-                    state = COMMAND;
-                    strcpy(main, token);
-                    break;
-
-                case COMMAND:
-                    state = ARGUMENT;
-                    strcpy(arg, token);
-                    break;
-
-                case ARGUMENT:
-                    state = DONE;
-                    break;
-
-                case DONE:
-                    return SUCCESS;
-
-                case ERROR:
-                    return FAILURE;
-            }
-        } else if (res == -1)
-            break;
+    while (gettoken(&cmdidx, token, whitespace) != -1 && cmd->argc < MAX_ARGC) {
+        cmd->argv[cmd->argc] = _malloc(sizeof(strlen(token) + 1));
+        strcpy(cmd->argv[cmd->argc], token);
+        cmd->argc++;
+        token[0] = '\0';
     }
-    return SUCCESS;
+
+    return cmd;
+}
+
+static line_t *parseline(char *line) {
+
+    char *l = line;
+    char chunk[TOKEN_LENGTH] = {0};
+
+    line_t *pline = _malloc(sizeof(line_t));
+    pline->left_cmd = NULL;
+    pline->right_cmd = NULL;
+    pline->operator= 0;
+
+    int delim = 0;
+
+    while ((delim = gettoken(&l, chunk, operators)) != -1) {
+        switch (delim) {
+            case '|':
+                if (pline->operator)
+                    break;
+
+                pline->operator= '|';
+                pline->left_cmd = getcmd(chunk);
+                break;
+            case '&':
+                if (pline->operator)
+                    break;
+
+                pline->operator= '&';
+                pline->left_cmd = getcmd(chunk);
+                break;
+            case '\0':
+                if (pline->operator== '|')
+                    pline->right_cmd = getcmd(chunk);
+
+                else if (pline->operator!= '&')
+                    pline->left_cmd = getcmd(chunk);
+
+                break;
+            default:
+                break;
+        }
+    }
+
+    return pline;
 }
 
 static void switch_layout(layout_mode_t mode) {
@@ -220,6 +263,15 @@ static void switch_layout(layout_mode_t mode) {
 static void lock_screen() {
     if (current_layout_mode == SPLITSCREEN)
         getchar();
+}
+
+void printcmd(cmd_t *cmd) {
+    printf("cmd: %s\n", cmd->name);
+    printf("argc: %d\n", cmd->argc);
+    for (int i = 0; i < cmd->argc; ++i) {
+        printf("arg[%d]: %s\n", i, cmd->argv[i]);
+    }
+    printf("\n");
 }
 
 static void read_input(char *buffer) {
@@ -260,6 +312,20 @@ void sigint_msg() {
     printf("\n[ process terminated ]\n");
 }
 
+void freecmd(cmd_t *cmd) {
+    if (cmd == NULL)
+        return;
+
+    for (size_t i = 0; i < cmd->argc; i++)
+        _free(cmd->argv[i]);
+}
+
+void freepline(line_t *parsedline) {
+    freecmd(parsedline->left_cmd);
+    freecmd(parsedline->right_cmd);
+    _free(parsedline);
+}
+
 int shell() {
     char cmd_buff[LINE_LENGTH], token_buff[TOKEN_LENGTH];
     _cntrl_listener(&ctrl_pressed);
@@ -276,38 +342,24 @@ int shell() {
         if (cmd_buff[0] == '\0')
             continue;
 
-        unsigned int command_count = 0;
-        while (gettoken(&input, token_buff, PIPE_SYMBOL) != -1) {
-            if (command_count < MAX_PROC_COUNT) {
-                parse_command(&token_buff, children[command_count].name,
-                              children[command_count].arg);
-                token_buff[0] = '\0';
-                command_count++;
-            }
+        line_t *parsedline = parseline(input);
+        switch (parsedline->operator) {
+            case '|':
+                printf("operator: %c\n", parsedline->operator);
+                printcmd(parsedline->left_cmd);
+                printcmd(parsedline->right_cmd);
+                break;
+            case '&':
+                printf("operator: %c\n", parsedline->operator);
+                printcmd(parsedline->left_cmd);
+                break;
+            default:
+                run_command(parsedline->left_cmd->name, NULL);
+                _wait2();
+                break;
         }
 
-        if (command_count > 0) {
-            switch_layout(command_count - 1);
-
-            // fullscreen: the focused process is the one that
-            // is running splitscreen: visual feedback is
-            // enabled after first key press
-            if (current_layout_mode == FULLSCREEN)
-                fidx = 0;
-            else
-                fidx = -1;
-
-            for (size_t i = 0; i < command_count; i++) {
-                children[i].status = RUNNING;
-                children[i].pid =
-                    run_command(children[i].name, children[i].arg);
-            }
-        }
-
-        for (size_t i = 0; i < command_count; i++)
-        {
-            _wait2();
-        }
+        freepline(parsedline);
     }
 
     return 0;
