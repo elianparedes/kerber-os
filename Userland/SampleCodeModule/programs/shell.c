@@ -76,45 +76,48 @@ static void invalid_command(char *cmd_name) {
     printf("[ Command %s not found ]\n", cmd_name);
 }
 
-static int run_command(char *name, char *arg) {
+static int run_command(char *name, int argc, char *argv[]) {
     if (strcmp(name, "help") == 0)
-        return _run(help, arg);
+        return _run(help, argc, argv);
 
     else if (strcmp(name, "fibonacci") == 0)
-        return _run(fibonacci, NULL);
+        return _run(fibonacci, argc, argv);
 
     else if (strcmp(name, "primes") == 0)
-        return _run(primes, NULL);
+        return _run(primes, argc, argv);
 
     else if (strcmp(name, "time") == 0)
-        return _run(time, NULL);
+        return _run(time, argc, argv);
 
     else if (strcmp(name, "divzero") == 0)
-        return _run(divzero, NULL);
+        return _run(divzero, argc, argv);
 
     else if (strcmp(name, "kerberos") == 0)
-        return _run(kerberos, NULL);
+        return _run(kerberos, argc, argv);
 
     else if (strcmp(name, "invopcode") == 0)
-        return _run(invopcode, NULL);
+        return _run(invopcode, argc, argv);
 
     else if (strcmp(name, "inforeg") == 0)
-        return _run(inforeg, NULL);
+        return _run(inforeg, argc, argv);
 
     else if (strcmp(name, "test-inforeg") == 0)
-        return _run(testinforeg, NULL);
+        return _run(testinforeg, argc, argv);
 
     else if (strcmp(name, "printmem") == 0)
-        return _run(printmem, arg);
-    else if (strcmp(name, "testsync") == 0) {
-        return _run(test_sync, "1");
-    } else if (strcmp(name, "testnosync") == 0) {
-        return _run(test_sync, "0");
-    } else if (strcmp(name, "sleeptest") == 0) {
-        return _run(sleeptest, NULL);
-    } else if (strcmp(name, "sem") == 0) {
-        return _run(printsems, NULL);
-    }
+        return _run(printmem, argc, argv);
+
+    else if (strcmp(name, "testsync") == 0)
+        return _run(test_sync, argc, argv);
+
+    else if (strcmp(name, "testnosync") == 0)
+        return _run(test_sync, argc, argv);
+
+    else if (strcmp(name, "sleeptest") == 0)
+        return _run(sleeptest, argc, argv);
+
+    else if (strcmp(name, "sem") == 0)
+        return _run(printsems, argc, argv);
 
     else if (strcmp(name, "clear") == 0) {
         // temporary workaround.
@@ -125,7 +128,8 @@ static int run_command(char *name, char *arg) {
         return 256;
     }
 
-    return _run(invalid_command, name);
+    printf("[ Command %s not found ]\n", name);
+    return -1;
 }
 
 /**
@@ -354,7 +358,9 @@ int shell() {
                 printcmd(parsedline->left_cmd);
                 break;
             default:
-                run_command(parsedline->left_cmd->name, NULL);
+                run_command(parsedline->left_cmd->name,
+                            parsedline->left_cmd->argc,
+                            parsedline->left_cmd->argv);
                 _wait2();
                 break;
         }

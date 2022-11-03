@@ -123,7 +123,7 @@ void sys_delete_char();
  * @param arg argument that the main function receives
  * @return int process id of the created process
  */
-int sys_run(void *main, char *arg);
+int sys_run(void *main, int argc, char *argv[]);
 
 /**
  * @brief Puts the value passed by reference in 0 or 1 depending if

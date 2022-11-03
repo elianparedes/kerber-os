@@ -88,11 +88,11 @@ static bool enqueue_process(process_t *process) {
     return true;
 }
 
-int add_process(function_t main, char *arg) {
+int add_process(function_t main, int argc, char *argv[]) {
     if (process_count >= MAX_PROC_COUNT)
         return PID_ERR;
 
-    process_t *process = new_process(main, arg);
+    process_t *process = new_process(main, argc, argv);
     if (process == NULL)
         return PID_ERR;
 
