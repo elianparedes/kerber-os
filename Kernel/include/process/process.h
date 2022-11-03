@@ -61,16 +61,17 @@ typedef struct process {
     int exit_status;
 } process_t;
 
-typedef void (*function_t)(char *);
+typedef void (*function_t)(int, char *[]);
 
 /**
  * @brief Creates a new process.
  *
  * @param main main function of the process
- * @param arg argument that the main function receives
+ * @param argc argument count that the main function receives
+ * @param argv an array containing all the arguments
  * @return process_t* pointer to the created process, or NULL if the process
  * could not be created
  */
-process_t *new_process(function_t main, char *arg);
+process_t *new_process(function_t function, int argc, char *argv[]);
 
 #endif /* _PROCESS_H_ */

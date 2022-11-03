@@ -9,8 +9,8 @@
 
 static int last_pid = 0;
 
-static void start(function_t function, char *arg) {
-    function(arg);
+static void start(function_t function, int argc, char *argv[]) {
+    function(argc, argv);
     sys_exit(P_EXIT_CODE);
 }
 
@@ -18,7 +18,7 @@ static int process_compare(process_t *process, pid_t pid) {
     return process->pid == pid;
 }
 
-process_t *new_process(function_t function, char *arg) {
+process_t *new_process(function_t function, int argc, char *argv[]) {
     process_t *process = (process_t *)kmalloc(sizeof(process_t));
     if (process == NULL)
         return NULL;
@@ -32,8 +32,9 @@ process_t *new_process(function_t function, char *arg) {
         (context_t *)((uint64_t)process + K_PROCESS_STACK_SIZE -
                       sizeof(context_t));
 
-    context->rsi = (uint64_t)arg;
     context->rdi = (uint64_t)function;
+    context->rsi = (uint64_t)argc;
+    context->rdx = (uint64_t)argv;
     context->rip = (uint64_t)&start;
     context->cs = P_INIT_CS;
     context->eflags = P_INIT_EFLAGS;

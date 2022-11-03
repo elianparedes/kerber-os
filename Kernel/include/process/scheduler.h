@@ -9,7 +9,7 @@
 
 /**
  * @brief set current process in wait status
- * 
+ *
  */
 void wait_process();
 
@@ -35,11 +35,12 @@ context_t *schedule(context_t *rsp);
  * to the current process.
  *
  * @param main main function of the process
- * @param arg argument that the main function of the process receives
+ * @param argc argument count that the main function receives
+ * @param argv an array containing all the arguments
  * @return int process id of created process, or -1 if process could not be
  * created.
  */
-int add_process(function_t main, char *arg);
+int add_process(function_t main, int argc, char *argv[]);
 
 /**
  * @brief Removes current process from the queue and forces a schedule.
@@ -72,7 +73,7 @@ process_t *get_process(pid_t pid);
 
 void sleep(uint64_t channel);
 
-//Returns pid of awakened process
+// Returns pid of awakened process
 int wakeup(uint64_t channel);
 
 #endif /* _SCHEDULER_H_ */

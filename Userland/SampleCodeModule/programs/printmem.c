@@ -5,10 +5,10 @@
 #include <printmem.h>
 #define PRINT_SIZE 32 // number of bytes
 
-void printmem(char *arg) {
+void printmem(int argc, char *argv[]) {
     uint8_t buffer[PRINT_SIZE];
     char *endp;
-    long address = strtol(arg, &endp, 16);
+    long address = strtol(argv[0], &endp, 16);
 
     // if endpointer isn't zero,
     // then the argument is not a hexadecimal number

@@ -2,8 +2,10 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <interrupts.h>
 #include <keyboard.h>
+#include <pmm.h>
 #include <registers.h>
 #include <scheduler.h>
+#include <semaphore/semaphore.h>
 #include <syscalls.h>
 #include <video.h>
 #include <semaphore/semaphore.h>
@@ -138,9 +140,8 @@ void sys_clear_screen()
     clear_screen();
 }
 
-int sys_run(void *main, char *arg)
-{
-    return add_process(main, arg);
+int sys_run(void *main, int argc, char *argv[]) {
+    return add_process(main, argc, argv);
 }
 
 void sys_delete_char()
@@ -223,19 +224,19 @@ void sys_sched_yield() {
     _force_schedule();
 }
 
-void sys_wait2(){
+void sys_wait2() {
     return wait_process();
 }
 
-sem_ptr sys_sem_open(char * name, int value){
+sem_ptr sys_sem_open(char *name, int value) {
     return sem_open(name, value);
 }
 
-int sys_sem_wait(sem_ptr sem){
+int sys_sem_wait(sem_ptr sem) {
     return sem_wait(sem);
 }
 
-int sys_sem_post(sem_ptr sem){
+int sys_sem_post(sem_ptr sem) {
     return sem_post(sem);
 }
 
@@ -270,14 +271,14 @@ int sys_sem_close(sem_ptr sem){
     return sem_close(sem);
 }
 
-int sys_get_semaphores(copy_sem_t * sems[]){
+int sys_get_semaphores(copy_sem_t *sems[]) {
     return get_semaphores(sems);
 }
 
-void * sys_malloc(size_t size){
+void *sys_malloc(size_t size) {
     return kmalloc(size);
 }
 
-void sys_free(void *ptr){
+void sys_free(void *ptr) {
     kfree(ptr);
 }

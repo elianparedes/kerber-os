@@ -138,8 +138,8 @@ static void help_pipe() {
     puts("");
     puts("Synopsis:");
     puts("    [c1] | [c2]");
-    puts("    [c1] | [c2] [arg]");
-    puts("    [c1] [arg] | [c2] [arg]");
+    puts("    [c1] | [c2] [argv[0]]");
+    puts("    [c1] [argv[0]] | [c2] [argv[0]]");
     puts("");
     puts("Description:");
     puts("    Extra spaces between commands, arguments and operator");
@@ -147,46 +147,46 @@ static void help_pipe() {
     puts("");
 }
 
-void help(char *arg) {
-    if (arg == NULL || arg[0] == '\0')
+void help(int argc, char *argv[]) {
+    if (argc == 0)
         help_cmds();
 
-    else if (strcmp(arg, "all") == 0)
+    else if (strcmp(argv[0], "all") == 0)
         help_all();
 
-    else if (strcmp("clear", arg) == 0)
+    else if (strcmp("clear", argv[0]) == 0)
         help_clear();
 
-    else if (strcmp("time", arg) == 0)
+    else if (strcmp("time", argv[0]) == 0)
         help_time();
 
-    else if (strcmp("fibonacci", arg) == 0)
+    else if (strcmp("fibonacci", argv[0]) == 0)
         help_fibonacci();
 
-    else if (strcmp("primes", arg) == 0)
+    else if (strcmp("primes", argv[0]) == 0)
         help_primes();
 
-    else if (strcmp("printmem", arg) == 0)
+    else if (strcmp("printmem", argv[0]) == 0)
         help_printmem();
 
-    else if (strcmp("inforeg", arg) == 0)
+    else if (strcmp("inforeg", argv[0]) == 0)
         help_inforeg();
 
-    else if (strcmp("test-inforeg", arg) == 0)
+    else if (strcmp("test-inforeg", argv[0]) == 0)
         help_testinforeg();
 
-    else if (strcmp("divzero", arg) == 0)
+    else if (strcmp("divzero", argv[0]) == 0)
         help_divzero();
 
-    else if (strcmp("invopcode", arg) == 0)
+    else if (strcmp("invopcode", argv[0]) == 0)
         help_invopcode();
 
-    else if (strcmp("kerberos", arg) == 0)
+    else if (strcmp("kerberos", argv[0]) == 0)
         help_kerberos();
 
-    else if (strcmp("pipe", arg) == 0)
+    else if (strcmp("pipe", argv[0]) == 0)
         help_pipe();
 
     else
-        help_error(arg);
+        help_error(argv[0]);
 }
