@@ -4,6 +4,7 @@
 #include <registers.h>
 #include <rtc.h>
 #include <stdint.h>
+#include <stddef.h>
 
 #define ERROR   -1
 #define SUCCESS 0
@@ -22,6 +23,8 @@ enum STD {
 #define SYSCALL_CNTRL_LISTENER     6
 #define SYSCALL_GET_MEM            10
 #define SYSCALL_COPY_CPU_STATE     7
+#define SYSCALL_MALLOC 9
+#define SYSCALL_FREE 11
 
 #define SYSCALL_EXIT               60
 #define SYSCALL_GETTIME            96
@@ -30,7 +33,26 @@ enum STD {
 #define SYSCALL_KILL               62
 #define SYSCALL_PAUSE              75
 #define SYSCALL_WAIT               67
+#define SYSCALL_WAIT2              68
 #define SYSCALL_FOCUS              77
+#define SYSCALL_SCHED_YIELD 24
+
+#define SYSCALL_SEM_OPEN 70
+#define SYSCALL_SEM_WAIT 71
+#define SYSCALL_SEM_POST 72
+#define SYSCALL_SEM_CLOSE 73
+#define SYSCALL_GET_SEMS 74
+
+#define SYSCALL_CLOSE 50
+#define SYSCALL_CREATE_PIPE 51
+#define SYSCALL_OPEN_PIPE 52
+#define SYSCALL_INFO_PIPE 53
+#define SYSCALL_INFO_ALL_PIPES 54
+#define SYSCALL_DUP2 55
+
+typedef struct sem * sem_ptr;
+typedef struct copy_sem copy_sem_t;
+typedef struct pipe_info pipe_info_t;
 
 /**
  * @brief Reads up to count bytes from keyboard and copies them to buffer
@@ -40,7 +62,7 @@ enum STD {
  * @param count number of bytes to read
  * @return uint16_t numbers of bytes read
  */
-uint16_t read(int fd, char *buffer, uint16_t count);
+int16_t read(int fd, char *buffer, uint16_t count);
 
 /**
  * @brief Writes up to count bytes from buffer and copies them to screen
@@ -50,7 +72,7 @@ uint16_t read(int fd, char *buffer, uint16_t count);
  * @param count number of bytes to write
  * @return uint16_t numbers of bytes written
  */
-uint16_t write(int fd, char *buffer, uint16_t count);
+int16_t write(int fd, char *buffer, uint16_t count);
 
 /**
  * @brief Fills struct_time given with time information
@@ -74,7 +96,7 @@ void sys_switch_screen_mode(int mode);
 
 /**
  * TODO: Fill function comments
- * @brief 
+ * @brief
  *
  * @param cpu_ptr
  * @param request
@@ -151,5 +173,36 @@ void sys_pause(int pid);
  * @param pid process id of the target process
  */
 void sys_focus(int pid);
+
+void sys_sched_yield();
+
+void sys_wait2();
+
+//Semaphore syscalls
+sem_ptr sys_sem_open(char * name, int value);
+
+int sys_sem_wait(sem_ptr sem);
+
+int sys_sem_post(sem_ptr sem);
+
+int sys_sem_close(sem_ptr sem);
+
+int sys_get_semaphores(copy_sem_t * sems[]);
+
+void * sys_malloc(size_t size);
+
+void sys_free(void *ptr);
+
+void sys_close(unsigned int fd);
+
+int sys_create_pipe(char * name, int fd[2]);
+
+int sys_open_pipe(char * name, int fd[2]);
+
+int sys_info_pipe(char * name, pipe_info_t * info);
+
+int sys_info_all_pipes(pipe_info_t * info[] , unsigned int size);
+
+int sys_dup2(unsigned int oldfd , unsigned int newfd);
 
 #endif

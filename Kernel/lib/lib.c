@@ -49,9 +49,12 @@ size_t strlen(const char *str) {
 }
 
 char *strcpy(char *dest, const char *src) {
-    for (int i = 0; src[i] != '\0'; i++) {
+    int i = 0;
+    while (src[i] != '\0') {
         dest[i] = src[i];
+        i++;
     }
+    dest[i] = '\0';
     return dest;
 }
 
@@ -203,3 +206,4 @@ int printf(char *str, ...) {
     va_end(vl);
     return j;
 }
+

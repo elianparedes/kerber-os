@@ -9,9 +9,13 @@
 
 static int last_pid = 0;
 
-static void process_start(function_t function, char *arg) {
+static void start(function_t function, char *arg) {
     function(arg);
     sys_exit(P_EXIT_CODE);
+}
+
+static int process_compare(process_t *process, pid_t pid) {
+    return process->pid == pid;
 }
 
 process_t *new_process(function_t function, char *arg) {
@@ -21,6 +25,8 @@ process_t *new_process(function_t function, char *arg) {
 
     process->pid = last_pid++;
     process->status = READY;
+    process->children = new_linked_list(process_compare);
+    process->exit_status = -1;
 
     context_t *context =
         (context_t *)((uint64_t)process + K_PROCESS_STACK_SIZE -
@@ -28,7 +34,7 @@ process_t *new_process(function_t function, char *arg) {
 
     context->rsi = (uint64_t)arg;
     context->rdi = (uint64_t)function;
-    context->rip = (uint64_t)&process_start;
+    context->rip = (uint64_t)&start;
     context->cs = P_INIT_CS;
     context->eflags = P_INIT_EFLAGS;
 
@@ -36,12 +42,21 @@ process_t *new_process(function_t function, char *arg) {
     context->ss = 0x0;
 
     process->context = context;
+    process->channel = NULL;
 
     process->g_context = get_context_id();
 
     process->l_child = NULL;
     process->r_child = NULL;
     process->parent = NULL;
+
+    /* Creates stdin in dataDescriptor 0*/
+    process->dataDescriptors[0] = create_dataDescriptor(STD_T,READ_MODE);
+
+    /* Creates stdout in dataDescriptor 0*/
+    process->dataDescriptors[1] = create_dataDescriptor(STD_T,WRITE_MODE);
+
+    process->dataD_index = 2;
 
     return process;
 }

@@ -125,4 +125,6 @@ char *strcat(char *destination, const char *source);
 
 int strcmp(const char *str1, const char *str2);
 
+char *strcpy(char *dest, const char *src);
+
 #endif /* _LIB_H_ */

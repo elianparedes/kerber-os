@@ -12,8 +12,12 @@
 #include <kstring.h>
 #include <primes.h>
 #include <printmem.h>
+#include <sleeptest.h>
 #include <test_inforeg.h>
+#include <testsync.h>
+#include <printsems.h>
 #include <time.h>
+#include <infopipe.h>
 
 #define LINE_LENGTH    512
 #define TOKEN_LENGTH   512
@@ -86,6 +90,20 @@ static int run_command(char *name, char *arg) {
 
     else if (strcmp(name, "printmem") == 0)
         return _run(printmem, arg);
+    else if (strcmp(name, "testsync") == 0){
+        return _run(test_sync, "1");
+    }
+    else if (strcmp(name, "testnosync") == 0){
+        return _run(test_sync, "0");
+    }
+    else if (strcmp(name, "sleeptest") == 0){
+        return _run(sleeptest, NULL);
+    }
+    else if (strcmp(name, "sem") ==0){
+        return _run(printsems, NULL);
+    }
+     else if (strcmp(name, "infopipes") == 0)
+        return _run(info_all_pipes,NULL);
 
     else if (strcmp(name, "clear") == 0) {
         // temporary workaround.
@@ -95,6 +113,7 @@ static int run_command(char *name, char *arg) {
         current_layout_mode = FULLSCREEN;
         return 256;
     }
+
     return _run(invalid_command, name);
 }
 
@@ -251,65 +270,46 @@ int shell() {
     kerberos(); // show welcome screen
 
     while (1) {
-        if (!chld_running()) {
-            lock_screen();
-            switch_layout(FULLSCREEN);
+        lock_screen();
+        switch_layout(FULLSCREEN);
 
-            read_input(cmd_buff);
-            char *input = cmd_buff;
+        read_input(cmd_buff);
+        char *input = cmd_buff;
 
-            if (cmd_buff[0] == '\0')
-                continue;
+        if (cmd_buff[0] == '\0')
+            continue;
 
-            unsigned int command_count = 0;
-            while (gettoken(&input, token_buff, PIPE_SYMBOL) != -1) {
-                if (command_count < MAX_PROC_COUNT) {
-                    parse_command(&token_buff, children[command_count].name,
-                                  children[command_count].arg);
-                    token_buff[0] = '\0';
-                    command_count++;
-                }
+        unsigned int command_count = 0;
+        while (gettoken(&input, token_buff, PIPE_SYMBOL) != -1) {
+            if (command_count < MAX_PROC_COUNT) {
+                parse_command(&token_buff, children[command_count].name,
+                              children[command_count].arg);
+                token_buff[0] = '\0';
+                command_count++;
             }
+        }
 
-            if (command_count > 0) {
-                switch_layout(command_count - 1);
+        if (command_count > 0) {
+            switch_layout(command_count - 1);
 
-                // fullscreen: the focused process is the one that
-                // is running splitscreen: visual feedback is
-                // enabled after first key press
-                if (current_layout_mode == FULLSCREEN)
-                    fidx = 0;
-                else
-                    fidx = -1;
+            // fullscreen: the focused process is the one that
+            // is running splitscreen: visual feedback is
+            // enabled after first key press
+            if (current_layout_mode == FULLSCREEN)
+                fidx = 0;
+            else
+                fidx = -1;
 
-                for (size_t i = 0; i < command_count; i++) {
-                    children[i].status = RUNNING;
-                    children[i].pid =
-                        run_command(children[i].name, children[i].arg);
-                }
+            for (size_t i = 0; i < command_count; i++) {
+                children[i].status = RUNNING;
+                children[i].pid =
+                    run_command(children[i].name, children[i].arg);
             }
-        } else {
-            char c;
-            if (ctrl_pressed && (c = getchar())) {
-                if (fidx != -1 && c == SIGINT_KEY) {
-                    _kill(children[fidx].pid);
+        }
 
-                    // when the process is killed, the status
-                    // of it should be force updated
-                    children[fidx].status = TERMINATED;
-
-                    if (chld_running())
-                        focus_next();
-                } else if (fidx != -1 && c == PAUSE_KEY)
-                    _pause(children[fidx].pid);
-
-                else if (c == FOCUS_KEY)
-                    focus_next();
-            } else {
-                for (size_t i = 0; i < MAX_PROC_COUNT; i++) {
-                    _wait(i, &children[i].status);
-                }
-            }
+        for (size_t i = 0; i < command_count; i++)
+        {
+            _wait2();
         }
     }
 

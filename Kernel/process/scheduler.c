@@ -1,8 +1,10 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+#include <fifo_queue.h>
 #include <idtLoader.h>
 #include <pmm.h>
 #include <scheduler.h>
+#include <lib/linked_list.h>
 
 #define PID_ERR        -1
 #define MAX_TERM_COUNT 2
@@ -19,6 +21,55 @@ static node_t *front_node = NULL;
 static node_t *rear_node = NULL;
 
 static uint64_t process_count = 0;
+
+static process_t *free_process(int pid);
+
+static int process_wstatus(process_t *process, pstatus_t status) {
+    return process->status == status;
+}
+
+void wait_process() {
+    process_t *current_process = get_current_process();
+
+    // if no children, return
+    if (size(current_process->children) <= 0)
+        return;
+
+    while (1) {
+        list_ptr children_list = current_process->children;
+
+        process_t *terminated_child =
+            find(children_list, PAUSED, process_wstatus);
+        if (terminated_child != NULL) {
+            free_process(terminated_child->pid);
+            return;
+        }
+
+        sleep(current_process);
+    }
+}
+
+void sleep(uint64_t channel) {
+    process_t *current_process = get_current_process();
+    current_process->channel = channel;
+    current_process->status = PAUSED;
+    _force_schedule();
+}
+
+int wakeup(uint64_t channel) {
+    node_t *aux_node = front_node;
+
+    do {
+        if (aux_node->process->channel == channel) {
+            aux_node->process->status = READY;
+            aux_node->process->channel = NULL;
+            return aux_node->process->pid;
+        }
+
+        aux_node = aux_node->next;
+    } while (aux_node != front_node);
+    return PID_ERR;
+}
 
 static bool enqueue_process(process_t *process) {
     node_t *node = kmalloc(sizeof(node_t));
@@ -48,41 +99,47 @@ int add_process(function_t main, char *arg) {
 
     if (enqueue_process(process)) {
         if (current_node != NULL) {
-            if (current_node->process->l_child == NULL)
-                current_node->process->l_child = process;
-
-            else if (current_node->process->r_child == NULL)
-                current_node->process->r_child = process;
+            // add new process to children list of current process
+            add(current_node->process->children, process);
+            process->parent = current_node->process;
         }
-        process->parent = current_node->process;
+
         return process->pid;
     }
 
     return PID_ERR;
 }
-
-static process_t *free_process(int pid) {
+node_t *get_node_before(pid_t pid) {
     node_t *aux_node = front_node;
 
-    while (aux_node->next->process->pid != pid)
+    do {
+        if (aux_node->next->process->pid == pid)
+            return aux_node;
+
         aux_node = aux_node->next;
+    } while (aux_node != front_node);
+
+    return NULL;
+}
+
+static process_t *free_process(int pid) {
+    node_t *aux_node = get_node_before(pid);
+
+    if (aux_node == NULL)
+        return NULL;
 
     node_t *target_node = aux_node->next;
 
     aux_node->next = target_node->next;
 
     if (rear_node == target_node)
-        rear_node = target_node->next;
+        rear_node = aux_node;
 
     if (front_node == target_node)
         front_node = target_node->next;
 
-    // tells the parent that the children process ends
-    if (target_node->process->parent->l_child == target_node->process)
-        target_node->process->parent->l_child = NULL;
-
-    if (target_node->process->parent->r_child == target_node->process)
-        target_node->process->parent->r_child = NULL;
+    // remove process from parent's children list
+    remove(target_node->process->parent->children, pid);
 
     kfree(target_node->process);
     kfree(target_node);
@@ -93,13 +150,24 @@ static process_t *free_process(int pid) {
 }
 
 void exit_process() {
+    process_t *current_process = get_current_process();
 
-    free_process(current_node->process->pid);
+    close_dataDescriptor(current_process->dataDescriptors[0]);
+    close_dataDescriptor(current_process->dataDescriptors[1]);
+    
+    if (current_process->pid > 0 && current_process->parent != NULL)
+        wakeup(current_process->parent);
+
+    // leave process as terminated. Parent will clean it up on wait
+    current_process->status = PAUSED;
+    current_process->exit_status = 0;
+
+    // free_process(current_process->pid);
+
     _force_schedule();
 }
 
 void kill_process(int pid) {
-
     process_t *target = free_process(pid);
 
     // the right way of doing this would be with signals and their handlers
@@ -119,10 +187,14 @@ process_t *get_current_process() {
 process_t *get_process(pid_t pid) {
     node_t *aux_node = front_node;
 
-    while (aux_node->next->process->pid != pid)
-        aux_node = aux_node->next;
+    do {
+        if (aux_node->process->pid == pid)
+            return aux_node->process;
 
-    return aux_node->next->process;
+        aux_node = aux_node->next;
+    } while (aux_node != front_node);
+
+    return NULL;
 }
 
 context_t *schedule(context_t *rsp) {

@@ -1,8 +1,8 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+#include <graphics.h>
 #include <idtLoader.h>
 #include <keyboard.h>
-#include <graphics.h>
 #include <lib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
@@ -11,8 +11,10 @@
 #include <scheduler.h>
 #include <stdint.h>
 #include <string.h>
-#include <time.h>
 #include <syscall.h>
+#include <pipe/pipe.h>
+#include <time.h>
+#include <semaphore/semaphore.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -28,18 +30,21 @@ static void *const sampleDataModuleAddress = (void *)0x500000;
 
 typedef int (*EntryPoint)();
 
-void clearBSS(void *bssAddress, uint64_t bssSize) {
+void clearBSS(void *bssAddress, uint64_t bssSize)
+{
     memset(bssAddress, 0, bssSize);
 }
 
-void *getStackBase() {
+void *getStackBase()
+{
     return (void *)((uint64_t)&endOfKernel +
                     PageSize * 8       // The size of the stack itself, 32KiB
                     - sizeof(uint64_t) // Begin at the top of the stack
     );
 }
 
-void *initializeKernelBinary() {
+void *initializeKernelBinary()
+{
     char buffer[10];
 
     ncPrint("[x64BareBones]");
@@ -87,11 +92,42 @@ void *initializeKernelBinary() {
     return getStackBase();
 }
 
+void process_a(){
+    int pipe_data[2];
+    int code = open_pipe("my_pipe",pipe_data);
+    if(code == -1)
+        puts("Hubo error");
+    char buffer[256] = {0};
+    read(pipe_data[0],buffer,19);
+    printf("%s",buffer);
+}
+
+void kernel_shell()
+{
+    
+    init_pipes();
+
+    int pipe_data[2];
+    create_pipe("my_pipe",pipe_data);
+    printf("%d\n",pipe_data[0]);
+    write(pipe_data[1],"Hola soy la shell\n",19);
+
+    add_process(process_a,NULL);
+
+    while (1)
+    {
+    }
+}
+
 int main() {
     init_pmm(); // init physical memory manager
     load_idt();
+    init_sem_list();
 
-    ((EntryPoint)sampleCodeModuleAddress)();
+    full_screen_distribution();
+    add_process(kernel_shell, NULL);
+
+    //((EntryPoint)sampleCodeModuleAddress)();
 
     while (1)
         ;
