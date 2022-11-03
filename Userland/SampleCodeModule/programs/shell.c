@@ -32,21 +32,6 @@
 #define SIGINT_KEY     'c'
 #define FOCUS_KEY      9
 
-typedef struct process {
-    char name[TOKEN_LENGTH];
-    char arg[TOKEN_LENGTH];
-    int pid;
-    chldstatus_t status;
-} process_t;
-
-static process_t children[MAX_PROC_COUNT];
-static int fidx = -1;
-
-static enum exit_status {
-    FAILURE,
-    SUCCESS
-};
-
 typedef enum layout_mode {
     FULLSCREEN = 0,
     SPLITSCREEN
@@ -295,21 +280,6 @@ static void read_input(char *buffer) {
     }
     buffer[offset] = '\0';
     printf("\n");
-}
-
-void focus_next() {
-    do
-        fidx = (fidx + 1) % MAX_PROC_COUNT;
-    while (children[fidx].status == TERMINATED);
-    _focus(children[fidx].pid);
-}
-
-bool chld_running() {
-    for (size_t i = 0; i < MAX_PROC_COUNT; i++) {
-        if (children[i].status == RUNNING)
-            return true;
-    }
-    return false;
 }
 
 void sigint_msg() {

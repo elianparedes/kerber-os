@@ -7,14 +7,14 @@
  * Prints fibonacci sequence
  */
 
-void fibonacci(char *arg) {
+void fibonacci(int argc, char *argv[]) {
     int max = 200;
 
     int n1 = 0;
     int n2 = 1;
 
-    if (arg != NULL && arg[0] != '\0')
-        max = strtol(arg, NULL, 10);
+    if (argc > 0 && argv[0] != '\0')
+        max = strtol(argv[0], NULL, 10);
 
     // first two terms of the sequence
     printf("fibonacci [%d]:    %d\n", 0, n1);
