@@ -3,19 +3,20 @@
 #include <pmm.h>
 #include <stdbool.h>
 
-#define SIZE (8 * 1024 * 1024) // 8 MB
-#define BASE_ADDR 0x600000
+#define SIZE             (1024 * 1024 * 64)
+#define BASE_ADDR        0x600000
+#define ALIGNMENT        8
+#define GET_SIZE(header) (header->size & ~0x1)
+#define ALIGN(size)      ((size + ALIGNMENT - 1) & -ALIGNMENT)
 
-typedef union header
-{
+typedef union header {
     uint64_t size;
     uint8_t alloced : 1; // bit_0
 } __attribute__((packed)) header_t;
 
 static header_t *start = (header_t *)BASE_ADDR;
 
-void init_pmm()
-{
+void init_pmm() {
     header_t *current_header = start;
 
     current_header->size = SIZE;
@@ -24,35 +25,30 @@ void init_pmm()
     // insert the end of space header
 
     current_header =
-        current_header + 1 + (current_header->size & ~0x1) / sizeof(header_t);
+        current_header + 1 + GET_SIZE(current_header) / sizeof(header_t);
     current_header->size = 0;
     current_header->alloced = 1;
 }
 
-void *kmalloc(size_t size)
-{
+void *kmalloc(size_t size) {
     header_t *current_header = start;
 
-    while (((uint64_t)current_header < BASE_ADDR + SIZE - sizeof(header_t)) &&
-           (current_header->size & ~0x1) > 0)
-    {
+    while (((uint64_t)current_header < BASE_ADDR + SIZE - sizeof(header_t))) {
         /**
          * header_t is an union and the first bit represents if is allocated or
          * not when reading size we must mask out the alloced flag
          */
-        if (size <= (current_header->size & ~0x1) && !current_header->alloced)
-        {
+        if (size <= GET_SIZE(current_header) && !current_header->alloced) {
             void *alloced_addr = current_header + 1; // return pointer
-            uint64_t old_size = current_header->size & ~0x1;
-            uint64_t new_size = size & ~0x1; // round up to even value
+            uint64_t old_size = GET_SIZE(current_header);
+            uint64_t new_size = ALIGN(size); // round up to even value
 
             current_header->size = new_size;
             current_header->alloced = 1;
 
             // then insert new split block
 
-            if (new_size < old_size)
-            {
+            if (new_size < old_size) {
                 // go to the next header
                 current_header =
                     current_header + 1 + new_size / sizeof(header_t);
@@ -65,22 +61,20 @@ void *kmalloc(size_t size)
         }
 
         // go to the next header
-        current_header = current_header + 1 +
-                         (current_header->size & ~0x1) / sizeof(header_t);
+        current_header =
+            current_header + 1 + GET_SIZE(current_header) / sizeof(header_t);
     }
     return NULL;
 }
 
-void kfree(void *ptr)
-{
-    header_t *current_header = (header_t *)ptr;
+void kfree(void *ptr) {
+    header_t *current_header = ptr - sizeof(header_t);
 
-    current_header = current_header - 1;
-    ((header_t *)current_header)->alloced = 0;
+    current_header->alloced = 0;
 
-    header_t *next_header = current_header + 1 +
-                            (current_header->size & ~0x1) /
-                                sizeof(header_t); // go to the next header
+    header_t *next_header =
+        current_header + 1 +
+        GET_SIZE(current_header) / sizeof(header_t); // go to the next header
     if (!next_header->alloced)
         current_header->size +=
             next_header->size + sizeof(header_t); // no need to mask out alloced

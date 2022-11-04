@@ -1,9 +1,11 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+#include <cat.h>
 #include <clear.h>
 #include <divzero.h>
 #include <fibonacci.h>
 #include <help.h>
+#include <infopipe.h>
 #include <inforeg.h>
 #include <invopcode.h>
 #include <kerberos.h>
@@ -16,11 +18,10 @@
 #include <printsems.h>
 #include <sleeptest.h>
 #include <test_inforeg.h>
+#include <test_pipe.h>
+#include <testmm.h>
 #include <testsync.h>
 #include <time.h>
-#include <infopipe.h>
-#include <test_pipe.h>
-#include <cat.h>
 
 #define LINE_LENGTH    512
 #define TOKEN_LENGTH   512
@@ -89,7 +90,7 @@ static int run_command(char *name, int argc, char *argv[]) {
     else if (strcmp(name, "inforeg") == 0)
         return _run(inforeg, argc, argv);
 
-    else if (strcmp(name, "test-inforeg") == 0)
+    else if (strcmp(name, "testinforeg") == 0)
         return _run(testinforeg, argc, argv);
 
     else if (strcmp(name, "printmem") == 0)
@@ -107,15 +108,17 @@ static int run_command(char *name, int argc, char *argv[]) {
     else if (strcmp(name, "sem") == 0)
         return _run(printsems, argc, argv);
 
-     else if (strcmp(name, "pipe") == 0)
-        return _run(info_all_pipes,0,NULL);
+    else if (strcmp(name, "pipe") == 0)
+        return _run(info_all_pipes, 0, NULL);
 
-     else if (strcmp(name, "cat") == 0)
-        return _run(cat,0,NULL);
-        
-     else if (strcmp(name, "testpipes") == 0)
-        return _run(test_pipes,0,NULL);
+    else if (strcmp(name, "cat") == 0)
+        return _run(cat, 0, NULL);
 
+    else if (strcmp(name, "testpipes") == 0)
+        return _run(test_pipes, 0, NULL);
+
+    else if (strcmp(name, "testmm") == 0)
+        return _run(test_mm, argc, argv);
 
     else if (strcmp(name, "clear") == 0) {
         // temporary workaround.
@@ -197,12 +200,12 @@ static cmd_t *getcmd(char *input) {
 
     // get the name of the command;
     gettoken(&cmdidx, token, whitespace);
-    cmd->name = _malloc(sizeof(token));
+    cmd->name = _malloc(sizeof(strlen(token)) + 1);
     strcpy(cmd->name, token);
     token[0] = '\0';
 
     while (gettoken(&cmdidx, token, whitespace) != -1 && cmd->argc < MAX_ARGC) {
-        cmd->argv[cmd->argc] = _malloc(sizeof(strlen(token) + 1));
+        cmd->argv[cmd->argc] = _malloc(sizeof(strlen(token)) + 1);
         strcpy(cmd->argv[cmd->argc], token);
         cmd->argc++;
         token[0] = '\0';
