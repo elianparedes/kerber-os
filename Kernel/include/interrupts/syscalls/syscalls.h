@@ -43,8 +43,16 @@ enum STD {
 #define SYSCALL_SEM_CLOSE 73
 #define SYSCALL_GET_SEMS 74
 
+#define SYSCALL_CLOSE 50
+#define SYSCALL_CREATE_PIPE 51
+#define SYSCALL_OPEN_PIPE 52
+#define SYSCALL_INFO_PIPE 53
+#define SYSCALL_INFO_ALL_PIPES 54
+#define SYSCALL_DUP2 55
+
 typedef struct sem * sem_ptr;
 typedef struct copy_sem copy_sem_t;
+typedef struct pipe_info pipe_info_t;
 
 /**
  * @brief Reads up to count bytes from keyboard and copies them to buffer
@@ -54,7 +62,7 @@ typedef struct copy_sem copy_sem_t;
  * @param count number of bytes to read
  * @return uint16_t numbers of bytes read
  */
-uint16_t read(int fd, char *buffer, uint16_t count);
+int16_t read(int fd, char *buffer, uint16_t count);
 
 /**
  * @brief Writes up to count bytes from buffer and copies them to screen
@@ -64,7 +72,7 @@ uint16_t read(int fd, char *buffer, uint16_t count);
  * @param count number of bytes to write
  * @return uint16_t numbers of bytes written
  */
-uint16_t write(int fd, char *buffer, uint16_t count);
+int16_t write(int fd, char *buffer, uint16_t count);
 
 /**
  * @brief Fills struct_time given with time information
@@ -184,5 +192,17 @@ int sys_get_semaphores(copy_sem_t * sems[]);
 void * sys_malloc(size_t size);
 
 void sys_free(void *ptr);
+
+void sys_close(unsigned int fd);
+
+int sys_create_pipe(char * name, int fd[2]);
+
+int sys_open_pipe(char * name, int fd[2]);
+
+int sys_info_pipe(char * name, pipe_info_t * info);
+
+int sys_info_all_pipes(pipe_info_t * info[] , unsigned int size);
+
+int sys_dup2(unsigned int oldfd , unsigned int newfd);
 
 #endif

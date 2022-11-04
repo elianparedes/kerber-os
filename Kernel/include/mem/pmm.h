@@ -34,4 +34,11 @@ void kfree(void *ptr);
  */
 void dump_mem();
 
+/**
+ * @brief Dumps total memory, occupied memory and free memory into mem_state
+ * 
+ * @param mem_state dump is done to this array (minimum 3 length)
+ */
+void get_mem_info(int mem_state[]);
+
 #endif /* _PMM_H */

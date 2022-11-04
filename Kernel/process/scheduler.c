@@ -5,6 +5,7 @@
 #include <idtLoader.h>
 #include <pmm.h>
 #include <scheduler.h>
+#include <lib/linked_list.h>
 
 #define PID_ERR        -1
 #define MAX_TERM_COUNT 2
@@ -141,6 +142,7 @@ static process_t *free_process(int pid) {
     // remove process from parent's children list
     remove(target_node->process->parent->children, pid);
 
+    free_list(target_node->process->children);
     kfree(target_node->process);
     kfree(target_node);
 
@@ -152,6 +154,9 @@ static process_t *free_process(int pid) {
 void exit_process() {
     process_t *current_process = get_current_process();
 
+    close_dataDescriptor(current_process->dataDescriptors[0]);
+    close_dataDescriptor(current_process->dataDescriptors[1]);
+    
     if (current_process->pid > 0 && current_process->parent != NULL)
         wakeup(current_process->parent);
 

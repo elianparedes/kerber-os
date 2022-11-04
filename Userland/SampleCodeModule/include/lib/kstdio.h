@@ -60,6 +60,7 @@ typedef enum {
 
 int _read(int fd, char *buffer, size_t count);
 int _write(int fd, char *buffer, size_t count);
+void _close(unsigned int fd);
 int _switch_screen_mode(int mode);
 int _clear_screen();
 int _exit(int error_code);
@@ -77,7 +78,7 @@ void _focus(int pid);
 int _get_mem(uint8_t *address, uint8_t *buffer, size_t count);
 void _sched_yield();
 
-char getchar();
+int getchar();
 int putchar(int character);
 int puts(const char *str);
 

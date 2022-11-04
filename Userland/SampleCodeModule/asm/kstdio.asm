@@ -1,5 +1,6 @@
 GLOBAL _read
 GLOBAL _write
+GLOBAL _close
 GLOBAL _time
 GLOBAL _run
 GLOBAL _wait
@@ -19,6 +20,11 @@ GLOBAL _sem_open
 GLOBAL _sem_wait
 GLOBAL _sem_post
 GLOBAL _sem_close
+GLOBAL _create_pipe
+GLOBAL _open_pipe
+GLOBAL _info_pipe
+GLOBAL _info_all_pipes
+GLOBAL _dup2
 GLOBAL _get_semaphores
 GLOBAL _malloc
 GLOBAL _free
@@ -130,6 +136,36 @@ _sem_close:
     int 0x80
     ret
 
+_close:
+    mov rax, SYSCALL_CLOSE
+    int 0x80
+    ret
+
+_create_pipe:
+    mov rax, SYSCALL_CREATE_PIPE
+    int 0x80
+    ret
+
+_open_pipe:
+    mov rax, SYSCALL_OPEN_PIPE
+    int 0x80
+    ret
+
+_info_pipe:
+    mov rax, SYSCALL_INFO_PIPE
+    int 0x80
+    ret
+
+_info_all_pipes:
+    mov rax, SYSCALL_INFO_ALL_PIPES
+    int 0x80
+    ret
+
+_dup2:
+    mov rax, SYSCALL_DUP2
+    int 0x80
+    ret
+
 _get_semaphores:
     mov rax, SYSCALL_GET_SEMS_ID
     int 0x80
@@ -170,6 +206,12 @@ SYSCALL_SEM_OPEN_ID equ 70
 SYSCALL_SEM_WAIT_ID equ 71
 SYSCALL_SEM_POST_ID equ 72
 SYSCALL_SEM_CLOSE_ID equ 73
+SYSCALL_CLOSE equ 50
+SYSCALL_CREATE_PIPE equ 51
+SYSCALL_OPEN_PIPE equ 52
+SYSCALL_INFO_PIPE equ 53
+SYSCALL_INFO_ALL_PIPES equ 54
+SYSCALL_DUP2 equ 55
 SYSCALL_GET_SEMS_ID equ 74
 
 KBD_PRINT_REG equ 1

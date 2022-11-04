@@ -5,9 +5,10 @@
 #include <kstring.h>
 #include <stdarg.h>
 
-char getchar() {
-    char buffer;
-    _read(STDIN, &buffer, 1);
+int getchar() {
+    int buffer;
+    if( _read(STDIN, (char *)&buffer, 1) == -1 )
+        return -1;
     return buffer;
 }
 
@@ -34,7 +35,7 @@ int puts(const char *str) {
 int printf(char *str, ...) {
     va_list vl;
     int i = 0, j = 0;
-    char buff[100] = {0}, tmp[20];
+    char buff[1024] = {0}, tmp[20];
     va_start(vl, str);
     while (str && str[i]) {
         if (str[i] == '%') {
