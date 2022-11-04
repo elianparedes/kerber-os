@@ -155,6 +155,8 @@ int piperead(pipe_t pipe, char *buffer, int count)
         return -2;
 
     while(pipe->nread == pipe->nwrite){
+        if(pipe->writeopen == 0)
+            return EOF;
         sleep_helper((uint64_t)&pipe->nread,pipe->blocked_pid);
 
     }  
@@ -182,17 +184,19 @@ void close_pipe(pipe_t pipe, int writable)
     if (writable){
         if (pipe->writeopen != 0){
             pipe->writeopen--;
+            wakeup_helper((uint64_t)&pipe->nread,pipe->blocked_pid);
         }
     }
     else{
         if (pipe->readopen != 0){
             pipe->readopen--;
+            wakeup_helper((uint64_t)&pipe->nread,pipe->blocked_pid);
         }
     }
 
     if (pipe->readopen == 0 && pipe->writeopen == 0 && pipe->nread > 0 && pipe->nwrite > 0){
         remove(pipe_list, pipe->name);
-        kfree(pipe->blocked_pid);
+        free_list(pipe->blocked_pid);
         kfree(pipe);
     }
 
@@ -257,4 +261,12 @@ int info_all_pipes( pipe_info_t * info_arr[] , unsigned int size){
 
     return count;
     
+}
+
+void add_writer(pipe_t pipe){
+    pipe->nwrite++;
+}
+
+void add_reader(pipe_t pipe){
+    pipe->nread++;
 }

@@ -245,6 +245,7 @@ void sys_close(unsigned int fd){
     if(fd >= process->dataD_index)
         return;
     close_dataDescriptor(process->dataDescriptors[fd]);
+    process->dataDescriptors[fd] = NULL;
 }
 
 int sys_create_pipe(char * name, int fd[2]){
