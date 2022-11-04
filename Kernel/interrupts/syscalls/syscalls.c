@@ -182,3 +182,7 @@ void * sys_malloc(size_t size){
 void sys_free(void *ptr){
     kfree(ptr);
 }
+
+void sys_get_mem_state(int mem_state[]){
+    get_mem_state(mem_state);
+}

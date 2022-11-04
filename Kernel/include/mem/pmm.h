@@ -39,6 +39,6 @@ void dump_mem();
  * 
  * @param mem_state dump is done to this array (minimum 3 length)
  */
-void get_mem_info(int mem_state[]);
+void get_mem_state(int mem_state[]);
 
 #endif /* _PMM_H */

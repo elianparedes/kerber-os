@@ -22,6 +22,7 @@ GLOBAL _sem_close
 GLOBAL _get_semaphores
 GLOBAL _malloc
 GLOBAL _free
+GLOBAL _get_mem_state
 
 section .text
 
@@ -145,6 +146,11 @@ _free:
     int 0x80
     ret
 
+_get_mem_state:
+    mov rax, SYSCALL_GET_MEM_STATE_ID
+    int 0x80
+    ret
+
 
 section .rodata
 SYSCALL_READ_ID equ 0
@@ -171,5 +177,6 @@ SYSCALL_SEM_WAIT_ID equ 71
 SYSCALL_SEM_POST_ID equ 72
 SYSCALL_SEM_CLOSE_ID equ 73
 SYSCALL_GET_SEMS_ID equ 74
+SYSCALL_GET_MEM_STATE_ID equ 90
 
 KBD_PRINT_REG equ 1

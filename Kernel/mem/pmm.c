@@ -3,8 +3,9 @@
 #include <pmm.h>
 #include <stdbool.h>
 
-#define SIZE (1024 * 64)
+#define SIZE (1024 * 1024 * 8)
 #define BASE_ADDR 0x600000
+size_t occupied_mem;
 
 #define BUDDY
 #ifdef BUDDY
@@ -62,6 +63,7 @@ static buddy_block *buddy_split(buddy_block *block, size_t size)
 
 		if (size <= block->size)
 		{
+			occupied_mem += block->size;
 			return block;
 		}
 	}
@@ -160,6 +162,8 @@ static size_t buddy_align_size(size_t size)
 
 void init_pmm()
 {
+	occupied_mem=0;
+
 	buddy_alloc->alignment = ALIGNMENT;
 	if (buddy_alloc->alignment < sizeof(buddy_block))
 	{
@@ -201,6 +205,7 @@ void kfree(void *ptr)
 	if (ptr != NULL)
 	{
 		buddy_block *block = (buddy_block *)((char *)ptr - buddy_alloc->alignment);
+		occupied_mem -= block->size;
 		block->is_free = true;
 	}
 }
@@ -317,3 +322,9 @@ void kfree(void *ptr)
 }*/
 
 #endif
+
+void get_mem_state(int mem_state[]){
+	mem_state[0] = SIZE;
+	mem_state[1] = occupied_mem;
+	mem_state[2] = SIZE- occupied_mem;
+}

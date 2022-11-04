@@ -42,6 +42,9 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
         case SYSCALL_GET_MEM:
             return sys_get_mem((uint8_t *)arg0, (uint8_t *)arg1,
                                (uint16_t)arg2);
+        case SYSCALL_GET_MEM_STATE:
+            sys_get_mem_state((int *)arg0);
+            break;
         case SYSCALL_COPY_CPU_STATE:
             return sys_copy_cpu_state((cpu_state_t *)arg0, (request_t)arg1);
         case SYSCALL_FOCUS:
