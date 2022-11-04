@@ -3,9 +3,9 @@
 #include "interrupts/time/time.h"
 #include <fifo_queue.h>
 #include <idtLoader.h>
+#include <lib/linked_list.h>
 #include <pmm.h>
 #include <scheduler.h>
-#include <lib/linked_list.h>
 
 #define PID_ERR        -1
 #define MAX_TERM_COUNT 2
@@ -156,7 +156,7 @@ void exit_process() {
 
     close_dataDescriptor(current_process->dataDescriptors[0]);
     close_dataDescriptor(current_process->dataDescriptors[1]);
-    
+
     if (current_process->pid > 0 && current_process->parent != NULL)
         wakeup(current_process->parent);
 
@@ -203,9 +203,9 @@ context_t *schedule(context_t *rsp) {
     if (process_count == 0)
         return rsp;
 
-    /*if (current_node != NULL &&
+    if (current_node != NULL && current_node->process->status != PAUSED &&
         ticks_elapsed() < current_node->process->priority)
-        return rsp;*/
+        return rsp;
 
     if (current_node != NULL) {
         current_node->process->context = rsp;
@@ -219,7 +219,7 @@ context_t *schedule(context_t *rsp) {
         current_node = front_node;
 
     // set timer ticks to 0
-    //timer_reset();
+    timer_reset();
 
     return current_node->process->context;
 }
