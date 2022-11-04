@@ -162,7 +162,6 @@ void exit_process() {
     // leave process as terminated. Parent will clean it up on wait
     current_process->status = PAUSED;
     current_process->exit_status = 0;
-
     // free_process(current_process->pid);
 
     _force_schedule();

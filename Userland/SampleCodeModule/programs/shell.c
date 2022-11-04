@@ -22,6 +22,8 @@
 #include <testmm.h>
 #include <testsync.h>
 #include <time.h>
+#include <printsems.h>
+#include <printmemstate.h>
 
 #define LINE_LENGTH    512
 #define TOKEN_LENGTH   512
@@ -95,7 +97,9 @@ static int run_command(char *name, int argc, char *argv[]) {
 
     else if (strcmp(name, "printmem") == 0)
         return _run(printmem, argc, argv);
-
+    else if (strcmp(name, "mem") == 0){
+        return _run(printmemstate, 0, NULL);
+    }
     else if (strcmp(name, "testsync") == 0)
         return _run(test_sync, argc, argv);
 
