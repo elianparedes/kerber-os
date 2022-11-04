@@ -5,9 +5,10 @@
 #include <kstring.h>
 #include <stdarg.h>
 
-char getchar() {
-    char buffer;
-    _read(STDIN, &buffer, 1);
+int getchar() {
+    int buffer;
+    if( _read(STDIN, (char *)&buffer, 1) == -1 )
+        return -1;
     return buffer;
 }
 

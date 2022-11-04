@@ -1,6 +1,7 @@
 #include <lib/dataDescriptor.h>
 #include <pmm.h>
 #include <scheduler.h>
+#include <pipe/pipe.h>
 
 typedef struct dataDescriptor{
     DATA_TYPE type;
@@ -67,15 +68,21 @@ int dup2(unsigned int oldfd , unsigned int newfd){
         return -1;
 
     close_dataDescriptor(process->dataDescriptors[newfd]);
-
     dataDescriptor_t dataD = process->dataDescriptors[oldfd];
     mode_t mode = getMode_dataDescriptor(dataD);
     DATA_TYPE type = getDataType_dataDescriptor(dataD);
-    pipe_t pipe = getPipe_dataDescriptor(dataD);
 
     dataDescriptor_t dataD_cpy = create_dataDescriptor(type,mode);
-    setPipe_dataDescriptor(dataD_cpy,pipe);
 
+    if(type == PIPE_T){
+        pipe_t pipe = getPipe_dataDescriptor(dataD);
+        if(mode == WRITE_MODE)
+            add_writer(pipe);
+        else
+            add_reader(pipe);
+        setPipe_dataDescriptor(dataD_cpy,pipe);
+    }
+    
     process->dataDescriptors[newfd] = dataD_cpy;
 
     return 0;

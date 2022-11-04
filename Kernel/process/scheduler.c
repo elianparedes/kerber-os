@@ -141,6 +141,7 @@ static process_t *free_process(int pid) {
     // remove process from parent's children list
     remove(target_node->process->parent->children, pid);
 
+    free_list(target_node->process->children);
     kfree(target_node->process);
     kfree(target_node);
 

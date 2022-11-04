@@ -34,4 +34,8 @@ int info_pipe(char * name, pipe_info_t * info);
 
 int info_all_pipes( pipe_info_t * info_arr[], unsigned int size);
 
+void add_writer(pipe_t pipe);
+
+void add_reader(pipe_t pipe);
+
 #endif

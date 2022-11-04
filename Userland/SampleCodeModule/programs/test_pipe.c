@@ -10,7 +10,8 @@ sem_ptr sem_shell;
 void process_left(){
     _sem_wait(sem_shell);
     int fd[2];
-    _create_pipe("my_pipe",fd);
+    if(_create_pipe("my_pipe",fd) == -1)
+        _open_pipe("my_pipe",fd);
     _sem_post(sem_shell);
 
     _dup2(fd[1],1);
@@ -26,7 +27,8 @@ void process_left(){
 void process_right(){
     int fd[2];
     _sem_wait(sem_shell);
-    _open_pipe("my_pipe",fd);
+    if(_open_pipe("my_pipe",fd) == -1)
+        _create_pipe("my_pipe",fd);
     _sem_post(sem_shell);
 
     _dup2(fd[0],0);
@@ -46,4 +48,5 @@ void test_pipes(){
     _wait2();
     _wait2();
     _sem_close(sem_shell);
+
 }
