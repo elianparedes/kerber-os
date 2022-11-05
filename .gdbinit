@@ -13,9 +13,14 @@ define asm-prof
 end
 
 define proclist
-  call cl_to_begin(process_list)
-  while(cl_has_next(process_list))
-    p *((process_t*)cl_next(process_list))
+  set var $i = 0
+  set var $s = (((list_t*)process_list))->size
+  set var $n = (((list_t*)process_list))->start
+
+  while $i < $s
+    p *((process_t*)$n->data)
+    set $i = $i + 1
+    set $n = $n->next
   end
 end
 
