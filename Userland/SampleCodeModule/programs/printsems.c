@@ -24,12 +24,14 @@ void printsems() {
 
     for (int i = 0; i < MAX_SEMAPHORES; i++) {
         copied_sems[i] = (copy_sem_t *)_malloc(sizeof(copy_sem_t));
+        for (int k=0; k < MAX_BLOCKED_PROCESSES; k++){
+            copied_sems[i]->blocked_processes[k]=0;
+        }
     }
 
     int i = _get_semaphores(copied_sems);
-    // TODO: This should be done with wait
     _sem_post(sem1);
-    _sched_yield();
+    _wait2();
     copy_sem_t *aux_sem;
     for (int j = 0; j < i; j++) {
         aux_sem = copied_sems[j];
