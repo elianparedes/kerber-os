@@ -4,8 +4,10 @@
 #include <divzero.h>
 #include <fibonacci.h>
 #include <help.h>
+#include <infopipe.h>
 #include <inforeg.h>
 #include <invopcode.h>
+#include <ipc_programs.h>
 #include <kerberos.h>
 #include <kmman.h>
 #include <kstdbool.h>
@@ -13,18 +15,15 @@
 #include <kstring.h>
 #include <primes.h>
 #include <printmem.h>
+#include <printmemstate.h>
 #include <printsems.h>
 #include <schd.h>
 #include <sleeptest.h>
 #include <test_inforeg.h>
+#include <test_pipe.h>
 #include <testmm.h>
 #include <testsync.h>
 #include <time.h>
-#include <infopipe.h>
-#include <test_pipe.h>
-#include <ipc_programs.h>
-#include <printsems.h>
-#include <printmemstate.h>
 
 #define LINE_LENGTH    512
 #define TOKEN_LENGTH   512
@@ -99,13 +98,11 @@ static int run_command(char *name, int argc, char *argv[]) {
 
     else if (strcmp(name, "printmem") == 0)
         return _run(printmem, argc, argv);
-    else if (strcmp(name, "mem") == 0){
+    else if (strcmp(name, "mem") == 0) {
         return _run(printmemstate, 0, NULL);
-    }
-    else if (strcmp(name, "testsync") == 0){
+    } else if (strcmp(name, "testsync") == 0) {
         return _run(test_sync, argc, argv);
-    }
-    else if (strcmp(name, "testnosync") == 0){
+    } else if (strcmp(name, "testnosync") == 0) {
         return _run(test_sync, argc, argv);
     }
 
@@ -124,10 +121,10 @@ static int run_command(char *name, int argc, char *argv[]) {
         return _run(cat, 0, NULL);
 
     else if (strcmp(name, "filter") == 0)
-        return _run(filter,0,NULL);
+        return _run(filter, 0, NULL);
 
     else if (strcmp(name, "wc") == 0)
-        return _run(wc,0,NULL);
+        return _run(wc, 0, NULL);
 
     else if (strcmp(name, "testpipes") == 0)
         return _run(test_pipes, 0, NULL);
@@ -347,7 +344,9 @@ int shell() {
         if (cmd_buff[0] == '\0')
             continue;
 
+        int pid = -1, proc_status = -1;
         line_t *parsedline = parseline(input);
+
         switch (parsedline->operator) {
             case '|':
                 printf("operator: %c\n", parsedline->operator);
@@ -361,10 +360,12 @@ int shell() {
                 break;
 
             default:
-                run_command(parsedline->left_cmd->name,
-                            parsedline->left_cmd->argc,
-                            parsedline->left_cmd->argv);
-                _wait2();
+                pid = run_command(parsedline->left_cmd->name,
+                                  parsedline->left_cmd->argc,
+                                  parsedline->left_cmd->argv);
+
+                _waitpid(pid, &proc_status);
+                printf("[ process exited with code %d ]\n", proc_status);
                 break;
         }
 

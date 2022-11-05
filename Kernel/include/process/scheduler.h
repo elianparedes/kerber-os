@@ -11,7 +11,7 @@
  * @brief set current process in wait status
  *
  */
-void wait_process();
+void wait_process(pid_t pid, int *status_ptr);
 
 /**
  * @brief Saves the CPU state in the current process and switches to the next
@@ -46,7 +46,7 @@ int add_process(function_t main, int argc, char *argv[]);
  * @brief Removes current process from the queue and forces a schedule.
  *
  */
-void exit_process();
+void exit_process(int status);
 
 /**
  * @brief Removes process with the given pid from the queue.

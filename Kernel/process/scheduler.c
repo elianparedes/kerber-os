@@ -7,6 +7,7 @@
 #include <lib/linked_list.h>
 #include <pmm.h>
 #include <scheduler.h>
+#include <stdbool.h>
 
 #define PID_ERR        -1
 #define MAX_TERM_COUNT 2
@@ -36,19 +37,33 @@ int process_count() {
     return cl_size(process_list);
 }
 
-void wait_process() {
+void wait_process(pid_t pid, int *status_ptr) {
+
     // if no children, return
     if (size(current_process->children) == 0)
         return;
 
-    while (1) {
-        list_ptr children_list = current_process->children;
+    list_ptr children_list = current_process->children;
+    process_t *target_child = NULL;
 
-        process_t *terminated_child =
-            find(children_list, TERMINATED, search_by_status);
-        if (terminated_child != NULL) {
-            free_process(terminated_child->pid);
-            return;
+    while (true) {
+        if (pid > 0) {
+            target_child = find(children_list, pid, search_by_pid);
+
+            if (target_child != NULL && target_child->status == TERMINATED) {
+                *status_ptr = target_child->exit_status;
+                free_process(target_child->pid);
+                return;
+            }
+        } else {
+            target_child = find(children_list, TERMINATED, search_by_status);
+
+            if (target_child != NULL) {
+                *status_ptr = target_child->exit_status;
+                free_process(target_child->pid);
+
+                return;
+            }
         }
 
         sleep(current_process);
@@ -106,7 +121,7 @@ static process_t *free_process(int pid) {
 static void terminate_process(int pid) {
 }
 
-void exit_process() {
+void exit_process(int status) {
     close_dataDescriptor(current_process->dataDescriptors[0]);
     close_dataDescriptor(current_process->dataDescriptors[1]);
 
@@ -115,7 +130,7 @@ void exit_process() {
 
     // leave process as terminated. Parent will clean it up on wait
     current_process->status = TERMINATED;
-    current_process->exit_status = 0;
+    current_process->exit_status = status;
 
     _force_schedule();
 }

@@ -64,7 +64,7 @@ void exceptionDispatcher(int exception) {
         opcode_exception();
     }
 
-    exit_process();
+    exit_process(0);
 }
 
 static void zero_division_exception() {

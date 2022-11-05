@@ -68,6 +68,7 @@ int _time(time_t *time_struct, int utc_offset);
 int _run(void *main, int argc, char *argv[]);
 void _wait(chld_t child, chldstatus_t *pstatus);
 void _wait2();
+void _waitpid(int pid, int *status_ptr);
 int _cntrl_pressed();
 int _copy_cpu_state(cpu_state_t *cpu_ptr, request_t request);
 void _delete_char();

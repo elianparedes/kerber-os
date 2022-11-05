@@ -13,7 +13,7 @@
 typedef enum pstatus {
     WAITING = 0,
     READY,
-    TERMINATED, 
+    TERMINATED,
 } pstatus_t;
 
 typedef int pid_t;
@@ -63,7 +63,7 @@ typedef struct process {
     int priority;
 } process_t;
 
-typedef void (*function_t)(int, char *[]);
+typedef int (*function_t)(int, char *[]);
 
 /**
  * @brief Creates a new process.

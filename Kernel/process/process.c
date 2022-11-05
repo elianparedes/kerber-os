@@ -11,8 +11,8 @@ static int last_pid = 0;
 static int ticks_by_priority[6] = {1, 2, 3, 5, 8, 13};
 
 static void start(function_t function, int argc, char *argv[]) {
-    function(argc, argv);
-    sys_exit(P_EXIT_CODE);
+    int status = function(argc, argv);
+    sys_exit(status);
 }
 
 static int process_compare(process_t *process, pid_t pid) {

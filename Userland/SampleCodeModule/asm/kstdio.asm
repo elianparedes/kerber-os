@@ -16,6 +16,7 @@ GLOBAL _pause
 GLOBAL _focus
 GLOBAL _sched_yield
 GLOBAL _wait2
+GLOBAL _waitpid
 GLOBAL _sem_open
 GLOBAL _sem_wait
 GLOBAL _sem_post
@@ -117,6 +118,11 @@ _wait2:
     int 0x80
     ret
 
+_waitpid:
+    mov rax, SYSCALL_WAITPID_ID
+    int 0x80
+    ret
+
 _sem_open:
     mov rax, SYSCALL_SEM_OPEN_ID
     int 0x80
@@ -203,6 +209,7 @@ SYSCALL_GETTIME_ID equ 96
 SYSCALL_RUN_ID equ 66
 SYSCALL_WAIT_ID equ 67
 SYSCALL_WAIT2_ID equ 68
+SYSCALL_WAITPID_ID equ 69
 SYSCALL_DELETE_CHAR_ID equ 46
 SYSCALL_KILL_ID equ 62
 SYSCALL_PAUSE_ID equ 75 

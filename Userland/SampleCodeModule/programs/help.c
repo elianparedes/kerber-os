@@ -147,7 +147,7 @@ static void help_pipe() {
     puts("");
 }
 
-void help(int argc, char *argv[]) {
+int help(int argc, char *argv[]) {
     if (argc == 0)
         help_cmds();
 
@@ -189,4 +189,6 @@ void help(int argc, char *argv[]) {
 
     else
         help_error(argv[0]);
+
+    return 0;
 }
