@@ -100,11 +100,12 @@ static int run_command(char *name, int argc, char *argv[]) {
     else if (strcmp(name, "mem") == 0){
         return _run(printmemstate, 0, NULL);
     }
-    else if (strcmp(name, "testsync") == 0)
+    else if (strcmp(name, "testsync") == 0){
         return _run(test_sync, argc, argv);
-
-    else if (strcmp(name, "testnosync") == 0)
+    }
+    else if (strcmp(name, "testnosync") == 0){
         return _run(test_sync, argc, argv);
+    }
 
     else if (strcmp(name, "sleeptest") == 0)
         return _run(sleeptest, argc, argv);
