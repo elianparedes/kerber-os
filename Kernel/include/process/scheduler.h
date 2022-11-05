@@ -7,6 +7,9 @@
 
 #define MAX_PROC_COUNT 256
 
+
+void sleep_time(int time);
+
 /**
  * @brief set current process in wait status
  *

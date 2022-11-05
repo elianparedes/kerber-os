@@ -90,6 +90,9 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
         case SYSCALL_FREE:
             sys_free((void *)arg0);
             break;
+        case SYSCALL_SLEEP_TIME:
+            sys_sleep_time((int)arg0);
+            break;
         default:
             return 0;
     }

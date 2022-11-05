@@ -13,6 +13,7 @@
 #include <pmm.h>
 #include <pipe/pipe.h>
 #include <lib/defs.h>
+#include <time.h>
 
 #define ADDRESS_LIMIT 0xFFFFFFFF
 
@@ -21,6 +22,10 @@ enum DISTRIBUTION
     FULL_DISTRIBUTION = 0,
     SPLIT_DISTRIBUTION
 };
+
+void sys_sleep_time( int time ){
+    return sleep_time(time);
+}
 
 int16_t read(int fd, char *buffer, uint16_t count)
 {

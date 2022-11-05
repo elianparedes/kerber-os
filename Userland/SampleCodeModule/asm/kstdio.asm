@@ -29,6 +29,7 @@ GLOBAL _get_semaphores
 GLOBAL _malloc
 GLOBAL _free
 GLOBAL _get_mem_state
+GLOBAL _sleep_time
 
 section .text
 
@@ -187,6 +188,11 @@ _get_mem_state:
     int 0x80
     ret
 
+_sleep_time:
+    mov rax, SYSCALL_SLEEP_TIME
+    int 0x80
+    ret
+
 
 section .rodata
 SYSCALL_READ_ID equ 0
@@ -220,5 +226,6 @@ SYSCALL_INFO_ALL_PIPES equ 54
 SYSCALL_DUP2 equ 55
 SYSCALL_GET_SEMS_ID equ 74
 SYSCALL_GET_MEM_STATE_ID equ 90
+SYSCALL_SLEEP_TIME equ 110
 
 KBD_PRINT_REG equ 1

@@ -5,6 +5,7 @@
 #include <pmm.h>
 #include <scheduler.h>
 #include <lib/linked_list.h>
+#include <time.h>
 
 #define PID_ERR        -1
 #define MAX_TERM_COUNT 2
@@ -54,6 +55,13 @@ void sleep(uint64_t channel) {
     current_process->channel = channel;
     current_process->status = PAUSED;
     _force_schedule();
+}
+
+void sleep_time(int time){
+    _sti();
+    int prev = seconds_elapsed();
+    while (seconds_elapsed() < (prev+time));
+    _cli();
 }
 
 int wakeup(uint64_t channel) {

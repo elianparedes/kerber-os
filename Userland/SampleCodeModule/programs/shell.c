@@ -23,6 +23,7 @@
 #include <ipc_programs.h>
 #include <printsems.h>
 #include <printmemstate.h>
+#include <phylo.h>
 
 #define LINE_LENGTH    512
 #define TOKEN_LENGTH   512
@@ -110,6 +111,9 @@ static int run_command(char *name, int argc, char *argv[]) {
 
     else if (strcmp(name, "sem") == 0)
         return _run(printsems, argc, argv);
+    
+    else if (strcmp(name, "phylo") == 0)
+        return _run(phylo, argc, argv);
 
     else if (strcmp(name, "pipe") == 0)
         return _run(info_all_pipes, 0, NULL);

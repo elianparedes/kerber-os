@@ -51,9 +51,13 @@ enum STD {
 #define SYSCALL_INFO_ALL_PIPES 54
 #define SYSCALL_DUP2 55
 
+#define SYSCALL_SLEEP_TIME 110
+
 typedef struct sem * sem_ptr;
 typedef struct copy_sem copy_sem_t;
 typedef struct pipe_info pipe_info_t;
+
+void sys_sleep_time(int time);
 
 /**
  * @brief Reads up to count bytes from keyboard and copies them to buffer

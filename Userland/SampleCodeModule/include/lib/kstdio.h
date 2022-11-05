@@ -58,6 +58,7 @@ typedef enum {
     KBD_PRINT_REG = 1
 } request_t;
 
+void _sleep_time(int time);
 int _read(int fd, char *buffer, size_t count);
 int _write(int fd, char *buffer, size_t count);
 void _close(unsigned int fd);
