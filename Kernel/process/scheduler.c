@@ -103,6 +103,9 @@ static process_t *free_process(int pid) {
     return target;
 }
 
+static void terminate_process(int pid) {
+}
+
 void exit_process() {
     close_dataDescriptor(current_process->dataDescriptors[0]);
     close_dataDescriptor(current_process->dataDescriptors[1]);
@@ -118,7 +121,18 @@ void exit_process() {
 }
 
 void kill_process(int pid) {
-    process_t *target = free_process(pid);
+    process_t *target = cl_find(process_list, pid, search_by_pid);
+    if (target == NULL)
+        return;
+
+    close_dataDescriptor(target->dataDescriptors[0]);
+    close_dataDescriptor(target->dataDescriptors[1]);
+
+    wakeup(target->parent);
+
+    // leave process as terminated. Parent will clean it up on wait
+    target->status = TERMINATED;
+    target->exit_status = -1;
 
     // the right way of doing this would be with signals and their handlers
     // between processes but these are not implemented yet.
@@ -128,6 +142,9 @@ void kill_process(int pid) {
     gprint_new_line(target->g_context);
     gprint_string("[ process terminated ]", target->g_context);
     gprint_new_line(target->g_context);
+
+    if (target == current_process)
+        _force_schedule();
 }
 
 process_t *get_current_process() {
