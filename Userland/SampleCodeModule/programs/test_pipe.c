@@ -1,9 +1,11 @@
-#include <cat.h>
+
 #include <infopipe.h>
 #include <kpipe.h>
 #include <ksemaphore.h>
 #include <kstdio.h>
 #include <test_pipe.h>
+
+#include <ipc_programs.h>
 
 sem_ptr sem_shell;
 
@@ -18,7 +20,7 @@ void process_left() {
     _close(fd[1]);
     _close(fd[0]);
 
-    printf("Hello world\n");
+    printf("Hola mundo\nescribo otra\n");
 
     _exit(0);
 }
@@ -34,7 +36,9 @@ void process_right() {
     _close(fd[0]);
     _close(fd[1]);
 
-    cat();
+    // cat();
+    // filter();
+    wc();
 
     _exit(0);
 }

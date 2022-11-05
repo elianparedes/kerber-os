@@ -135,7 +135,7 @@ process_t *get_current_process() {
 }
 
 process_t *get_process(pid_t pid) {
-    return find(process_list, pid, search_by_pid);
+    return cl_find(process_list, pid, search_by_pid);
 }
 
 context_t *schedule(context_t *rsp) {

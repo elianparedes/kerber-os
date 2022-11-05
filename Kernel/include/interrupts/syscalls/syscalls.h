@@ -22,6 +22,7 @@ enum STD {
 
 #define SYSCALL_CNTRL_LISTENER     6
 #define SYSCALL_GET_MEM            10
+#define SYSCALL_GET_MEM_STATE      90
 #define SYSCALL_COPY_CPU_STATE     7
 #define SYSCALL_MALLOC 9
 #define SYSCALL_FREE 11
@@ -158,6 +159,8 @@ void sys_kill(int pid);
  * @return uint16_t number of bytes copied to buffer
  */
 uint16_t sys_get_mem(uint8_t *address, uint8_t *buffer, uint16_t count);
+
+void sys_get_mem_state(int mem_state[]);
 
 /**
  * @brief Pauses the execution of given process

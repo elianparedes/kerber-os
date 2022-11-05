@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <keyboard.h>
 #include <scheduler.h>
+#include <lib/defs.h>
 
 #define KBD_ENCODER_PORT 0x60
 #define KBD_CTRL_PORT    0x64
@@ -44,6 +45,8 @@ static uint8_t caps_locked = 0;
 static uint8_t shift_pressed = 0;
 static uint8_t cntrl_pressed = 0;
 static uint8_t *cntrl_listener = &cntrl_pressed;
+
+static uint8_t ctrl_d_flag = 0;
 
 static char kbd_US_1[KBD_SIZE] = {
     0,
@@ -207,6 +210,16 @@ void kbd_enable() {
     kbd_send_ctrl_cmd(KBD_CTRL_CMD_ENABLE);
 }
 
+static void ctrl_c_handler(){
+    int pid = get_current_process()->pid;
+    if(pid != 0)
+        exit_process();
+}
+
+static void ctrl_d_handler(){
+    ctrl_d_flag = 1;
+}
+
 void kbd_handler() {
 
     uint8_t scan_code = inb(KBD_ENCODER_PORT);
@@ -246,6 +259,20 @@ void kbd_handler() {
     }
     if (caps_locked && IS_ASCII_LETTER(character)) {
         buffer[index] = character - MAYUS_OFFSET;
+    } else if (cntrl_pressed){
+        switch (character)
+        {
+        case 'c':
+            ctrl_c_handler();
+            break;
+
+        case 'd':
+            ctrl_d_handler();
+        
+        default:
+            break;
+        }
+        
     } else {
         buffer[index] = character;
     }
@@ -253,13 +280,13 @@ void kbd_handler() {
     buffer[index] = 0;
 }
 
- void kbd_get_buffer(char * buffer_ret) {
-    /*
-    char toReturn[BUFFER_SIZE];
-    memcpy(toReturn, buffer, index);
-    return toReturn;
-    */
+ int kbd_get_buffer(char * buffer_ret) {
+   if(ctrl_d_flag){
+    ctrl_d_flag = 0;
+    return EOF;
+   }
    memcpy(buffer_ret, buffer, index);
+   return 0;
 }
 
 void kbd_clear_buffer() {

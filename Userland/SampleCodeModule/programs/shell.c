@@ -1,11 +1,9 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-#include <cat.h>
 #include <clear.h>
 #include <divzero.h>
 #include <fibonacci.h>
 #include <help.h>
-#include <infopipe.h>
 #include <inforeg.h>
 #include <invopcode.h>
 #include <kerberos.h>
@@ -19,10 +17,14 @@
 #include <schd.h>
 #include <sleeptest.h>
 #include <test_inforeg.h>
-#include <test_pipe.h>
 #include <testmm.h>
 #include <testsync.h>
 #include <time.h>
+#include <infopipe.h>
+#include <test_pipe.h>
+#include <ipc_programs.h>
+#include <printsems.h>
+#include <printmemstate.h>
 
 #define LINE_LENGTH    512
 #define TOKEN_LENGTH   512
@@ -97,12 +99,15 @@ static int run_command(char *name, int argc, char *argv[]) {
 
     else if (strcmp(name, "printmem") == 0)
         return _run(printmem, argc, argv);
-
-    else if (strcmp(name, "testsync") == 0)
+    else if (strcmp(name, "mem") == 0){
+        return _run(printmemstate, 0, NULL);
+    }
+    else if (strcmp(name, "testsync") == 0){
         return _run(test_sync, argc, argv);
-
-    else if (strcmp(name, "testnosync") == 0)
+    }
+    else if (strcmp(name, "testnosync") == 0){
         return _run(test_sync, argc, argv);
+    }
 
     else if (strcmp(name, "sleeptest") == 0)
         return _run(sleeptest, argc, argv);
@@ -117,6 +122,12 @@ static int run_command(char *name, int argc, char *argv[]) {
 
     else if (strcmp(name, "cat") == 0)
         return _run(cat, 0, NULL);
+
+    else if (strcmp(name, "filter") == 0)
+        return _run(filter,0,NULL);
+
+    else if (strcmp(name, "wc") == 0)
+        return _run(wc,0,NULL);
 
     else if (strcmp(name, "testpipes") == 0)
         return _run(test_pipes, 0, NULL);
