@@ -13,17 +13,9 @@ define asm-prof
 end
 
 define proclist
-  set var $n = front_node
-  p current_node->process
-
-  p ($n->process)
-  p *($n->process)
-  set var $n = $n->next
-  
-  while $n != front_node
-    p ($n->process)
-    p *($n->process)
-    set var $n = $n->next
+  call cl_to_begin(process_list)
+  while(cl_has_next(process_list))
+    p *((process_t*)cl_next(process_list))
   end
 end
 

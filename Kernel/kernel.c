@@ -6,15 +6,15 @@
 #include <lib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
+#include <pipe/pipe.h>
 #include <pmm.h>
 #include <process.h>
 #include <scheduler.h>
+#include <semaphore/semaphore.h>
 #include <stdint.h>
 #include <string.h>
 #include <syscall.h>
-#include <pipe/pipe.h>
 #include <time.h>
-#include <semaphore/semaphore.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -30,21 +30,18 @@ static void *const sampleDataModuleAddress = (void *)0x500000;
 
 typedef int (*EntryPoint)();
 
-void clearBSS(void *bssAddress, uint64_t bssSize)
-{
+void clearBSS(void *bssAddress, uint64_t bssSize) {
     memset(bssAddress, 0, bssSize);
 }
 
-void *getStackBase()
-{
+void *getStackBase() {
     return (void *)((uint64_t)&endOfKernel +
                     PageSize * 8       // The size of the stack itself, 32KiB
                     - sizeof(uint64_t) // Begin at the top of the stack
     );
 }
 
-void *initializeKernelBinary()
-{
+void *initializeKernelBinary() {
     char buffer[10];
 
     ncPrint("[x64BareBones]");
@@ -95,6 +92,7 @@ void *initializeKernelBinary()
 int main() {
 
     init_pmm(); // init physical memory manager
+    init_scheduler();
     load_idt();
     init_sem_list();
     init_pipes();

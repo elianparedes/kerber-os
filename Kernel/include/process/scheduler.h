@@ -76,4 +76,6 @@ void sleep(uint64_t channel);
 // Returns pid of awakened process
 int wakeup(uint64_t channel);
 
+void init_scheduler();
+
 #endif /* _SCHEDULER_H_ */

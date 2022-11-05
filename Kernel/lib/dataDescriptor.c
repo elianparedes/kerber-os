@@ -1,22 +1,23 @@
 #include <lib/dataDescriptor.h>
+#include <pipe/pipe.h>
 #include <pmm.h>
 #include <scheduler.h>
-#include <pipe/pipe.h>
 
-typedef struct dataDescriptor{
+typedef struct dataDescriptor {
     DATA_TYPE type;
     mode_t mode;
     pipe_t pipe;
 } dataDescriptor;
 
-dataDescriptor_t create_dataDescriptor(DATA_TYPE type , mode_t mode){
+dataDescriptor_t create_dataDescriptor(DATA_TYPE type, mode_t mode) {
 
-    if(!((mode == READ_MODE || mode == WRITE_MODE) && (type == PIPE_T || type == STD_T )))
+    if (!((mode == READ_MODE || mode == WRITE_MODE) &&
+          (type == PIPE_T || type == STD_T)))
         return NULL;
-    
+
     dataDescriptor_t newDataD = kmalloc(sizeof(dataDescriptor));
-    
-    if(newDataD != NULL){
+
+    if (newDataD != NULL) {
         newDataD->type = type;
         newDataD->mode = mode;
         newDataD->pipe = NULL;
@@ -25,46 +26,46 @@ dataDescriptor_t create_dataDescriptor(DATA_TYPE type , mode_t mode){
     return newDataD;
 }
 
-DATA_TYPE getDataType_dataDescriptor(dataDescriptor_t dataD){
-    if(dataD == NULL)
+DATA_TYPE getDataType_dataDescriptor(dataDescriptor_t dataD) {
+    if (dataD == NULL)
         return -1;
 
     return dataD->type;
 }
 
-mode_t getMode_dataDescriptor(dataDescriptor_t dataD){
+mode_t getMode_dataDescriptor(dataDescriptor_t dataD) {
     return dataD->mode;
 }
 
-pipe_t getPipe_dataDescriptor(dataDescriptor_t dataD){
-    if( dataD == NULL || dataD->type != PIPE_T)
+pipe_t getPipe_dataDescriptor(dataDescriptor_t dataD) {
+    if (dataD == NULL || dataD->type != PIPE_T)
         return NULL;
 
     return dataD->pipe;
 }
 
-int setPipe_dataDescriptor(dataDescriptor_t dataD ,pipe_t pipe){
-    if(dataD != NULL && dataD->type == PIPE_T){
+int setPipe_dataDescriptor(dataDescriptor_t dataD, pipe_t pipe) {
+    if (dataD != NULL && dataD->type == PIPE_T) {
         dataD->pipe = pipe;
         return 0;
     }
     return -1;
 }
 
-void close_dataDescriptor(dataDescriptor_t dataD){
-    if(dataD == NULL)
+void close_dataDescriptor(dataDescriptor_t dataD) {
+    if (dataD == NULL)
         return;
 
-    if(dataD->type == PIPE_T)
-        close_pipe(dataD->pipe,dataD->mode == WRITE_MODE);
-    
+    if (dataD->type == PIPE_T)
+        close_pipe(dataD->pipe, dataD->mode == WRITE_MODE);
+
     kfree(dataD);
 }
 
-int dup2(unsigned int oldfd , unsigned int newfd){
-    process_t * process = get_current_process();
+int dup2(unsigned int oldfd, unsigned int newfd) {
+    process_t *process = get_current_process();
 
-    if(newfd >= process->dataD_index || oldfd >= process->dataD_index)
+    if (newfd >= process->dataD_index || oldfd >= process->dataD_index)
         return -1;
 
     close_dataDescriptor(process->dataDescriptors[newfd]);
@@ -72,17 +73,17 @@ int dup2(unsigned int oldfd , unsigned int newfd){
     mode_t mode = getMode_dataDescriptor(dataD);
     DATA_TYPE type = getDataType_dataDescriptor(dataD);
 
-    dataDescriptor_t dataD_cpy = create_dataDescriptor(type,mode);
+    dataDescriptor_t dataD_cpy = create_dataDescriptor(type, mode);
 
-    if(type == PIPE_T){
+    if (type == PIPE_T) {
         pipe_t pipe = getPipe_dataDescriptor(dataD);
-        if(mode == WRITE_MODE)
+        if (mode == WRITE_MODE)
             add_writer(pipe);
         else
             add_reader(pipe);
-        setPipe_dataDescriptor(dataD_cpy,pipe);
+        setPipe_dataDescriptor(dataD_cpy, pipe);
     }
-    
+
     process->dataDescriptors[newfd] = dataD_cpy;
 
     return 0;

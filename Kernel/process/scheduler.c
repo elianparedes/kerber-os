@@ -1,6 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "interrupts/time/time.h"
+#include <circular_linked_list.h>
 #include <fifo_queue.h>
 #include <idtLoader.h>
 #include <lib/linked_list.h>
@@ -10,28 +11,32 @@
 #define PID_ERR        -1
 #define MAX_TERM_COUNT 2
 
-typedef struct node node_t;
-
-typedef struct node {
-    process_t *process;
-    node_t *next;
-} node_t;
-
-static node_t *current_node = NULL;
-static node_t *front_node = NULL;
-static node_t *rear_node = NULL;
-
-static uint64_t process_count = 0;
+static circular_list_t process_list;
+static process_t *current_process;
 
 static process_t *free_process(int pid);
 
-static int process_wstatus(process_t *process, pstatus_t status) {
+static int search_by_status(process_t *process, pstatus_t status) {
     return process->status == status;
 }
 
-void wait_process() {
-    process_t *current_process = get_current_process();
+static int search_by_pid(process_t *process, pid_t pid) {
+    return process->pid == pid;
+}
 
+static int search_by_channel(process_t *process, uint64_t channel) {
+    return process->status == WAITING && process->channel == channel;
+}
+
+void init_scheduler() {
+    process_list = new_circular_linked_list(search_by_pid);
+}
+
+int process_count() {
+    return cl_size(process_list);
+}
+
+void wait_process() {
     // if no children, return
     if (size(current_process->children) == 0)
         return;
@@ -40,7 +45,7 @@ void wait_process() {
         list_ptr children_list = current_process->children;
 
         process_t *terminated_child =
-            find(children_list, TERMINATED, process_wstatus);
+            find(children_list, TERMINATED, search_by_status);
         if (terminated_child != NULL) {
             free_process(terminated_child->pid);
             return;
@@ -51,112 +56,54 @@ void wait_process() {
 }
 
 void sleep(uint64_t channel) {
-    process_t *current_process = get_current_process();
     current_process->channel = channel;
     current_process->status = WAITING;
     _force_schedule();
 }
 
 int wakeup(uint64_t channel) {
-    node_t *aux_node = front_node;
+    process_t *target = cl_find(process_list, channel, search_by_channel);
+    if (target == NULL)
+        return PID_ERR;
 
-    do {
-        if (aux_node->process->status == WAITING &&
-            aux_node->process->channel == channel) {
+    target->status = READY;
+    target->channel = NULL;
 
-            aux_node->process->status = READY;
-            aux_node->process->channel = NULL;
-            return aux_node->process->pid;
-        }
-
-        aux_node = aux_node->next;
-    } while (aux_node != front_node);
-
-    return PID_ERR;
-}
-
-static bool enqueue_process(process_t *process) {
-    node_t *node = kmalloc(sizeof(node_t));
-    if (node == NULL)
-        return false;
-
-    node->process = process;
-    if (process_count == 0)
-        front_node = node;
-    else
-        rear_node->next = node;
-
-    rear_node = node;
-    rear_node->next = front_node;
-
-    process_count++;
-    return true;
+    return target->pid;
 }
 
 int add_process(function_t main, int argc, char *argv[]) {
-    if (process_count >= MAX_PROC_COUNT)
+    if (process_count() >= MAX_PROC_COUNT)
         return PID_ERR;
 
     process_t *process = new_process(main, argc, argv);
     if (process == NULL)
         return PID_ERR;
 
-    if (enqueue_process(process)) {
-        if (current_node != NULL) {
-            // add new process to children list of current process
-            add(current_node->process->children, process);
-            process->parent = current_node->process;
-        }
+    cl_add(process_list, process);
 
-        return process->pid;
+    if (current_process != NULL) {
+        add(current_process->children, process);
+        process->parent = current_process;
     }
 
-    return PID_ERR;
-}
-node_t *get_node_before(pid_t pid) {
-    node_t *aux_node = front_node;
-
-    do {
-        if (aux_node->next->process->pid == pid)
-            return aux_node;
-
-        aux_node = aux_node->next;
-    } while (aux_node != front_node);
-
-    return NULL;
+    return process->pid;
 }
 
 static process_t *free_process(int pid) {
-    node_t *aux_node = get_node_before(pid);
-
-    if (aux_node == NULL)
+    process_t *target = cl_remove(process_list, pid);
+    if (target == NULL)
         return NULL;
 
-    node_t *target_node = aux_node->next;
-
-    aux_node->next = target_node->next;
-
-    if (rear_node == target_node)
-        rear_node = aux_node;
-
-    if (front_node == target_node)
-        front_node = target_node->next;
-
     // remove process from parent's children list
-    remove(target_node->process->parent->children, pid);
+    remove(target->parent->children, pid);
+    free_list(target->children);
+    kfree(target);
 
-    free_list(target_node->process->children);
-    kfree(target_node->process);
-    kfree(target_node);
-
-    process_count--;
-
-    return target_node->process;
+    return target;
 }
 
 void exit_process() {
-    process_t *current_process = get_current_process();
-
     close_dataDescriptor(current_process->dataDescriptors[0]);
     close_dataDescriptor(current_process->dataDescriptors[1]);
 
@@ -184,43 +131,30 @@ void kill_process(int pid) {
 }
 
 process_t *get_current_process() {
-    return current_node->process;
+    return current_process;
 }
 
 process_t *get_process(pid_t pid) {
-    node_t *aux_node = front_node;
-
-    do {
-        if (aux_node->process->pid == pid)
-            return aux_node->process;
-
-        aux_node = aux_node->next;
-    } while (aux_node != front_node);
-
-    return NULL;
+    return find(process_list, pid, search_by_pid);
 }
 
 context_t *schedule(context_t *rsp) {
-    if (process_count == 0)
+    if (process_count() == 0)
         return rsp;
 
-    if (current_node != NULL && current_node->process->status == READY &&
-        ticks_elapsed() < current_node->process->priority)
+    if (current_process != NULL && current_process->status == READY &&
+        ticks_elapsed() < current_process->priority)
         return rsp;
 
-    if (current_node != NULL) {
-        current_node->process->context = rsp;
+    if (current_process != NULL)
+        current_process->context = rsp;
 
-        // skip waiting processes
-        do {
-            current_node = current_node->next;
-        } while (current_node->process->status != READY);
-
-    } else
-        current_node = front_node;
+    do {
+        current_process = cl_next(process_list);
+    } while (current_process->status != READY);
 
     // set timer ticks to 0
     timer_reset();
 
-    return current_node->process->context;
+    return current_process->context;
 }
