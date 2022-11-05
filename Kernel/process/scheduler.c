@@ -15,7 +15,7 @@
 static circular_list_t process_list;
 static process_t *current_process;
 
-static process_t *free_process(int pid);
+static void remove_process(int pid);
 
 static int search_by_status(process_t *process, pstatus_t status) {
     return process->status == status;
@@ -52,7 +52,7 @@ void wait_process(pid_t pid, int *status_ptr) {
 
             if (target_child != NULL && target_child->status == TERMINATED) {
                 *status_ptr = target_child->exit_status;
-                free_process(target_child->pid);
+                remove_process(target_child->pid);
                 return;
             }
         } else {
@@ -60,7 +60,7 @@ void wait_process(pid_t pid, int *status_ptr) {
 
             if (target_child != NULL) {
                 *status_ptr = target_child->exit_status;
-                free_process(target_child->pid);
+                remove_process(target_child->pid);
 
                 return;
             }
@@ -105,17 +105,15 @@ int add_process(function_t main, int argc, char *argv[]) {
     return process->pid;
 }
 
-static process_t *free_process(int pid) {
+static void remove_process(int pid) {
     process_t *target = cl_remove(process_list, pid);
     if (target == NULL)
         return NULL;
 
     // remove process from parent's children list
     remove(target->parent->children, pid);
-    free_list(target->children);
-    kfree(target);
 
-    return target;
+    free_process(target);
 }
 
 static void terminate_process(int pid) {

@@ -51,8 +51,6 @@ typedef struct process {
     context_t *context;
     pid_t pid;
     pstatus_t status;
-    process_t *l_child;
-    process_t *r_child;
     process_t *parent;
     context_id_t g_context;
     dataDescriptor_t dataDescriptors[128];
@@ -61,6 +59,8 @@ typedef struct process {
     list_ptr children;
     int exit_status;
     int priority;
+    char **argv;
+    int argc;
 } process_t;
 
 typedef int (*function_t)(int, char *[]);
@@ -74,6 +74,6 @@ typedef int (*function_t)(int, char *[]);
  * @return process_t* pointer to the created process, or NULL if the process
  * could not be created
  */
-process_t *new_process(function_t function, int argc, char *argv[]);
+process_t *new_process(function_t main, int argc, char *argv[]);
 
 #endif /* _PROCESS_H_ */

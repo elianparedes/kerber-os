@@ -68,9 +68,8 @@ static void invalid_command(char *cmd_name) {
 }
 
 static int run_command(char *name, int argc, char *argv[]) {
-    if (strcmp(name, "help") == 0) {
+    if (strcmp(name, "help") == 0)
         return _run(help, argc, argv);
-    }
 
     else if (strcmp(name, "fibonacci") == 0)
         return _run(fibonacci, argc, argv);
@@ -98,13 +97,15 @@ static int run_command(char *name, int argc, char *argv[]) {
 
     else if (strcmp(name, "printmem") == 0)
         return _run(printmem, argc, argv);
-    else if (strcmp(name, "mem") == 0) {
+
+    else if (strcmp(name, "mem") == 0)
         return _run(printmemstate, 0, NULL);
-    } else if (strcmp(name, "testsync") == 0) {
+
+    else if (strcmp(name, "testsync") == 0)
         return _run(test_sync, argc, argv);
-    } else if (strcmp(name, "testnosync") == 0) {
+
+    else if (strcmp(name, "testnosync") == 0)
         return _run(test_sync, argc, argv);
-    }
 
     else if (strcmp(name, "sleeptest") == 0)
         return _run(sleeptest, argc, argv);
@@ -114,6 +115,7 @@ static int run_command(char *name, int argc, char *argv[]) {
 
     else if (strcmp(name, "sched") == 0)
         return _run(schd, argc, argv);
+
     else if (strcmp(name, "pipe") == 0)
         return _run(info_all_pipes, 0, NULL);
 
@@ -212,12 +214,12 @@ static cmd_t *getcmd(char *input) {
 
     // get the name of the command;
     gettoken(&cmdidx, token, whitespace);
-    cmd->name = _malloc(sizeof(strlen(token)) + 1);
+    cmd->name = _malloc(strlen(token) + 1);
     strcpy(cmd->name, token);
     token[0] = '\0';
 
     while (gettoken(&cmdidx, token, whitespace) != -1 && cmd->argc < MAX_ARGC) {
-        cmd->argv[cmd->argc] = _malloc(sizeof(strlen(token)) + 1);
+        cmd->argv[cmd->argc] = _malloc(strlen(token) + 1);
         strcpy(cmd->argv[cmd->argc], token);
         cmd->argc++;
         token[0] = '\0';
@@ -365,7 +367,6 @@ int shell() {
                                   parsedline->left_cmd->argv);
 
                 _waitpid(pid, &proc_status);
-                printf("[ process exited with code %d ]\n", proc_status);
                 break;
         }
 

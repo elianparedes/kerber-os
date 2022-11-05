@@ -153,7 +153,7 @@ void sys_kill(int pid) {
 }
 
 void sys_wait(int child, int *pstatus) {
-    if (child > 1) {
+    /*if (child > 1) {
         *pstatus = -1;
         return;
     }
@@ -162,7 +162,7 @@ void sys_wait(int child, int *pstatus) {
     if (child == 0)
         *pstatus = process->l_child != NULL;
     else if (child == 1)
-        *pstatus = process->r_child != NULL;
+        *pstatus = process->r_child != NULL;*/
 }
 
 void sys_pause(int pid) {
