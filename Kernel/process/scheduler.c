@@ -104,6 +104,17 @@ int add_process(function_t main, int argc, char *argv[]) {
     return process->pid;
 }
 
+static void remove_children(process_t *process) {
+    if (size(process->children) == 0)
+        return;
+
+    to_begin(process->children);
+    while (hasNext(process->children)) {
+        process_t *child = next(process->children);
+        remove_process(child->pid);
+    }
+}
+
 static void remove_process(int pid) {
     process_t *target = cl_remove(process_list, pid);
     if (target == NULL)
@@ -121,8 +132,8 @@ void exit_process(int status) {
     close_dataDescriptor(current_process->dataDescriptors[0]);
     close_dataDescriptor(current_process->dataDescriptors[1]);
 
-    if (current_process->pid > 0 && current_process->parent != NULL)
-        wakeup(current_process->parent);
+    remove_children(current_process);
+    wakeup(current_process->parent);
 
     // leave process as terminated. Parent will clean it up on wait
     current_process->status = TERMINATED;
@@ -149,10 +160,10 @@ void kill_process(int pid) {
     // between processes but these are not implemented yet.
     // since the shell doesn't know the graphics context of each process,
     // force printing messages should be done here.
-    gprint_new_line(target->g_context);
-    gprint_new_line(target->g_context);
-    gprint_string("[ process terminated ]", target->g_context);
-    gprint_new_line(target->g_context);
+    // gprint_new_line(target->g_context);
+    // gprint_new_line(target->g_context);
+    // gprint_string("[ process terminated ]", target->g_context);
+    // gprint_new_line(target->g_context);
 
     if (target == current_process)
         _force_schedule();

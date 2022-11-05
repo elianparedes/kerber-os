@@ -9,5 +9,7 @@ void dummy() {
 void schd() {
     _run(dummy, 0, NULL);
     _run(dummy, 0, NULL);
+    _wait();
+    _wait();
     return 0;
 }
