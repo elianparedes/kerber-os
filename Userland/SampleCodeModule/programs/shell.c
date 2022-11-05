@@ -344,9 +344,11 @@ int shell() {
                 printcmd(parsedline->right_cmd);
                 break;
             case '&':
-                printf("operator: %c\n", parsedline->operator);
-                printcmd(parsedline->left_cmd);
+                run_command(parsedline->left_cmd->name,
+                            parsedline->left_cmd->argc,
+                            parsedline->left_cmd->argv);
                 break;
+
             default:
                 run_command(parsedline->left_cmd->name,
                             parsedline->left_cmd->argc,

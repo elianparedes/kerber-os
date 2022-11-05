@@ -2,17 +2,18 @@
 #define _PROCESS_H_
 
 #include <graphics.h>
+#include <lib/dataDescriptor.h>
 #include <linked_list.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <lib/dataDescriptor.h>
 
 #define K_PROCESS_STACK_SIZE 1024 * 4
 
 typedef enum pstatus {
-    PAUSED = 0,
-    READY = 1
+    WAITING = 0,
+    READY,
+    TERMINATED, 
 } pstatus_t;
 
 typedef int pid_t;

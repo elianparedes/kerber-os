@@ -33,14 +33,14 @@ void wait_process() {
     process_t *current_process = get_current_process();
 
     // if no children, return
-    if (size(current_process->children) <= 0)
+    if (size(current_process->children) == 0)
         return;
 
     while (1) {
         list_ptr children_list = current_process->children;
 
         process_t *terminated_child =
-            find(children_list, PAUSED, process_wstatus);
+            find(children_list, TERMINATED, process_wstatus);
         if (terminated_child != NULL) {
             free_process(terminated_child->pid);
             return;
@@ -53,7 +53,7 @@ void wait_process() {
 void sleep(uint64_t channel) {
     process_t *current_process = get_current_process();
     current_process->channel = channel;
-    current_process->status = PAUSED;
+    current_process->status = WAITING;
     _force_schedule();
 }
 
@@ -61,7 +61,9 @@ int wakeup(uint64_t channel) {
     node_t *aux_node = front_node;
 
     do {
-        if (aux_node->process->channel == channel) {
+        if (aux_node->process->status == WAITING &&
+            aux_node->process->channel == channel) {
+
             aux_node->process->status = READY;
             aux_node->process->channel = NULL;
             return aux_node->process->pid;
@@ -69,6 +71,7 @@ int wakeup(uint64_t channel) {
 
         aux_node = aux_node->next;
     } while (aux_node != front_node);
+
     return PID_ERR;
 }
 
@@ -161,10 +164,8 @@ void exit_process() {
         wakeup(current_process->parent);
 
     // leave process as terminated. Parent will clean it up on wait
-    current_process->status = PAUSED;
+    current_process->status = TERMINATED;
     current_process->exit_status = 0;
-
-    // free_process(current_process->pid);
 
     _force_schedule();
 }
@@ -203,17 +204,17 @@ context_t *schedule(context_t *rsp) {
     if (process_count == 0)
         return rsp;
 
-    if (current_node != NULL && current_node->process->status != PAUSED &&
+    if (current_node != NULL && current_node->process->status == READY &&
         ticks_elapsed() < current_node->process->priority)
         return rsp;
 
     if (current_node != NULL) {
         current_node->process->context = rsp;
 
-        // skip paused processes
+        // skip waiting processes
         do {
             current_node = current_node->next;
-        } while (current_node->process->status == PAUSED);
+        } while (current_node->process->status != READY);
 
     } else
         current_node = front_node;
