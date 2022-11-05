@@ -3,9 +3,9 @@
 #include <lib.h>
 #include <pmm.h>
 #include <scheduler.h>
+#include <lib/defs.h>
 
 #define PIPE_SIZE (1024)
-#define EOF -1
 
 typedef struct pipe
 {
@@ -131,7 +131,7 @@ int pipewrite(pipe_t pipe, const char *buffer, int count)
 {
 
     if (pipe == NULL || buffer == NULL || count < 0)
-        return -1;
+        return -2;
 
     int i;
     for (i = 0; i < count; i++)
@@ -154,7 +154,7 @@ int piperead(pipe_t pipe, char *buffer, int count)
     if (pipe == NULL || buffer == NULL || count < 0)
         return -2;
 
-    while(pipe->nread == pipe->nwrite){
+    while(pipe->nread == pipe->nwrite ){
         if(pipe->writeopen == 0)
             return EOF;
         sleep_helper((uint64_t)&pipe->nread,pipe->blocked_pid);
@@ -169,7 +169,7 @@ int piperead(pipe_t pipe, char *buffer, int count)
     }
     wakeup_helper((uint64_t)&pipe->nwrite,pipe->blocked_pid);
 
-    if(pipe->nread == pipe->nwrite)
+    if(pipe->nread == pipe->nwrite + 1)
         return EOF;
 
     return i;

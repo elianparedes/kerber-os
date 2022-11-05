@@ -3,7 +3,7 @@
 #include <infopipe.h>
 #include <kpipe.h>
 #include <ksemaphore.h>
-#include <cat.h>
+#include <ipc_programs.h>
 
 sem_ptr sem_shell;
 
@@ -18,7 +18,7 @@ void process_left(){
     _close(fd[1]);
     _close(fd[0]);
 
-    printf("Hello world\n");
+    printf("Hola mundo\nescribo otra\n");
 
     _exit(0);
 
@@ -35,13 +35,23 @@ void process_right(){
     _close(fd[0]);
     _close(fd[1]);
 
-    cat();
+    //cat();
+    //filter();
+    wc();
 
     _exit(0);
 
 }
 
 void test_pipes(){
+    for(int i = 0 ; i < 18 ; i++){
+        sem_shell = _sem_open("shell_sem",1);
+    _run(process_left,0,NULL);
+    _run(process_right,0,NULL);
+    _wait2();
+    _wait2();
+    _sem_close(sem_shell);
+    }
     sem_shell = _sem_open("shell_sem",1);
     _run(process_left,0,NULL);
     _run(process_right,0,NULL);
