@@ -11,7 +11,7 @@
  * @brief set current process in wait status
  *
  */
-void wait_process(pid_t pid, int *status_ptr);
+pid_t wait_process(pid_t pid, int *status_ptr);
 
 /**
  * @brief Saves the CPU state in the current process and switches to the next

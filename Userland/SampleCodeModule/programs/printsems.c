@@ -31,7 +31,7 @@ void printsems() {
 
     int i = _get_semaphores(copied_sems);
     _sem_post(sem1);
-    _wait2();
+    _wait();
     copy_sem_t *aux_sem;
     for (int j = 0; j < i; j++) {
         aux_sem = copied_sems[j];

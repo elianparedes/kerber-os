@@ -14,7 +14,7 @@ void child() {
     for (size_t i = 0; i < 1; i++) {
         printf("from child1: %d\n", i);
         _run(child2, NULL, NULL);
-        _wait2();
+        _wait();
     }
 }
 
@@ -25,7 +25,7 @@ void sleeptest() {
         if ((pid = _run(child, NULL, NULL)) > 0) {
             printf("Process created %d\n", pid);
             printf("Sleeping...\n");
-            _wait2();
+            _wait();
             printf("children terminated...\n");
         }
         i++;

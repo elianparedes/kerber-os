@@ -80,8 +80,8 @@ uint64_t test_sync(uint64_t argc, char *argv[])
 
     for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
     {
-        _wait2();
-        _wait2();
+        _wait();
+        _wait();
         //my_wait(pids[i]);
         //my_wait(pids[i + TOTAL_PAIR_PROCESSES]);
     }

@@ -152,19 +152,6 @@ void sys_kill(int pid) {
     kill_process(pid);
 }
 
-void sys_wait(int child, int *pstatus) {
-    /*if (child > 1) {
-        *pstatus = -1;
-        return;
-    }
-
-    process_t *process = get_current_process();
-    if (child == 0)
-        *pstatus = process->l_child != NULL;
-    else if (child == 1)
-        *pstatus = process->r_child != NULL;*/
-}
-
 void sys_pause(int pid) {
     process_t *process = get_process(pid);
     if (process != NULL)
@@ -255,10 +242,10 @@ void sys_get_mem_state(int mem_state[]) {
     get_mem_state(mem_state);
 }
 
-void sys_waitpid(int pid, int *status_ptr) {
+int sys_waitpid(int pid, int *status_ptr) {
     return wait_process(pid, status_ptr);
 }
 
-void sys_wait2() {
+int sys_wait() {
     return wait_process(-1, NULL);
 }

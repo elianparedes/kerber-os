@@ -37,7 +37,7 @@ int process_count() {
     return cl_size(process_list);
 }
 
-void wait_process(pid_t pid, int *status_ptr) {
+pid_t wait_process(pid_t pid, int *status_ptr) {
 
     // if no children, return
     if (size(current_process->children) == 0)
@@ -53,7 +53,7 @@ void wait_process(pid_t pid, int *status_ptr) {
             if (target_child != NULL && target_child->status == TERMINATED) {
                 *status_ptr = target_child->exit_status;
                 remove_process(target_child->pid);
-                return;
+                return target_child->pid;
             }
         } else {
             target_child = find(children_list, TERMINATED, search_by_status);
@@ -61,8 +61,7 @@ void wait_process(pid_t pid, int *status_ptr) {
             if (target_child != NULL) {
                 *status_ptr = target_child->exit_status;
                 remove_process(target_child->pid);
-
-                return;
+                return target_child->pid;
             }
         }
 
@@ -112,7 +111,6 @@ static void remove_process(int pid) {
 
     // remove process from parent's children list
     remove(target->parent->children, pid);
-
     free_process(target);
 }
 

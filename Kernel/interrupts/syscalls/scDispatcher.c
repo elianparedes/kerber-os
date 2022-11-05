@@ -36,9 +36,6 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
         case SYSCALL_PAUSE:
             sys_pause((int)arg0);
             break;
-        case SYSCALL_WAIT:
-            sys_wait((int)arg0, (int *)arg1);
-            break;
         case SYSCALL_GET_MEM:
             return sys_get_mem((uint8_t *)arg0, (uint8_t *)arg1,
                                (uint16_t)arg2);
@@ -53,18 +50,14 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
         case SYSCALL_SCHED_YIELD:
             sys_sched_yield();
             break;
-        case SYSCALL_WAIT2:
-            sys_wait2();
-            break;
+        case SYSCALL_WAIT:
+            return sys_wait();
         case SYSCALL_SEM_OPEN:
             return sys_sem_open((char *)arg0, (int)arg1);
-            break;
         case SYSCALL_SEM_WAIT:
             return sys_sem_wait((sem_ptr)arg0);
-            break;
         case SYSCALL_SEM_POST:
             return sys_sem_post((sem_ptr)arg0);
-            break;
         case SYSCALL_CLOSE:
             sys_close((int)arg0);
             break;
@@ -74,25 +67,21 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
             return sys_open_pipe((char *)arg0, (int *)arg1);
         case SYSCALL_SEM_CLOSE:
             return sys_sem_close((sem_ptr)arg0);
-            break;
         case SYSCALL_INFO_PIPE:
             return sys_info_pipe((char *)arg0, (pipe_info_t *)arg1);
         case SYSCALL_INFO_ALL_PIPES:
             return sys_info_all_pipes((pipe_info_t **)arg0, (unsigned int)arg1);
         case SYSCALL_GET_SEMS:
             return sys_get_semaphores((copy_sem_t **)arg0);
-            break;
         case SYSCALL_DUP2:
             return sys_dup2((unsigned int)arg0, (unsigned int)arg1);
         case SYSCALL_MALLOC:
             return sys_malloc((size_t)arg0);
-            break;
         case SYSCALL_FREE:
             sys_free((void *)arg0);
             break;
         case SYSCALL_WAITPID:
-            sys_waitpid((int)arg0, (int *)arg1);
-            break;
+            return sys_waitpid((int)arg0, (int *)arg1);
         default:
             return 0;
     }

@@ -3,7 +3,6 @@ GLOBAL _write
 GLOBAL _close
 GLOBAL _time
 GLOBAL _run
-GLOBAL _wait
 GLOBAL _switch_screen_mode
 GLOBAL _clear_screen
 GLOBAL _exit
@@ -15,7 +14,7 @@ GLOBAL _get_mem
 GLOBAL _pause
 GLOBAL _focus
 GLOBAL _sched_yield
-GLOBAL _wait2
+GLOBAL _wait
 GLOBAL _waitpid
 GLOBAL _sem_open
 GLOBAL _sem_wait
@@ -68,11 +67,6 @@ _run:
     int 0x80
     ret
 
-_wait:
-    mov rax, SYSCALL_WAIT_ID
-    int 0x80
-    ret
-
 _cntrl_listener:
     mov rax, SYSCALL_CNTRL_LISTENER_ID
     int 0x80
@@ -113,8 +107,8 @@ _sched_yield:
     int 0x80
     ret
 
-_wait2:
-    mov rax, SYSCALL_WAIT2_ID
+_wait:
+    mov rax, SYSCALL_WAIT_ID
     int 0x80
     ret
 
@@ -207,8 +201,7 @@ SYSCALL_COPY_CPU_STATE equ 7
 SYSCALL_EXIT_ID equ 60
 SYSCALL_GETTIME_ID equ 96
 SYSCALL_RUN_ID equ 66
-SYSCALL_WAIT_ID equ 67
-SYSCALL_WAIT2_ID equ 68
+SYSCALL_WAIT_ID equ 68
 SYSCALL_WAITPID_ID equ 69
 SYSCALL_DELETE_CHAR_ID equ 46
 SYSCALL_KILL_ID equ 62

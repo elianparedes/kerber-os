@@ -360,7 +360,6 @@ int shell() {
                             parsedline->left_cmd->argc,
                             parsedline->left_cmd->argv);
                 break;
-
             default:
                 pid = run_command(parsedline->left_cmd->name,
                                   parsedline->left_cmd->argc,
