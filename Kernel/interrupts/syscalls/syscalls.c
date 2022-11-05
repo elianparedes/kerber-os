@@ -12,6 +12,7 @@
 #include <dataDescriptor.h>
 #include <pmm.h>
 #include <pipe/pipe.h>
+#include <lib/defs.h>
 
 #define ADDRESS_LIMIT 0xFFFFFFFF
 
@@ -53,7 +54,9 @@ int16_t read(int fd, char *buffer, uint16_t count)
         }
         _cli();
         
-        kbd_get_buffer(aux);
+        int code = kbd_get_buffer(aux);
+        if(code == EOF)
+            return EOF;
         
         for (i = 0; i < count; i++)
         {
@@ -67,12 +70,12 @@ int16_t write(int fd, char *buffer, uint16_t count)
 {
 
     if (fd < 0)
-        return -1;
+        return -2;
 
     process_t *current_process = get_current_process();
 
     if(fd >= current_process->dataD_index )
-        return -1;
+        return -2;
 
     dataDescriptor_t dataD = current_process->dataDescriptors[fd];
     if(getMode_dataDescriptor(dataD) != WRITE_MODE)

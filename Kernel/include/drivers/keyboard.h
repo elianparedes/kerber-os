@@ -34,7 +34,7 @@ void kbd_clear_buffer();
  * 
  * @return char* 
  */
-void kbd_get_buffer(char * buffer_ret);
+int kbd_get_buffer(char * buffer_ret);
 
 /**
  * @brief 
