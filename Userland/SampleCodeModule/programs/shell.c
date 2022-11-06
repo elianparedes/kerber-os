@@ -24,6 +24,7 @@
 #include <testmm.h>
 #include <testsync.h>
 #include <time.h>
+#include <block.h>
 
 #define LINE_LENGTH    512
 #define TOKEN_LENGTH   512
@@ -124,10 +125,10 @@ static int run_command(char *name, int argc, char *argv[]) {
 
     else if (strcmp(name, "filter") == 0)
         return _run(filter, 0, NULL);
-
     else if (strcmp(name, "wc") == 0)
         return _run(wc, 0, NULL);
-
+    else if (strcmp(name , "block") == 0)
+        return _run(block, argc, argv);
     else if (strcmp(name, "testpipes") == 0)
         return _run(test_pipes, 0, NULL);
 

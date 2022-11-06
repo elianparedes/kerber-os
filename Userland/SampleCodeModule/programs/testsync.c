@@ -1,22 +1,20 @@
+#include <ksemaphore.h>
 #include <kstdio.h>
 #include <test_util.h>
-#include <ksemaphore.h>
 
-#define SEM_ID "sem"
+#define SEM_ID               "sem"
 #define TOTAL_PAIR_PROCESSES 2
 
 int64_t global; // shared memory
 
-void slowInc(int64_t *p, int64_t inc)
-{
+void slowInc(int64_t *p, int64_t inc) {
     uint64_t aux = *p;
     _sched_yield(); // This makes the race condition highly probable
     aux += inc;
     *p = aux;
 }
 
-uint64_t my_process_inc(uint64_t argc, char *argv[])
-{
+uint64_t my_process_inc(uint64_t argc, char *argv[]) {
     uint64_t n;
     int8_t inc;
     int8_t use_sem;
@@ -35,15 +33,13 @@ uint64_t my_process_inc(uint64_t argc, char *argv[])
 
     sem_ptr sem;
     if (use_sem)
-        if (!(sem=_sem_open(SEM_ID, 1)))
-        {
+        if (!(sem = _sem_open(SEM_ID, 1))) {
             printf("test_sync: ERROR opening semaphore\n");
             return -1;
         }
 
     uint64_t i;
-    for (i = 0; i < n; i++)
-    {
+    for (i = 0; i < n; i++) {
         if (use_sem)
             _sem_wait(sem);
         slowInc(&global, inc);
@@ -57,8 +53,7 @@ uint64_t my_process_inc(uint64_t argc, char *argv[])
     return 0;
 }
 
-uint64_t test_sync(uint64_t argc, char *argv[])
-{ //{n, use_sem, 0}
+uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
     uint64_t pids[2 * TOTAL_PAIR_PROCESSES];
 
     if (argc != 2)
@@ -72,18 +67,16 @@ uint64_t test_sync(uint64_t argc, char *argv[])
     global = 0;
 
     uint64_t i;
-    for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
-    {
+    for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
         pids[i] = _run(my_process_inc, 3, argvDec);
         pids[i + TOTAL_PAIR_PROCESSES] = _run(my_process_inc, 3, argvInc);
     }
 
-    for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
-    {
+    for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
         _wait();
         _wait();
-        //my_wait(pids[i]);
-        //my_wait(pids[i + TOTAL_PAIR_PROCESSES]);
+        // my_wait(pids[i]);
+        // my_wait(pids[i + TOTAL_PAIR_PROCESSES]);
     }
 
     printf("Final value: %d\n", global);

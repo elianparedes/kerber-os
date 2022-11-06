@@ -33,8 +33,11 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
         case SYSCALL_KILL:
             sys_kill((int)arg0);
             break;
-        case SYSCALL_PAUSE:
-            sys_pause((int)arg0);
+        case SYSCALL_BLOCK:
+            return sys_block((int)arg0);
+            break;
+        case SYSCALL_UNBLOCK:
+            return sys_unblock((int)arg0);
             break;
         case SYSCALL_GET_MEM:
             return sys_get_mem((uint8_t *)arg0, (uint8_t *)arg1,

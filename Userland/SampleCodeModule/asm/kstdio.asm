@@ -11,7 +11,6 @@ GLOBAL _delete_char
 GLOBAL _cntrl_listener
 GLOBAL _kill
 GLOBAL _get_mem
-GLOBAL _pause
 GLOBAL _focus
 GLOBAL _sched_yield
 GLOBAL _wait
@@ -29,6 +28,8 @@ GLOBAL _get_semaphores
 GLOBAL _malloc
 GLOBAL _free
 GLOBAL _get_mem_state
+GLOBAL _block
+GLOBAL _unblock
 
 section .text
 
@@ -92,8 +93,13 @@ _copy_cpu_state:
     int 0x80
     ret
 
-_pause:
-    mov rax, SYSCALL_PAUSE_ID
+_block:
+    mov rax, SYSCALL_BLOCK_ID
+    int 0x80
+    ret
+
+_unblock:
+    mov rax, SYSCALL_UNBLOCK_ID
     int 0x80
     ret
 
@@ -205,7 +211,8 @@ SYSCALL_WAIT_ID equ 68
 SYSCALL_WAITPID_ID equ 69
 SYSCALL_DELETE_CHAR_ID equ 46
 SYSCALL_KILL_ID equ 62
-SYSCALL_PAUSE_ID equ 75 
+SYSCALL_BLOCK_ID equ 75 
+SYSCALL_UNBLOCK_ID equ 76
 SYSCALL_FOCUS_ID equ 77   
 SYSCALL_SCHED_YIELD_ID equ 24
 SYSCALL_SEM_OPEN_ID equ 70
