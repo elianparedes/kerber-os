@@ -71,6 +71,10 @@ process_t *get_current_process();
  */
 process_t *get_process(pid_t pid);
 
+process_t *get_foreground_process();
+
+void set_foreground_process(int pid);
+
 void sleep(uint64_t channel);
 
 // Returns pid of awakened process

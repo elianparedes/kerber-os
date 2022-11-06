@@ -75,6 +75,7 @@ int _cntrl_listener(char *listener);
 void _kill(int pid);
 void _pause(int pid);
 void _focus(int pid);
+void _setfg(int pid);
 int _get_mem(uint8_t *address, uint8_t *buffer, size_t count);
 void _sched_yield();
 

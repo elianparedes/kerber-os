@@ -13,7 +13,9 @@
 #define MAX_TERM_COUNT 2
 
 static circular_list_t process_list;
+
 static process_t *current_process;
+static process_t *foreground_process;
 
 static void remove_process(int pid);
 
@@ -120,12 +122,12 @@ static void remove_process(int pid) {
     if (target == NULL)
         return NULL;
 
+    if (target == foreground_process)
+        foreground_process == NULL;
+
     // remove process from parent's children list
     remove(target->parent->children, pid);
     free_process(target);
-}
-
-static void terminate_process(int pid) {
 }
 
 void exit_process(int status) {
@@ -175,6 +177,18 @@ process_t *get_current_process() {
 
 process_t *get_process(pid_t pid) {
     return cl_find(process_list, pid, search_by_pid);
+}
+
+void set_foreground_process(int pid) {
+    process_t *found = cl_find(process_list, pid, search_by_pid);
+    if (found == NULL)
+        return;
+
+    foreground_process = found;
+}
+
+process_t *get_foreground_process() {
+    return foreground_process;
 }
 
 context_t *schedule(context_t *rsp) {
