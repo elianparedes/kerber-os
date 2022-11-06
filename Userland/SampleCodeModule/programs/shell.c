@@ -365,7 +365,7 @@ int shell() {
                 pid = run_command(parsedline->left_cmd->name,
                                   parsedline->left_cmd->argc,
                                   parsedline->left_cmd->argv);
-
+                _setfg(pid);
                 _waitpid(pid, &proc_status);
                 break;
         }

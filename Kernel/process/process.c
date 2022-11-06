@@ -24,7 +24,7 @@ static char **get_argv_copy(int argc, char *argv[]) {
     if (argc == 0 || argv == NULL)
         return NULL;
 
-    char **argv_copy = kmalloc(argc);
+    char **argv_copy = kmalloc(argc * sizeof(char *));
     for (size_t i = 0; i < argc; i++) {
         argv_copy[i] = kmalloc(strlen(argv[i]) + 1);
         strcpy(argv_copy[i], argv[i]);

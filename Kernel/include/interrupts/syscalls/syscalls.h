@@ -51,6 +51,7 @@ enum STD {
 #define SYSCALL_INFO_PIPE          53
 #define SYSCALL_INFO_ALL_PIPES     54
 #define SYSCALL_DUP2               55
+#define SYSCALL_SETFG              92
 
 typedef struct sem *sem_ptr;
 typedef struct copy_sem copy_sem_t;
@@ -198,5 +199,7 @@ int sys_info_pipe(char *name, pipe_info_t *info);
 int sys_info_all_pipes(pipe_info_t *info[], unsigned int size);
 
 int sys_dup2(unsigned int oldfd, unsigned int newfd);
+
+void sys_setfg(int pid);
 
 #endif

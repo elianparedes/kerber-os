@@ -85,6 +85,9 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
             break;
         case SYSCALL_WAITPID:
             return sys_waitpid((int)arg0, (int *)arg1);
+        case SYSCALL_SETFG:
+            sys_setfg((int)arg0);
+            break;
         default:
             return 0;
     }

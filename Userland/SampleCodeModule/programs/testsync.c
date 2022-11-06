@@ -5,16 +5,16 @@
 #define SEM_ID               "sem"
 #define TOTAL_PAIR_PROCESSES 2
 
-int64_t global; // shared memory
+int64_t global = 0; // shared memory
 
-void slowInc(int64_t *p, int64_t inc) {
+void slowInc(int64_t *p, int inc) {
     uint64_t aux = *p;
     _sched_yield(); // This makes the race condition highly probable
     aux += inc;
     *p = aux;
 }
 
-uint64_t my_process_inc(uint64_t argc, char *argv[]) {
+int my_process_inc(int argc, char *argv[]) {
     uint64_t n;
     int8_t inc;
     int8_t use_sem;
@@ -53,16 +53,16 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
     return 0;
 }
 
-uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
-    uint64_t pids[2 * TOTAL_PAIR_PROCESSES];
+int test_sync(int argc, char *argv[]) { //{n, use_sem, 0}
+    int pids[2 * TOTAL_PAIR_PROCESSES];
 
     if (argc != 2)
         return -1;
 
     printf("arg0: %s \n", argv[0]);
     printf("arg1: %s \n", argv[1]);
-    char *argvDec[] = {argv[0], "-1", argv[1], NULL};
-    char *argvInc[] = {argv[0], "1", argv[1], NULL};
+    char *argvDec[] = {argv[0], "-1", argv[1]};
+    char *argvInc[] = {argv[0], "1", argv[1]};
 
     global = 0;
 

@@ -261,3 +261,7 @@ int sys_waitpid(int pid, int *status_ptr) {
 int sys_wait() {
     return wait_process(-1, NULL);
 }
+
+void sys_setfg(int pid) {
+    set_foreground_process(pid);
+}

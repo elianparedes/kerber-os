@@ -211,9 +211,11 @@ void kbd_enable() {
 }
 
 static void ctrl_c_handler() {
-    int pid = get_current_process()->pid;
-    if (pid != 0)
-        kill_process(pid);
+    process_t *foreground_process = get_foreground_process();
+    if (foreground_process == NULL)
+        return;
+
+    kill_process(foreground_process->pid);
 }
 
 static void ctrl_d_handler() {

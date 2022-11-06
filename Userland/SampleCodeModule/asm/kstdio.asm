@@ -30,6 +30,7 @@ GLOBAL _free
 GLOBAL _get_mem_state
 GLOBAL _block
 GLOBAL _unblock
+GLOBAL _setfg
 
 section .text
 
@@ -193,6 +194,10 @@ _get_mem_state:
     int 0x80
     ret
 
+_setfg:
+    mov rax, SYSCALL_SET_FG_ID
+    int 0x80
+    ret
 
 section .rodata
 SYSCALL_READ_ID equ 0
@@ -227,5 +232,6 @@ SYSCALL_INFO_ALL_PIPES equ 54
 SYSCALL_DUP2 equ 55
 SYSCALL_GET_SEMS_ID equ 74
 SYSCALL_GET_MEM_STATE_ID equ 90
+SYSCALL_SET_FG_ID equ 92
 
 KBD_PRINT_REG equ 1
