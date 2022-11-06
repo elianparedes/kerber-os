@@ -16,11 +16,6 @@ typedef enum chld {
     RIGHT_CHD
 } chld_t;
 
-typedef enum chldstatus {
-    TERMINATED,
-    RUNNING
-} chldstatus_t;
-
 typedef struct time {
     uint64_t year;
     uint64_t month;
@@ -58,6 +53,12 @@ typedef enum {
     KBD_PRINT_REG = 1
 } request_t;
 
+typedef enum pstatus {
+    WAITING = 0,
+    READY,
+    TERMINATED,
+} pstatus_t;
+
 int _read(int fd, char *buffer, size_t count);
 int _write(int fd, char *buffer, size_t count);
 void _close(unsigned int fd);
@@ -81,6 +82,7 @@ int _waitpid(int pid, int *status_ptr);
 void _kill(int pid);
 int _block(int pid);
 int _unblock(int pid);
+int _get_proc_status(int pid);
 
 int getchar();
 int putchar(int character);

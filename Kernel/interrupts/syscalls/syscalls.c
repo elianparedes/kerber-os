@@ -265,3 +265,11 @@ int sys_wait() {
 void sys_setfg(int pid) {
     set_foreground_process(pid);
 }
+
+int sys_get_proc_status(int pid){
+    process_t *process = get_process(pid);
+    if (process == NULL){
+        return ERROR;
+    }
+    return process->status;
+}
