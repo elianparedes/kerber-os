@@ -4,10 +4,11 @@
 #include <kstdlib.h>
 #include <kstring.h>
 #include <stdarg.h>
+#include <test_util.h>
 
 int getchar() {
     int buffer;
-    if( _read(STDIN, (char *)&buffer, 1) == -1 )
+    if (_read(STDIN, (char *)&buffer, 1) == -1)
         return -1;
     return buffer;
 }
@@ -36,34 +37,52 @@ int printf(char *str, ...) {
     va_list vl;
     int i = 0, j = 0;
     char buff[1024] = {0}, tmp[20];
+    char num_buff[5];
     va_start(vl, str);
     while (str && str[i]) {
         if (str[i] == '%') {
             i++;
+            int min = 0;
+            int s = 0;
+            while (str[i] >= '0' && str[i] <= '9') {
+                num_buff[s] = str[i];
+                s++;
+                i++;
+            }
+            num_buff[s] = '\0';
             switch (str[i]) {
                 case 'c': {
                     buff[j] = (char)va_arg(vl, int);
                     j++;
+                    min++;
                     break;
                 }
                 case 'd': {
                     itoa(va_arg(vl, int), tmp, 10);
                     strcpy(&buff[j], tmp);
                     j += strlen(tmp);
+                    min = strlen(tmp);
                     break;
                 }
                 case 'x': {
                     ltoa(va_arg(vl, uint64_t), tmp, 16);
                     strcpy(&buff[j], tmp);
                     j += strlen(tmp);
+                    min = strlen(tmp);
                     break;
                 }
                 case 's': {
                     char *src = va_arg(vl, char *);
                     strcpy(&buff[j], src);
                     j += strlen(src);
+                    min = strlen(src);
                     break;
                 }
+            }
+            while (min < satoi(num_buff)) {
+                buff[j] = ' ';
+                min++;
+                j++;
             }
         } else {
             buff[j] = str[i];
