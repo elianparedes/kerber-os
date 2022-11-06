@@ -43,14 +43,14 @@ int process_count() {
 pid_t wait_process(pid_t pid, int *status_ptr) {
 
     // if no children, return
-    if (size(current_process->children) == 0)
+    if (size(current_process->children) == 0 || pid < -1)
         return;
 
     list_ptr children_list = current_process->children;
     process_t *target_child = NULL;
 
     while (true) {
-        if (pid > 0) {
+        if (pid >= 0) {
             target_child = find(children_list, pid, search_by_pid);
 
             if (target_child != NULL && target_child->status == TERMINATED) {
@@ -58,7 +58,7 @@ pid_t wait_process(pid_t pid, int *status_ptr) {
                 remove_process(target_child->pid);
                 return target_child->pid;
             }
-        } else {
+        } else if (pid == -1) {
             target_child = find(children_list, TERMINATED, search_by_status);
 
             if (target_child != NULL) {
@@ -205,6 +205,17 @@ int get_process_table(process_table_t *table) {
         table->entries[i].pid = process->pid;
         table->entries[i].priority = process->priority;
         table->entries[i].status = process->status;
+        table->entries[i].rbp = process->context->rbp;
+        table->entries[i].stack = process->context;
+        table->entries[i].children_count = size(process->children);
+
+        if (process->parent != NULL)
+            strcpy(table->entries[i].parent_name, process->parent->argv[0]);
+        else
+            strcpy(table->entries[i].parent_name, "-");
+
+        strcpy(table->entries[i].name, process->argv[0]);
+
         i++;
     }
 

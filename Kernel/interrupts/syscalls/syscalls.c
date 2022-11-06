@@ -6,6 +6,7 @@
 #include <lib/defs.h>
 #include <pipe/pipe.h>
 #include <pmm.h>
+#include <process.h>
 #include <registers.h>
 #include <semaphore/semaphore.h>
 #include <syscalls.h>
@@ -152,11 +153,22 @@ void sys_kill(int pid) {
     kill_process(pid);
 }
 
-void sys_pause(int pid) {
+int sys_block(int pid) {
     process_t *process = get_process(pid);
-    if (process != NULL)
-        process->status = !process->status;
-    return;
+    if (process != NULL) {
+        process->status = WAITING;
+        return SUCCESS;
+    }
+    return ERROR;
+}
+
+int sys_unblock(int pid) {
+    process_t *process = get_process(pid);
+    if (process != NULL) {
+        process->status = READY;
+        return SUCCESS;
+    }
+    return ERROR;
 }
 
 uint16_t sys_get_mem(uint8_t *address, uint8_t *buffer, uint16_t count) {
@@ -256,4 +268,11 @@ void sys_setfg(int pid) {
 
 void sys_proctable(process_table_t *table) {
     get_process_table(table);
+}
+int sys_get_proc_status(int pid){
+    process_t *process = get_process(pid);
+    if (process == NULL){
+        return ERROR;
+    }
+    return process->status;
 }

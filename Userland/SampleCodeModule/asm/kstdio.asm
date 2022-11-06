@@ -11,7 +11,6 @@ GLOBAL _delete_char
 GLOBAL _cntrl_listener
 GLOBAL _kill
 GLOBAL _get_mem
-GLOBAL _pause
 GLOBAL _focus
 GLOBAL _sched_yield
 GLOBAL _wait
@@ -29,8 +28,11 @@ GLOBAL _get_semaphores
 GLOBAL _malloc
 GLOBAL _free
 GLOBAL _get_mem_state
+GLOBAL _block
+GLOBAL _unblock
 GLOBAL _setfg
 GLOBAL _get_process_table
+GLOBAL _get_proc_status
 
 section .text
 
@@ -94,8 +96,13 @@ _copy_cpu_state:
     int 0x80
     ret
 
-_pause:
-    mov rax, SYSCALL_PAUSE_ID
+_block:
+    mov rax, SYSCALL_BLOCK_ID
+    int 0x80
+    ret
+
+_unblock:
+    mov rax, SYSCALL_UNBLOCK_ID
     int 0x80
     ret
 
@@ -189,6 +196,11 @@ _get_mem_state:
     int 0x80
     ret
 
+_get_proc_status:
+    mov rax, SYSCALL_GET_PROC_STATUS_ID
+    int 0x80
+    ret
+
 _setfg:
     mov rax, SYSCALL_SET_FG_ID
     int 0x80
@@ -216,7 +228,8 @@ SYSCALL_WAIT_ID equ 68
 SYSCALL_WAITPID_ID equ 69
 SYSCALL_DELETE_CHAR_ID equ 46
 SYSCALL_KILL_ID equ 62
-SYSCALL_PAUSE_ID equ 75 
+SYSCALL_BLOCK_ID equ 75 
+SYSCALL_UNBLOCK_ID equ 76
 SYSCALL_FOCUS_ID equ 77   
 SYSCALL_SCHED_YIELD_ID equ 24
 SYSCALL_SEM_OPEN_ID equ 70
@@ -231,6 +244,7 @@ SYSCALL_INFO_ALL_PIPES equ 54
 SYSCALL_DUP2 equ 55
 SYSCALL_GET_SEMS_ID equ 74
 SYSCALL_GET_MEM_STATE_ID equ 90
+SYSCALL_GET_PROC_STATUS_ID equ 91
 SYSCALL_SET_FG_ID equ 92
 SYSCALL_GET_PROC_TABLE_ID equ 93
 

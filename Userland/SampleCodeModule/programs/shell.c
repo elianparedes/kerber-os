@@ -1,5 +1,6 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+#include <block.h>
 #include <clear.h>
 #include <divzero.h>
 #include <fibonacci.h>
@@ -105,9 +106,6 @@ static int run_command(char *name, int argc, char *argv[]) {
     else if (strcmp(name, "testsync") == 0)
         return _run(test_sync, argc, argv);
 
-    else if (strcmp(name, "testnosync") == 0)
-        return _run(test_sync, argc, argv);
-
     else if (strcmp(name, "sleeptest") == 0)
         return _run(sleeptest, argc, argv);
 
@@ -129,6 +127,9 @@ static int run_command(char *name, int argc, char *argv[]) {
     else if (strcmp(name, "wc") == 0)
         return _run(wc, 0, NULL);
 
+    else if (strcmp(name, "block") == 0)
+        return _run(block, argc, argv);
+
     else if (strcmp(name, "testpipes") == 0)
         return _run(test_pipes, 0, NULL);
 
@@ -144,11 +145,11 @@ static int run_command(char *name, int argc, char *argv[]) {
         _clear_screen();
         _switch_screen_mode(FULLSCREEN);
         current_layout_mode = FULLSCREEN;
-        return 256;
+        return -2;
     }
 
     printf("[ Command %s not found ]\n", name);
-    return -1;
+    return -2;
 }
 
 /**
@@ -220,8 +221,12 @@ static cmd_t *getcmd(char *input) {
     gettoken(&cmdidx, token, whitespace);
     cmd->name = _malloc(strlen(token) + 1);
     strcpy(cmd->name, token);
-    token[0] = '\0';
 
+    cmd->argv[cmd->argc] = _malloc(strlen(token) + 1);
+    strcpy(cmd->argv[cmd->argc], token);
+    cmd->argc++;
+
+    token[0] = '\0';
     while (gettoken(&cmdidx, token, whitespace) != -1 && cmd->argc < MAX_ARGC) {
         cmd->argv[cmd->argc] = _malloc(strlen(token) + 1);
         strcpy(cmd->argv[cmd->argc], token);

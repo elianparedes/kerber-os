@@ -7,8 +7,9 @@ void dummy() {
 }
 
 void schd() {
-    _run(dummy, 0, NULL);
-    _run(dummy, 0, NULL);
+    char *args[] = {"dummy"};
+    _run(dummy, 1, args);
+    _run(dummy, 1, args);
     _wait();
     _wait();
     return 0;
