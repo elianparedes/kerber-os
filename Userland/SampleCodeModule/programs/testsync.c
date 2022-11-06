@@ -18,6 +18,7 @@ int my_process_inc(int argc, char *argv[]) {
     uint64_t n;
     int8_t inc;
     int8_t use_sem;
+    sem_ptr sem;
 
     if (argc != 3)
         return -1;
@@ -29,12 +30,9 @@ int my_process_inc(int argc, char *argv[]) {
     if ((use_sem = satoi(argv[2])) < 0)
         return -1;
 
-    printf("Entre aca \n");
-
-    sem_ptr sem;
     if (use_sem)
         if (!(sem = _sem_open(SEM_ID, 1))) {
-            printf("test_sync: ERROR opening semaphore\n");
+            printf("test_sync: error opening semaphore\n");
             return -1;
         }
 
@@ -54,17 +52,31 @@ int my_process_inc(int argc, char *argv[]) {
 }
 
 int test_sync(int argc, char *argv[]) { //{n, use_sem, 0}
-    int pids[2 * TOTAL_PAIR_PROCESSES];
 
-    if (argc != 2)
+    if (argc < 2) {
+        printf("test_sync: missing arguments\n");
         return -1;
+    }
+    if (argc > 2) {
+        printf("test_sync: too many arguments\n");
+        return -1;
+    }
 
-    printf("arg0: %s \n", argv[0]);
-    printf("arg1: %s \n", argv[1]);
+    if (satoi(argv[0]) <= 0) {
+        printf("test_sync: increment is not a valid argument\n");
+        return -1;
+    }
+    if (satoi(argv[1]) < 0) {
+        printf("test_sync: use_sem is not a valid argument\n");
+        return -1;
+    }
+
+    int exit_status;
+    int pids[2 * TOTAL_PAIR_PROCESSES];
+    global = 0;
+
     char *argvDec[] = {argv[0], "-1", argv[1]};
     char *argvInc[] = {argv[0], "1", argv[1]};
-
-    global = 0;
 
     uint64_t i;
     for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
@@ -73,10 +85,8 @@ int test_sync(int argc, char *argv[]) { //{n, use_sem, 0}
     }
 
     for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
-        _wait();
-        _wait();
-        // my_wait(pids[i]);
-        // my_wait(pids[i + TOTAL_PAIR_PROCESSES]);
+        _waitpid(pids[i], &exit_status);
+        _waitpid(pids[i + TOTAL_PAIR_PROCESSES], &exit_status);
     }
 
     printf("Final value: %d\n", global);
