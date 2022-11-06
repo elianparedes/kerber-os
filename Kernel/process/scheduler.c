@@ -2,7 +2,6 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "interrupts/time/time.h"
 #include <circular_linked_list.h>
-#include <fifo_queue.h>
 #include <idtLoader.h>
 #include <lib/linked_list.h>
 #include <pmm.h>
@@ -13,6 +12,7 @@
 #define MAX_TERM_COUNT 2
 
 static circular_list_t process_list;
+static circular_list_iterator_t rr_iterator;
 
 static process_t *current_process;
 static process_t *foreground_process;
@@ -33,6 +33,7 @@ static int search_by_channel(process_t *process, uint64_t channel) {
 
 void init_scheduler() {
     process_list = new_circular_linked_list(search_by_pid);
+    rr_iterator = new_circular_list_iterator(process_list);
 }
 
 int process_count() {
@@ -101,7 +102,8 @@ int add_process(function_t main, int argc, char *argv[]) {
     if (current_process != NULL) {
         add(current_process->children, process);
         process->parent = current_process;
-    }
+    } else
+        cl_to_begin(process_list, rr_iterator);
 
     return process->pid;
 }
@@ -191,6 +193,25 @@ process_t *get_foreground_process() {
     return foreground_process;
 }
 
+int get_process_table(process_table_t *table) {
+    circular_list_iterator_t *iterator =
+        new_circular_list_iterator(process_list);
+
+    int i = 0;
+    cl_to_begin(process_list, iterator);
+    while (cl_has_next(iterator)) {
+        process_t *process = cl_next(iterator);
+
+        table->entries[i].pid = process->pid;
+        table->entries[i].priority = process->priority;
+        table->entries[i].status = process->status;
+        i++;
+    }
+
+    table->count = i;
+    cl_free_iterator(iterator);
+}
+
 context_t *schedule(context_t *rsp) {
     if (process_count() == 0)
         return rsp;
@@ -203,7 +224,7 @@ context_t *schedule(context_t *rsp) {
         current_process->context = rsp;
 
     do {
-        current_process = cl_next(process_list);
+        current_process = cl_next(rr_iterator);
     } while (current_process->status != READY);
 
     // set timer ticks to 0

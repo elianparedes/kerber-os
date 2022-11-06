@@ -17,6 +17,7 @@
 #include <printmem.h>
 #include <printmemstate.h>
 #include <printsems.h>
+#include <ps.h>
 #include <schd.h>
 #include <sleeptest.h>
 #include <test_inforeg.h>
@@ -133,6 +134,9 @@ static int run_command(char *name, int argc, char *argv[]) {
 
     else if (strcmp(name, "testmm") == 0)
         return _run(test_mm, argc, argv);
+
+    else if (strcmp(name, "ps") == 0)
+        return _run(ps, argc, argv);
 
     else if (strcmp(name, "clear") == 0) {
         // temporary workaround.

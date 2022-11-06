@@ -7,10 +7,10 @@
 #include <pipe/pipe.h>
 #include <pmm.h>
 #include <registers.h>
-#include <scheduler.h>
 #include <semaphore/semaphore.h>
 #include <syscalls.h>
 #include <video.h>
+#include <scheduler.h>
 
 #define ADDRESS_LIMIT 0xFFFFFFFF
 
@@ -252,4 +252,8 @@ int sys_wait() {
 
 void sys_setfg(int pid) {
     set_foreground_process(pid);
+}
+
+void sys_proctable(process_table_t *table) {
+    get_process_table(table);
 }

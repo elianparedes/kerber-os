@@ -85,6 +85,9 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
         case SYSCALL_SETFG:
             sys_setfg((int)arg0);
             break;
+        case SYSCALL_GET_PROC_TABLE:
+            sys_proctable((process_table_t *)arg0);
+            break;
         default:
             return 0;
     }
