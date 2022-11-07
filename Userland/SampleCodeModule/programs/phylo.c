@@ -4,7 +4,7 @@
 #include <kstdlib.h>
 #include <kstring.h>
 
-#define MAX_PHYLO 10
+#define MAX_PHYLO 16
 #define N 5
 #define PENSANDO '.'
 #define HAMBRIENTO '.'
