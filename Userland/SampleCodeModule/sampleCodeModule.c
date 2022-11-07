@@ -10,7 +10,9 @@
 int main() {
     _clear_screen();
     _switch_screen_mode(FULLSCREEN);
-    _run(shell, 0, NULL);
+
+    char *args[] = {"shell"};
+    _run(shell, 1, args);
 
     return 0xDEADBEEF;
 }

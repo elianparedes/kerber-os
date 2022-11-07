@@ -14,20 +14,20 @@ void slowInc(int64_t *p, int inc) {
     *p = aux;
 }
 
-int my_process_inc(int argc, char *argv[]) {
+int myprocinc(int argc, char *argv[]) {
     uint64_t n;
     int8_t inc;
     int8_t use_sem;
     sem_ptr sem;
 
-    if (argc != 3)
+    if (argc != 4)
         return -1;
 
-    if ((n = satoi(argv[0])) <= 0)
+    if ((n = satoi(argv[1])) <= 0)
         return -1;
-    if ((inc = satoi(argv[1])) == 0)
+    if ((inc = satoi(argv[2])) == 0)
         return -1;
-    if ((use_sem = satoi(argv[2])) < 0)
+    if ((use_sem = satoi(argv[3])) < 0)
         return -1;
 
     if (use_sem)
@@ -53,20 +53,22 @@ int my_process_inc(int argc, char *argv[]) {
 
 int test_sync(int argc, char *argv[]) { //{n, use_sem, 0}
 
-    if (argc < 2) {
+    if (argc < 3) {
         printf("test_sync: missing arguments\n");
         return -1;
     }
-    if (argc > 2) {
+
+    if (argc > 3) {
         printf("test_sync: too many arguments\n");
         return -1;
     }
 
-    if (satoi(argv[0]) <= 0) {
+    if (satoi(argv[1]) <= 0) {
         printf("test_sync: increment is not a valid argument\n");
         return -1;
     }
-    if (satoi(argv[1]) < 0) {
+
+    if (satoi(argv[2]) < 0) {
         printf("test_sync: use_sem is not a valid argument\n");
         return -1;
     }
@@ -75,21 +77,23 @@ int test_sync(int argc, char *argv[]) { //{n, use_sem, 0}
     int pids[2 * TOTAL_PAIR_PROCESSES];
     global = 0;
 
-    char *argvDec[] = {argv[0], "-1", argv[1]};
-    char *argvInc[] = {argv[0], "1", argv[1]};
+    char *argvDec[] = {"myprocinc", argv[1], "-1", argv[2]};
+    char *argvInc[] = {"myprocinc", argv[1], "1", argv[2]};
 
     uint64_t i;
-    for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
-        pids[i] = _run(my_process_inc, 3, argvDec);
-        pids[i + TOTAL_PAIR_PROCESSES] = _run(my_process_inc, 3, argvInc);
-    }
+    while (1) {
+        for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
+            pids[i] = _run(myprocinc, 4, argvDec);
+            pids[i + TOTAL_PAIR_PROCESSES] = _run(myprocinc, 4, argvInc);
+        }
 
-    for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
-        _waitpid(pids[i], &exit_status);
-        _waitpid(pids[i + TOTAL_PAIR_PROCESSES], &exit_status);
-    }
+        for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
+            _waitpid(pids[i], &exit_status);
+            _waitpid(pids[i + TOTAL_PAIR_PROCESSES], &exit_status);
+        }
 
-    printf("Final value: %d\n", global);
+        // printf("Final value: %d\n", global);
+    }
 
     return 0;
 }

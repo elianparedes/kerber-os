@@ -11,13 +11,16 @@
 #include <ipc_programs.h>
 #include <kerberos.h>
 #include <kmman.h>
+#include <ksemaphore.h>
 #include <kstdbool.h>
 #include <kstdio.h>
 #include <kstring.h>
+#include <phylo.h>
 #include <primes.h>
 #include <printmem.h>
 #include <printmemstate.h>
 #include <printsems.h>
+#include <ps.h>
 #include <schd.h>
 #include <sleeptest.h>
 #include <test_inforeg.h>
@@ -56,6 +59,41 @@ typedef struct line {
     cmd_t *right_cmd;
 } line_t;
 
+typedef int (*function_t)(int, char *[]);
+
+typedef struct cmd_entry {
+    char *name;
+    function_t function;
+} cmd_entry_t;
+
+cmd_entry_t cmd_table[] = {{"help", help},
+                           {"fibonacci", fibonacci},
+                           {"primes", primes},
+                           {"time", time},
+                           {"divzero", divzero},
+                           {"kerberos", kerberos},
+                           {"invopcode", invopcode},
+                           {"inforeg", inforeg},
+                           {"testinforeg", testinforeg},
+                           {"printmem", printmem},
+                           {"mem", printmemstate},
+                           {"testsync", test_sync},
+                           {"sleeptest", sleeptest},
+                           {"sem", printsems},
+                           {"sched", schd},
+                           {"pipe", info_all_pipes},
+                           {"cat", cat},
+                           {"filter", filter},
+                           {"wc", wc},
+                           {"block", block},
+                           {"testpipes", test_pipes},
+                           {"testmm", test_mm},
+                           {"phylo", phylo},
+                           {"ps", ps},
+                           {NULL, NULL}};
+
+sem_ptr sem_pipe_exec;
+
 static char whitespace[] = " \t\n";
 static char operators[] = "|&";
 
@@ -63,86 +101,31 @@ static layout_mode_t current_layout_mode = FULLSCREEN;
 
 static char ctrl_pressed = 0;
 
+static function_t get_cmd(char *cmd_name) {
+    for (int i = 0; cmd_table[i].name != NULL; i++) {
+        if (!strcmp(cmd_name, cmd_table[i].name)) {
+            return cmd_table[i].function;
+        }
+    }
+
+    return NULL;
+}
+
 // temporary workaround
 static void invalid_command(char *cmd_name) {
     printf("[ Command %s not found ]\n", cmd_name);
 }
 
 static int run_command(char *name, int argc, char *argv[]) {
-    if (strcmp(name, "help") == 0)
-        return _run(help, argc, argv);
 
-    else if (strcmp(name, "fibonacci") == 0)
-        return _run(fibonacci, argc, argv);
+    function_t function = get_cmd(name);
 
-    else if (strcmp(name, "primes") == 0)
-        return _run(primes, argc, argv);
-
-    else if (strcmp(name, "time") == 0)
-        return _run(time, argc, argv);
-
-    else if (strcmp(name, "divzero") == 0)
-        return _run(divzero, argc, argv);
-
-    else if (strcmp(name, "kerberos") == 0)
-        return _run(kerberos, argc, argv);
-
-    else if (strcmp(name, "invopcode") == 0)
-        return _run(invopcode, argc, argv);
-
-    else if (strcmp(name, "inforeg") == 0)
-        return _run(inforeg, argc, argv);
-
-    else if (strcmp(name, "testinforeg") == 0)
-        return _run(testinforeg, argc, argv);
-
-    else if (strcmp(name, "printmem") == 0)
-        return _run(printmem, argc, argv);
-
-    else if (strcmp(name, "mem") == 0)
-        return _run(printmemstate, 0, NULL);
-
-    else if (strcmp(name, "testsync") == 0)
-        return _run(test_sync, argc, argv);
-
-    else if (strcmp(name, "sleeptest") == 0)
-        return _run(sleeptest, argc, argv);
-
-    else if (strcmp(name, "sem") == 0)
-        return _run(printsems, argc, argv);
-
-    else if (strcmp(name, "sched") == 0)
-        return _run(schd, argc, argv);
-
-    else if (strcmp(name, "pipe") == 0)
-        return _run(info_all_pipes, 0, NULL);
-
-    else if (strcmp(name, "cat") == 0)
-        return _run(cat, 0, NULL);
-
-    else if (strcmp(name, "filter") == 0)
-        return _run(filter, 0, NULL);
-    else if (strcmp(name, "wc") == 0)
-        return _run(wc, 0, NULL);
-    else if (strcmp(name, "block") == 0)
-        return _run(block, argc, argv);
-    else if (strcmp(name, "testpipes") == 0)
-        return _run(test_pipes, 0, NULL);
-
-    else if (strcmp(name, "testmm") == 0)
-        return _run(test_mm, argc, argv);
-
-    else if (strcmp(name, "clear") == 0) {
-        // temporary workaround.
-        // clear command should not be used with pipe operator
-        _clear_screen();
-        _switch_screen_mode(FULLSCREEN);
-        current_layout_mode = FULLSCREEN;
-        return 256;
+    if (function == NULL) {
+        printf("[ Command %s not found ]\n", name);
+        return -2;
     }
 
-    printf("[ Command %s not found ]\n", name);
-    return -1;
+    _run(function, argc, argv);
 }
 
 /**
@@ -214,8 +197,12 @@ static cmd_t *getcmd(char *input) {
     gettoken(&cmdidx, token, whitespace);
     cmd->name = _malloc(strlen(token) + 1);
     strcpy(cmd->name, token);
-    token[0] = '\0';
 
+    cmd->argv[cmd->argc] = _malloc(strlen(token) + 1);
+    strcpy(cmd->argv[cmd->argc], token);
+    cmd->argc++;
+
+    token[0] = '\0';
     while (gettoken(&cmdidx, token, whitespace) != -1 && cmd->argc < MAX_ARGC) {
         cmd->argv[cmd->argc] = _malloc(strlen(token) + 1);
         strcpy(cmd->argv[cmd->argc], token);
@@ -320,12 +307,56 @@ void freecmd(cmd_t *cmd) {
 
     for (size_t i = 0; i < cmd->argc; i++)
         _free(cmd->argv[i]);
+
+    _free(cmd->name);
 }
 
 void freepline(line_t *parsedline) {
     freecmd(parsedline->left_cmd);
     freecmd(parsedline->right_cmd);
     _free(parsedline);
+}
+
+static void pipe_exec_left(int argc, char *argv[]) {
+
+    function_t function = get_cmd(argv[0]);
+
+    int fd[2];
+    if (_create_pipe("shell_pipe", fd) == -1)
+        _open_pipe("shell_pipe", fd);
+    _sem_post(sem_pipe_exec);
+
+    _dup2(fd[1], 1);
+    _close(fd[1]);
+    _close(fd[0]);
+
+    function(argc, argv);
+}
+
+static void pipe_exec_right(int argc, char *argv[]) {
+
+    function_t function = get_cmd(argv[0]);
+
+    int fd[2];
+    _sem_wait(sem_pipe_exec);
+    if (_open_pipe("shell_pipe", fd) == -1)
+        _create_pipe("shell_pipe", fd);
+    _sem_post(sem_pipe_exec);
+
+    _dup2(fd[0], 0);
+    _close(fd[0]);
+    _close(fd[1]);
+
+    function(argc, argv);
+}
+
+static void pipe_exec(cmd_t *left, cmd_t *right) {
+    sem_pipe_exec = _sem_open("shell_sem_pipe_exec", 1);
+    int left_pid = _run(pipe_exec_left, left->argc, left->argv);
+    int right_pid = _run(pipe_exec_right, right->argc, right->argv);
+    _waitpid(left_pid, NULL);
+    _waitpid(right_pid, NULL);
+    _sem_close(sem_pipe_exec);
 }
 
 int shell() {
@@ -349,9 +380,7 @@ int shell() {
 
         switch (parsedline->operator) {
             case '|':
-                printf("operator: %c\n", parsedline->operator);
-                printcmd(parsedline->left_cmd);
-                printcmd(parsedline->right_cmd);
+                pipe_exec(parsedline->left_cmd, parsedline->right_cmd);
                 break;
             case '&':
                 run_command(parsedline->left_cmd->name,
