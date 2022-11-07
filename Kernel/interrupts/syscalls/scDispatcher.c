@@ -48,6 +48,9 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
         case SYSCALL_GET_PROC_STATUS:
             return sys_get_proc_status((int)arg0);
             break;
+        case SYSCALL_SET_PRIORITY:
+            return sys_set_priority((int)arg0, (int)arg1);
+            break;
         case SYSCALL_COPY_CPU_STATE:
             return sys_copy_cpu_state((cpu_state_t *)arg0, (request_t)arg1);
         case SYSCALL_FOCUS:
@@ -90,6 +93,9 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
             return sys_waitpid((int)arg0, (int *)arg1);
         case SYSCALL_SETFG:
             sys_setfg((int)arg0);
+            break;
+        case SYSCALL_GET_PROC_TABLE:
+            sys_proctable((process_table_t *)arg0);
             break;
         default:
             return 0;

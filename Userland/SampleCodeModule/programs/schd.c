@@ -1,15 +1,18 @@
 #include <kstdio.h>
 #include <schd.h>
 
-void dummy() {
-    while (1)
-        ;
+int dummy(int argc, char *argv[]) {
+    return 0;
 }
 
 void schd() {
-    _run(dummy, 0, NULL);
-    _run(dummy, 0, NULL);
-    _wait();
-    _wait();
+    char *args[] = {"dummy"};
+    while (1) {
+        _run(dummy, 1, args);
+        _run(dummy, 1, args);
+        _wait();
+        _wait();
+    }
+
     return 0;
 }

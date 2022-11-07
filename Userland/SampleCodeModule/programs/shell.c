@@ -10,15 +10,19 @@
 #include <invopcode.h>
 #include <ipc_programs.h>
 #include <kerberos.h>
+#include <kill.h>
 #include <kmman.h>
+#include <ksemaphore.h>
 #include <kstdbool.h>
 #include <kstdio.h>
 #include <kstring.h>
-#include <ksemaphore.h>
+#include <nice.h>
+#include <phylo.h>
 #include <primes.h>
 #include <printmem.h>
 #include <printmemstate.h>
 #include <printsems.h>
+#include <ps.h>
 #include <schd.h>
 #include <sleeptest.h>
 #include <test_inforeg.h>
@@ -26,7 +30,6 @@
 #include <testmm.h>
 #include <testsync.h>
 #include <time.h>
-#include <phylo.h>
 
 #define LINE_LENGTH    512
 #define TOKEN_LENGTH   512
@@ -60,37 +63,38 @@ typedef struct line {
 
 typedef int (*function_t)(int, char *[]);
 
-typedef struct cmd_entry{
-    char * name;
+typedef struct cmd_entry {
+    char *name;
     function_t function;
 } cmd_entry_t;
 
-cmd_entry_t cmd_table [] = { 
-    { "help" , help },
-    { "fibonacci" , fibonacci },
-    { "primes" , primes },
-    { "time" , time },
-    { "divzero" , divzero },
-    { "kerberos" , kerberos },
-    { "invopcode" , invopcode },
-    { "inforeg" , inforeg },
-    { "testinforeg" , testinforeg },
-    { "printmem" , printmem },
-    { "mem" , printmemstate },
-    { "testsync" , test_sync },
-    { "sleeptest" , sleeptest },
-    { "sem" , printsems },
-    { "sched" , schd },
-    { "pipe" , info_all_pipes },
-    { "cat" , cat },
-    { "filter" , filter },
-    { "wc" , wc },
-    { "block" , block },
-    { "testpipes" , test_pipes },
-    { "testmm" , test_mm },
-    { "phylo" , phylo },
-    {NULL, NULL}
-}; 
+cmd_entry_t cmd_table[] = {{"help", help},
+                           {"fibonacci", fibonacci},
+                           {"primes", primes},
+                           {"time", time},
+                           {"divzero", divzero},
+                           {"kerberos", kerberos},
+                           {"invopcode", invopcode},
+                           {"inforeg", inforeg},
+                           {"testinforeg", testinforeg},
+                           {"printmem", printmem},
+                           {"mem", printmemstate},
+                           {"testsync", test_sync},
+                           {"sleeptest", sleeptest},
+                           {"sem", printsems},
+                           {"sched", schd},
+                           {"pipe", info_all_pipes},
+                           {"cat", cat},
+                           {"filter", filter},
+                           {"wc", wc},
+                           {"block", block},
+                           {"testpipes", test_pipes},
+                           {"testmm", test_mm},
+                           {"phylo", phylo},
+                           {"ps", ps},
+                           {"kill", kill},
+                           {"nice", nice},
+                           {NULL, NULL}};
 
 sem_ptr sem_pipe_exec;
 
@@ -101,11 +105,9 @@ static layout_mode_t current_layout_mode = FULLSCREEN;
 
 static char ctrl_pressed = 0;
 
-
-static function_t get_cmd(char * cmd_name){
-
-    for( int i = 0 ; cmd_table[i].name != NULL ; i++){
-        if(!strcmp(cmd_name,cmd_table[i].name)){
+static function_t get_cmd(char *cmd_name) {
+    for (int i = 0; cmd_table[i].name != NULL; i++) {
+        if (!strcmp(cmd_name, cmd_table[i].name)) {
             return cmd_table[i].function;
         }
     }
@@ -119,15 +121,15 @@ static void invalid_command(char *cmd_name) {
 }
 
 static int run_command(char *name, int argc, char *argv[]) {
-    
+
     function_t function = get_cmd(name);
 
-    if(function == NULL){
+    if (function == NULL) {
         printf("[ Command %s not found ]\n", name);
-        return -1;
+        return -2;
     }
 
-    _run(function,argc,argv);
+    _run(function, argc, argv);
 }
 
 /**
@@ -199,8 +201,12 @@ static cmd_t *getcmd(char *input) {
     gettoken(&cmdidx, token, whitespace);
     cmd->name = _malloc(strlen(token) + 1);
     strcpy(cmd->name, token);
-    token[0] = '\0';
 
+    cmd->argv[cmd->argc] = _malloc(strlen(token) + 1);
+    strcpy(cmd->argv[cmd->argc], token);
+    cmd->argc++;
+
+    token[0] = '\0';
     while (gettoken(&cmdidx, token, whitespace) != -1 && cmd->argc < MAX_ARGC) {
         cmd->argv[cmd->argc] = _malloc(strlen(token) + 1);
         strcpy(cmd->argv[cmd->argc], token);
@@ -305,6 +311,8 @@ void freecmd(cmd_t *cmd) {
 
     for (size_t i = 0; i < cmd->argc; i++)
         _free(cmd->argv[i]);
+
+    _free(cmd->name);
 }
 
 void freepline(line_t *parsedline) {
@@ -313,9 +321,7 @@ void freepline(line_t *parsedline) {
     _free(parsedline);
 }
 
-
-
-static void pipe_exec_left(int argc, char * argv[]){
+static void pipe_exec_left(int argc, char *argv[]) {
 
     function_t function = get_cmd(argv[0]);
 
@@ -328,11 +334,10 @@ static void pipe_exec_left(int argc, char * argv[]){
     _close(fd[1]);
     _close(fd[0]);
 
-    function(argc,argv);
-
+    function(argc, argv);
 }
 
-static void pipe_exec_right(int argc, char * argv[]){
+static void pipe_exec_right(int argc, char *argv[]) {
 
     function_t function = get_cmd(argv[0]);
 
@@ -346,18 +351,17 @@ static void pipe_exec_right(int argc, char * argv[]){
     _close(fd[0]);
     _close(fd[1]);
 
-    function(argc,argv);
+    function(argc, argv);
 }
 
-static void pipe_exec(cmd_t * left , cmd_t * right){
+static void pipe_exec(cmd_t *left, cmd_t *right) {
     sem_pipe_exec = _sem_open("shell_sem_pipe_exec", 1);
-    int left_pid =_run(pipe_exec_left, left->argc, left->argv);
+    int left_pid = _run(pipe_exec_left, left->argc, left->argv);
     int right_pid = _run(pipe_exec_right, right->argc, right->argv);
-    _waitpid(left_pid,NULL);
-    _waitpid(right_pid,NULL);
+    _waitpid(left_pid, NULL);
+    _waitpid(right_pid, NULL);
     _sem_close(sem_pipe_exec);
 }
-
 
 int shell() {
     char cmd_buff[LINE_LENGTH], token_buff[TOKEN_LENGTH];
@@ -380,7 +384,7 @@ int shell() {
 
         switch (parsedline->operator) {
             case '|':
-                pipe_exec(parsedline->left_cmd,parsedline->right_cmd);
+                pipe_exec(parsedline->left_cmd, parsedline->right_cmd);
                 break;
             case '&':
                 run_command(parsedline->left_cmd->name,

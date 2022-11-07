@@ -5,7 +5,25 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define MAX_PROC_COUNT 256
+#define MAX_PROC_COUNT         256
+#define MAX_NAME_LENGTH        10
+#define PROCESS_TABLE_MAX_SIZE 16
+
+typedef struct process_entry {
+    int pid;
+    char name[MAX_NAME_LENGTH];
+    int priority;
+    void *stack;
+    void *rbp;
+    int children_count;
+    char parent_name[MAX_NAME_LENGTH];
+    int status;
+} process_entry_t;
+
+typedef struct process_table {
+    process_entry_t entries[PROCESS_TABLE_MAX_SIZE];
+    int count;
+} process_table_t;
 
 /**
  * @brief set current process in wait status
@@ -81,5 +99,7 @@ void sleep(uint64_t channel);
 int wakeup(uint64_t channel);
 
 void init_scheduler();
+
+int get_process_table(process_table_t *table);
 
 #endif /* _SCHEDULER_H_ */

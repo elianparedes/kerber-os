@@ -2,7 +2,6 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "interrupts/time/time.h"
 #include <circular_linked_list.h>
-#include <fifo_queue.h>
 #include <idtLoader.h>
 #include <lib/linked_list.h>
 #include <pmm.h>
@@ -13,6 +12,7 @@
 #define MAX_TERM_COUNT 2
 
 static circular_list_t process_list;
+static circular_list_iterator_t rr_iterator;
 
 static process_t *current_process;
 static process_t *foreground_process;
@@ -33,6 +33,8 @@ static int search_by_channel(process_t *process, uint64_t channel) {
 
 void init_scheduler() {
     process_list = new_circular_linked_list(search_by_pid);
+    rr_iterator = new_circular_list_iterator(process_list);
+    cl_subscribe_iterator(process_list, rr_iterator);
 }
 
 int process_count() {
@@ -42,26 +44,28 @@ int process_count() {
 pid_t wait_process(pid_t pid, int *status_ptr) {
 
     // if no children, return
-    if (size(current_process->children) == 0)
+    if (size(current_process->children) == 0 || pid < -1)
         return;
 
     list_ptr children_list = current_process->children;
     process_t *target_child = NULL;
 
     while (true) {
-        if (pid > 0) {
+        if (pid >= 0) {
             target_child = find(children_list, pid, search_by_pid);
 
             if (target_child != NULL && target_child->status == TERMINATED) {
-                *status_ptr = target_child->exit_status;
+                if (status_ptr != NULL)
+                    *status_ptr = target_child->exit_status;
                 remove_process(target_child->pid);
                 return target_child->pid;
             }
-        } else {
+        } else if (pid == -1) {
             target_child = find(children_list, TERMINATED, search_by_status);
 
             if (target_child != NULL) {
-                *status_ptr = target_child->exit_status;
+                if (status_ptr != NULL)
+                    *status_ptr = target_child->exit_status;
                 remove_process(target_child->pid);
                 return target_child->pid;
             }
@@ -123,7 +127,7 @@ static void remove_process(int pid) {
         return NULL;
 
     if (target == foreground_process)
-        foreground_process == NULL;
+        foreground_process = NULL;
 
     // remove process from parent's children list
     remove(target->parent->children, pid);
@@ -133,6 +137,9 @@ static void remove_process(int pid) {
 void exit_process(int status) {
     close_dataDescriptor(current_process->dataDescriptors[0]);
     close_dataDescriptor(current_process->dataDescriptors[1]);
+
+    current_process->dataDescriptors[0] = NULL;
+    current_process->dataDescriptors[1] = NULL;
 
     remove_children(current_process);
     wakeup(current_process->parent);
@@ -152,6 +159,7 @@ void kill_process(int pid) {
     close_dataDescriptor(target->dataDescriptors[0]);
     close_dataDescriptor(target->dataDescriptors[1]);
 
+    remove_children(target);
     wakeup(target->parent);
 
     // leave process as terminated. Parent will clean it up on wait
@@ -191,6 +199,36 @@ process_t *get_foreground_process() {
     return foreground_process;
 }
 
+int get_process_table(process_table_t *table) {
+    circular_list_iterator_t *iterator =
+        new_circular_list_iterator(process_list);
+
+    int i = 0;
+    cl_to_begin(process_list, iterator);
+    while (cl_has_next(iterator)) {
+        process_t *process = cl_next(iterator);
+
+        table->entries[i].pid = process->pid;
+        table->entries[i].priority = process->priority;
+        table->entries[i].status = process->status;
+        table->entries[i].rbp = process->context->rbp;
+        table->entries[i].stack = process->context;
+        table->entries[i].children_count = size(process->children);
+
+        if (process->parent != NULL)
+            strcpy(table->entries[i].parent_name, process->parent->argv[0]);
+        else
+            strcpy(table->entries[i].parent_name, "-");
+
+        strcpy(table->entries[i].name, process->argv[0]);
+
+        i++;
+    }
+
+    table->count = i;
+    cl_free_iterator(iterator);
+}
+
 context_t *schedule(context_t *rsp) {
     if (process_count() == 0)
         return rsp;
@@ -203,7 +241,7 @@ context_t *schedule(context_t *rsp) {
         current_process->context = rsp;
 
     do {
-        current_process = cl_next(process_list);
+        current_process = cl_next(rr_iterator);
     } while (current_process->status != READY);
 
     // set timer ticks to 0

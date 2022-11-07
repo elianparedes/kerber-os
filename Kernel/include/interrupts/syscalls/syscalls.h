@@ -39,6 +39,7 @@ enum STD {
 #define SYSCALL_WAITPID            69
 #define SYSCALL_FOCUS              77
 #define SYSCALL_SCHED_YIELD        24
+#define SYSCALL_SET_PRIORITY       141
 
 #define SYSCALL_SEM_OPEN           70
 #define SYSCALL_SEM_WAIT           71
@@ -53,10 +54,12 @@ enum STD {
 #define SYSCALL_INFO_ALL_PIPES     54
 #define SYSCALL_DUP2               55
 #define SYSCALL_SETFG              92
+#define SYSCALL_GET_PROC_TABLE     93
 
 typedef struct sem *sem_ptr;
 typedef struct copy_sem copy_sem_t;
 typedef struct pipe_info pipe_info_t;
+typedef struct process_table process_table_t;
 
 /**
  * @brief Reads up to count bytes from keyboard and copies them to buffer
