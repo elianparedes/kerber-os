@@ -10,7 +10,7 @@ typedef struct time {
     uint64_t hour;
     uint64_t minutes;
     uint64_t seconds;
-} time_t;
+} time_rtc_t;
 
 typedef enum {
     SEC = 0,

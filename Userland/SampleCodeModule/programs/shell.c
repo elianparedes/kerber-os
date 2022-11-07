@@ -12,6 +12,7 @@
 #include <kerberos.h>
 #include <kill.h>
 #include <kmman.h>
+#include <kpipe.h>
 #include <ksemaphore.h>
 #include <kstdbool.h>
 #include <kstdio.h>
@@ -133,7 +134,7 @@ static int run_command(char *name, int argc, char *argv[]) {
         return -2;
     }
 
-    _run(function, argc, argv);
+    return _run(function, argc, argv);
 }
 
 /**

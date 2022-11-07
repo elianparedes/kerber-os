@@ -13,7 +13,7 @@ void fibonacci(int argc, char *argv[]) {
     int n1 = 0;
     int n2 = 1;
 
-    if (argc > 2 && argv[1] != '\0')
+    if (argc > 1 && *argv[1] != '\0')
         max = strtol(argv[1], NULL, 10);
 
     // first two terms of the sequence

@@ -26,7 +26,7 @@ enum KBD_CTRL_CMD {
 #define KBD_SIZE           90
 
 #define MAYUS_OFFSET       ('a' - 'A')
-#define IS_ASCII_LETTER(l) (l >= 'a' && l <= 'z')
+#define IS_ASCII_LETTER(l) ((l) >= 'a' && (l) <= 'z')
 
 #define LSHIFT_MK          0x2A
 #define LSHIFT_BK          0xAA
@@ -247,7 +247,7 @@ void kbd_handler() {
         caps_locked = !caps_locked;
         return;
     }
-    if (index > BUFFER_SIZE || scan_code > KBD_SIZE) {
+    if (index >= BUFFER_SIZE || scan_code >= KBD_SIZE) {
         return;
     }
     uint8_t character;
