@@ -53,19 +53,6 @@ static node_list_t *create_node(void *data) {
     return new_node;
 }
 
-static void notify_iterators(list_t *l) {
-    for (size_t i = 0; i < MAX_ITERATORS; i++) {
-        iterator_t *iterator = l->iterators[i];
-        if (iterator != NULL) {
-            iterator->start = l->start;
-            iterator->end = l->end;
-
-            if (iterator->current == NULL)
-                iterator->current = l->start;
-        }
-    }
-}
-
 int cl_size(list_t *l) {
     return l->size;
 }
@@ -81,8 +68,17 @@ void cl_add(list_t *list, void *data) {
     list->end = new_node;
     list->end->next = list->start;
 
-    // Notify subscribed iterator
-    notify_iterators(list);
+    // Notify subscribed iterators
+    for (size_t i = 0; i < MAX_ITERATORS; i++) {
+        iterator_t *iterator = list->iterators[i];
+        if (iterator != NULL) {
+            iterator->start = list->start;
+            iterator->end = list->end;
+
+            if (iterator->current == NULL)
+                iterator->current = list->start;
+        }
+    }
 
     list->size++;
 }
@@ -116,8 +112,17 @@ void *cl_remove(list_t *list, void *data) {
     if (list->start == target_node)
         list->start = target_node->next;
 
-    // Notify subscribed iterator
-    notify_iterators(list);
+    // Notify subscribed iterators
+    for (size_t i = 0; i < MAX_ITERATORS; i++) {
+        iterator_t *iterator = list->iterators[i];
+        if (iterator != NULL) {
+            iterator->start = list->start;
+            iterator->end = list->end;
+
+            if (iterator->current == target_node)
+                iterator->current = target_node->next;
+        }
+    }
 
     kfree(target_node);
     list->size--;
