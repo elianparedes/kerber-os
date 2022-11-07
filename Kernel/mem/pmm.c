@@ -238,6 +238,7 @@ void *kmalloc(size_t size) {
                 current_header->alloced = 0;
             }
 
+            occupied_mem += new_size;
             return alloced_addr;
         }
 
@@ -252,12 +253,13 @@ void kfree(void *ptr) {
     header_t *current_header = ptr - sizeof(header_t);
 
     current_header->alloced = 0;
+    occupied_mem -= GET_SIZE(current_header);
 
     header_t *next_header =
         current_header + 1 +
         GET_SIZE(current_header) / sizeof(header_t); // go to the next header
-    
-	if (!next_header->alloced)
+
+    if (!next_header->alloced)
         current_header->size +=
             next_header->size + sizeof(header_t); // no need to mask out alloced
                                                   // bit because is always 0
