@@ -55,7 +55,8 @@ pid_t wait_process(pid_t pid, int *status_ptr) {
             target_child = find(children_list, pid, search_by_pid);
 
             if (target_child != NULL && target_child->status == TERMINATED) {
-                *status_ptr = target_child->exit_status;
+                if (status_ptr != NULL)
+                    *status_ptr = target_child->exit_status;
                 remove_process(target_child->pid);
                 return target_child->pid;
             }
@@ -63,7 +64,8 @@ pid_t wait_process(pid_t pid, int *status_ptr) {
             target_child = find(children_list, TERMINATED, search_by_status);
 
             if (target_child != NULL) {
-                *status_ptr = target_child->exit_status;
+                if (status_ptr != NULL)
+                    *status_ptr = target_child->exit_status;
                 remove_process(target_child->pid);
                 return target_child->pid;
             }
@@ -157,6 +159,7 @@ void kill_process(int pid) {
     close_dataDescriptor(target->dataDescriptors[0]);
     close_dataDescriptor(target->dataDescriptors[1]);
 
+    remove_children(target);
     wakeup(target->parent);
 
     // leave process as terminated. Parent will clean it up on wait

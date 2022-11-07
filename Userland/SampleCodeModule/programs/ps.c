@@ -9,7 +9,7 @@ static void draw_header() {
 
 int ps(int argc, char const *argv[]) {
 
-    char *status[] = {"WAITING", "READY", "TERMINATED"};
+    char *status[] = {"WAITING", "READY", "TERM"};
     process_table_t *process_table = _malloc(sizeof(process_table_t));
 
     _get_process_table(process_table);
@@ -24,6 +24,8 @@ int ps(int argc, char const *argv[]) {
                process_table->entries[i].children_count,
                process_table->entries[i].stack, process_table->entries[i].rbp);
     }
+
+    _free(process_table);
 
     return 0;
 }
