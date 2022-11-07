@@ -331,6 +331,8 @@ void freecmd(cmd_t *cmd) {
 
     for (size_t i = 0; i < cmd->argc; i++)
         _free(cmd->argv[i]);
+
+    _free(cmd->name);
 }
 
 void freepline(line_t *parsedline) {
