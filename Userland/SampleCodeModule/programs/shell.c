@@ -68,6 +68,8 @@ typedef struct cmd_entry {
     function_t function;
 } cmd_entry_t;
 
+static void background_exec(int argc, char * argv[]);
+
 cmd_entry_t cmd_table[] = {{"help", help},
                            {"fibonacci", fibonacci},
                            {"primes", primes},
@@ -94,6 +96,7 @@ cmd_entry_t cmd_table[] = {{"help", help},
                            {"ps", ps},
                            {"kill", kill},
                            {"nice", nice},
+                           {"background_exec",background_exec},
                            {NULL, NULL}};
 
 sem_ptr sem_pipe_exec;
@@ -363,6 +366,19 @@ static void pipe_exec(cmd_t *left, cmd_t *right) {
     _sem_close(sem_pipe_exec);
 }
 
+static void background_exec(int argc, char * argv[]){
+    
+    function_t function = get_cmd(argv[0]);
+    
+    if(function == NULL)
+        _exit(-1);
+    
+    _close(0);
+    _close(1);
+
+    function(argc,argv);
+}
+
 int shell() {
     char cmd_buff[LINE_LENGTH], token_buff[TOKEN_LENGTH];
     _cntrl_listener(&ctrl_pressed);
@@ -387,9 +403,7 @@ int shell() {
                 pipe_exec(parsedline->left_cmd, parsedline->right_cmd);
                 break;
             case '&':
-                run_command(parsedline->left_cmd->name,
-                            parsedline->left_cmd->argc,
-                            parsedline->left_cmd->argv);
+                run_command("background_exec",parsedline->left_cmd->argc,parsedline->left_cmd->argv);
                 break;
             default:
                 pid = run_command(parsedline->left_cmd->name,
