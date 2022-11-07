@@ -1,6 +1,8 @@
+// From alejoaquili ITBA-72.11-SO repository
+
+#include <kprocess.h>
 #include <kstdio.h>
 #include <test_util.h>
-// From alejoaquili ITBA-72.11-SO repository
 
 // Random
 static uint32_t m_z = 362436069;
@@ -64,15 +66,11 @@ void endless_loop() {
         ;
 }
 
-/*
-void endless_loop_print(uint64_t wait)
-{
-    int64_t pid = my_getpid();
+void endless_loop_print(uint64_t wait) {
+    int64_t pid = _getpid();
 
-    while (1)
-    {
-        printf("%d ", pid);
+    while (1) {
+        // printf("%d ", pid);
         bussy_wait(wait);
     }
 }
-*/

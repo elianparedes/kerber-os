@@ -34,6 +34,7 @@ GLOBAL _setfg
 GLOBAL _get_process_table
 GLOBAL _get_proc_status
 GLOBAL _set_priority
+GLOBAL _getpid
 
 section .text
 
@@ -213,7 +214,12 @@ _set_priority:
     ret
 
 _get_process_table:
-     mov rax, SYSCALL_GET_PROC_TABLE_ID
+    mov rax, SYSCALL_GET_PROC_TABLE_ID
+    int 0x80
+    ret
+
+_getpid:
+    mov rax, SYSCALL_GETPID_ID
     int 0x80
     ret
 
@@ -254,5 +260,6 @@ SYSCALL_GET_PROC_STATUS_ID equ 91
 SYSCALL_SET_FG_ID equ 92
 SYSCALL_SET_PRIORITY_ID equ 141
 SYSCALL_GET_PROC_TABLE_ID equ 93
+SYSCALL_GETPID_ID equ 95
 
 KBD_PRINT_REG equ 1

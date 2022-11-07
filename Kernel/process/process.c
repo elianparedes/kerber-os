@@ -62,7 +62,7 @@ process_t *new_process(function_t main, int argc, char *argv[]) {
     process->argc = argc;
 
     process->pid = last_pid++;
-    process->priority = 13;
+    process->priority = 10;
 
     process->status = READY;
     process->exit_status = -1;
@@ -77,6 +77,7 @@ process_t *new_process(function_t main, int argc, char *argv[]) {
 
     /* Creates stdin in dataDescriptor 0*/
     process->dataDescriptors[0] = create_dataDescriptor(STD_T, READ_MODE);
+
     /* Creates stdout in dataDescriptor 0*/
     process->dataDescriptors[1] = create_dataDescriptor(STD_T, WRITE_MODE);
 
