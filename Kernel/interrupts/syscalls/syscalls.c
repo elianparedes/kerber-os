@@ -286,3 +286,11 @@ int sys_set_priority(int pid, int priority) {
     process->priority = priority;
     return SUCCESS;
 }
+
+int sys_getpid() {
+    process_t *process = get_current_process();
+    if (process == NULL)
+        return -1;
+
+    return process->pid;
+}

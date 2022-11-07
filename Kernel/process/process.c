@@ -62,7 +62,7 @@ process_t *new_process(function_t main, int argc, char *argv[]) {
     process->argc = argc;
 
     process->pid = last_pid++;
-    process->priority = 13;
+    process->priority = 1;
 
     process->status = READY;
     process->exit_status = -1;
