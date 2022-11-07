@@ -13,6 +13,7 @@
 char estado[MAX_PHYLO + 1];
 sem_ptr state;
 sem_ptr mutex;
+
 sem_ptr s[MAX_PHYLO];
 char * args[MAX_PHYLO];
 char name[32];
@@ -73,14 +74,20 @@ void poner_tenedores(int i)
     _sem_post(mutex);
 }
 
+void aux_sleep(){
+    for(int i = 0 ; i < 10000000 ; i++){
+        for(int j = 0 ; j < 1 ; j++){
 
+        }
+    }
+}
 
 void filosofo(int argc, char * argv[]){
     int i = (int)strtol(argv[0],NULL,10);
     while(1){
-        //_sleep_time(1);
+        aux_sleep();
         tomar_tenedores(i);
-        //_sleep_time(1);
+        aux_sleep();
         poner_tenedores(i);
     }
 }
@@ -107,6 +114,7 @@ void remove_phylo(){
         probar(0);
     }
     estado[phylo] = '\0';
+
     _sem_post(mutex);
 }
 
@@ -145,7 +153,7 @@ void add_phylo(){
     char aux[8];
     itoa(phylo_count,aux,10);
     strcpy(name+10,aux);
-    s[phylo_count] = _sem_open(name,1);
+    s[phylo_count] = _sem_open(name,0);
     char * argv[1];
     argv[0] = aux;
     pid[phylo_count++] = _run(filosofo,1,argv);
@@ -166,7 +174,7 @@ void phylo(){
         char aux[8];
         itoa(i,aux,10);
         strcpy(name+10,aux);
-        s[i] = _sem_open(name,1);
+        s[i] = _sem_open(name,0);
         char * argv[1];
         argv[0] = aux;
         pid[phylo_count++] = _run(filosofo,1,argv);
