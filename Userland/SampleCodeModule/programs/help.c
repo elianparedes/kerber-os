@@ -4,17 +4,29 @@
 #include <kstdio.h>
 #include <kstring.h>
 
+static void formatter(char *name1, char *name2, char *name3, char *name4) {
+    printf(" %15s    %15s    %15s    %15s\n", name1, name2, name3, name4);
+}
+
 static void help_cmds() {
     puts("");
     puts("Available commands:");
+    formatter("clear", "time", "fibonacci", "primes");
+    formatter("ps", "mem", "sem", "kill");
+    formatter("nice", "block", "cat", "wc");
+    formatter("filter", "pipe", "phylo", "loop");
+    formatter("printmem", "inforeg", "divzero", "invopcode");
+    puts(" kerberos");
     puts("");
-    puts(" help        clear          kerberos");
-    puts(" time        inforeg        invopcode");
-    puts(" fibonacci   test-inforeg   divzero");
-    puts(" primes      printmem       ");
+    puts("Tests:");
+    formatter("testmm", "testprocesses", "testpriority", "testsync");
+    formatter("test-inforeg", "runalltests", "", "");
+    puts("");
+    puts("Operators:");
+    puts(" [p1] | [p2]     Connects a pipe between [p1] and [p2] processes.");
+    puts(" [p1] &          Runs process [p1] on background.");
     puts("");
     puts("Type \"help [command]\" for information about a specific command.");
-    puts("Use \"help all\" to display a brief description of each command.");
     puts("");
 }
 
@@ -150,9 +162,6 @@ static void help_pipe() {
 int help(int argc, char *argv[]) {
     if (argc == 1)
         help_cmds();
-
-    else if (strcmp(argv[1], "all") == 0)
-        help_all();
 
     else if (strcmp("clear", argv[1]) == 0)
         help_clear();

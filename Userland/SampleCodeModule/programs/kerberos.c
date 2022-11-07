@@ -11,16 +11,16 @@ void kerberos() {
     puts(" MM   `MM. YM.    ,  MM     MM.   ,M9 YM.    ,  MM     `Mb.    ,dP' Mb     dM"); 
     puts(".MML.   MMb.`Mbmmd'.JMML.   P^YbmdP'   `Mbmmd'.JMML.     `\"bmmd\"'   P\"Ybmmd\" ");
     puts("");
-    puts(" v2.0 //****************************************//             /\\_/\\____,    ");         
-    puts(" Available commands:                                 ,___/\\_/\\ \\  ~     /    ");    
+    puts(" v3.0 //****************************************//             /\\_/\\____,    ");         
+    puts(" Main commands:                                      ,___/\\_/\\ \\  ~     /    ");    
     puts("                                                     \\     ~  \\ )   XXX      ");
-    puts(" help           clear             kerberos             XXX     /    /\\_/\\___,");
-    puts(" time           inforeg           invopcode               \\o-o/-o-o/   ~    /");
-    puts(" fibonacci      test-inforeg      divzero                 ) /     \\    XXX  ");
-    puts(" primes         printmem                                 _|    / \\ \\_/      ");
+    puts(" help           clear             ps                   XXX     /    /\\_/\\___,");
+    puts(" mem            sem               loop                    \\o-o/-o-o/   ~    /");
+    puts(" nice           block             cat                     ) /     \\    XXX  ");
+    puts(" wc             filter            pipe                   _|    / \\ \\_/      ");
     puts("                                                      ,-/   _  \\_/   \\      ");
-    puts(" Type \"help [command]\" for more information.        / (   /____,__|  )     ");
-    puts(" Use \"help all\" to list all commands.                (  |_ (    )  \\) _|     ");
+    puts(" Type \"help\" to list all commands.                    / (   /____,__|  )     ");
+    puts(" Type \"help [command]\" for more information.         (  |_ (    )  \\) _|     ");
     puts("                                                    _/ _)   \\   \\__/   (_    ");
     puts("//**********************************************// (,-(,(,(,/      \\,),),)   ");
 }
