@@ -78,9 +78,9 @@ void poner_tenedores(int i)
 void filosofo(int argc, char * argv[]){
     int i = (int)strtol(argv[0],NULL,10);
     while(1){
-        _sleep_time(1);
+        //_sleep_time(1);
         tomar_tenedores(i);
-        _sleep_time(1);
+        //_sleep_time(1);
         poner_tenedores(i);
     }
 }
