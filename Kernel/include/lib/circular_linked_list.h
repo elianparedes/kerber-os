@@ -43,4 +43,8 @@ void cl_free_iterator(circular_list_iterator_t i);
 
 int cl_size(circular_list_t l);
 
+void cl_subscribe_iterator(circular_list_t l, circular_list_iterator_t i);
+
+void cl_unsubscribe_iterator(circular_list_t l, circular_list_iterator_t i);
+
 #endif /* _CIRCULAR_LINKED_LIST_H_ */

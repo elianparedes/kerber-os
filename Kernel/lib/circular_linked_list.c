@@ -1,8 +1,9 @@
 #include <circular_linked_list.h>
 #include <stdlib.h>
 
-#define ERROR   -1
-#define SUCCESS 0
+#define ERROR         -1
+#define SUCCESS       0
+#define MAX_ITERATORS 2
 
 static int visited = 0;
 
@@ -12,15 +13,6 @@ typedef struct node_list_t {
     struct node_list_t *next;
 } node_list_t;
 
-typedef struct list_t {
-    struct node_list_t *start;
-    struct node_list_t *end;
-    struct node_list_t *current;
-    // function that will compare node->data with argument "data" for deletion
-    int (*comp_funct)(void *, void *);
-    int size;
-} list_t;
-
 typedef struct iterator_t {
     struct node_list_t *start;
     struct node_list_t *end;
@@ -28,10 +20,23 @@ typedef struct iterator_t {
     int visited;
 } iterator_t;
 
+typedef struct list_t {
+    struct node_list_t *start;
+    struct node_list_t *end;
+    struct node_list_t *current;
+    int (*comp_funct)(void *, void *); // function that will compare node->data
+                                       // with argument "data" for deletion
+    int size;
+    iterator_t *iterator; // one iterator can subscribe to the list and be
+                          // notified with changes
+} list_t;
+
 list_t *new_circular_linked_list(int (*comp_funct)(void *, void *)) {
     list_t *new_list = kmalloc(sizeof(list_t));
     new_list->start = NULL;
     new_list->end = NULL;
+    new_list->current = NULL;
+    new_list->iterator = NULL;
     new_list->comp_funct = comp_funct;
     new_list->size = 0;
     return new_list;
@@ -59,6 +64,15 @@ void cl_add(list_t *list, void *data) {
     list->end = new_node;
     list->end->next = list->start;
 
+    // Notify subscribed iterator
+    if (list->iterator != NULL) {
+        list->iterator->start = list->start;
+        list->iterator->end = list->end;
+
+        if (list->iterator->current == NULL)
+            list->iterator->current = list->start;
+    }
+
     list->size++;
 }
 
@@ -83,9 +97,6 @@ void *cl_remove(list_t *list, void *data) {
 
     node_list_t *target_node = node_before_target->next;
 
-    if (list->current == target_node)
-        list->current = list->current->next;
-
     node_before_target->next = target_node->next;
 
     if (list->end == target_node)
@@ -93,6 +104,15 @@ void *cl_remove(list_t *list, void *data) {
 
     if (list->start == target_node)
         list->start = target_node->next;
+
+    // Notify subscribed iterator
+    if (list->iterator != NULL) {
+        list->iterator->start = list->start;
+        list->iterator->end = list->end;
+
+        if (list->iterator->current == target_node)
+            list->iterator->current = target_node->next;
+    }
 
     kfree(target_node);
     list->size--;
@@ -131,6 +151,7 @@ void cl_free_list(circular_list_t list) {
 iterator_t *new_circular_list_iterator(list_t *l) {
     iterator_t *new_iterator = kmalloc(sizeof(iterator_t));
     new_iterator->start = l->start;
+    new_iterator->current = l->start;
     new_iterator->end = l->end;
     new_iterator->visited = 0;
     return new_iterator;
@@ -142,7 +163,7 @@ void cl_free_iterator(iterator_t *i) {
 
 void cl_to_begin(list_t *l, iterator_t *i) {
     i->start = l->start;
-    i->current = i->start;
+    i->current = l->start;
     i->end = l->end;
     i->visited = 0;
 }
@@ -159,4 +180,12 @@ void *cl_next(iterator_t *i) {
     void *data = i->current->data;
     i->current = i->current->next;
     return data;
+}
+
+void cl_subscribe_iterator(list_t *l, iterator_t *i) {
+    l->iterator = i;
+}
+
+void cl_unsubscribe_iterator(list_t *l, iterator_t *i) {
+    l->iterator = NULL;
 }
