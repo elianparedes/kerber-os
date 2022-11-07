@@ -8,7 +8,7 @@
 void printmem(int argc, char *argv[]) {
     uint8_t buffer[PRINT_SIZE];
     char *endp;
-    long address = strtol(argv[0], &endp, 16);
+    long address = strtol(argv[1], &endp, 16);
 
     // if endpointer isn't zero,
     // then the argument is not a hexadecimal number

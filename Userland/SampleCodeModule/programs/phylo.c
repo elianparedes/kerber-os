@@ -8,13 +8,14 @@
 
 #define MAX_PHYLO 16
 #define N 5
-#define PENSANDO '.'
-#define HAMBRIENTO '.'
-#define COMIENDO 'E'
+#define THINKING '.'
+#define HUNGRY '.'
+#define EATING 'E'
 
-char estado[MAX_PHYLO + 1];
-sem_ptr state;
+char state[MAX_PHYLO + 1];
+sem_ptr state_sem;
 sem_ptr mutex;
+
 sem_ptr s[MAX_PHYLO];
 char * args[MAX_PHYLO];
 char name[32];
@@ -22,29 +23,29 @@ char name[32];
 int pid[MAX_PHYLO];
 int phylo_count;
 
-void filosofo(int argc, char * argv[]);
-void tomar_tenedores(int i);
-void poner_tenedores(int i);
-void probar(int i);
+void philosopher(int argc, char * argv[]);
+void pick_forks(int i);
+void put_forks(int i);
+void test(int i);
 void printState();
-int izquierdo(int i);
-int derecho(int i);
+int left(int i);
+int right(int i);
 void add_phylo();
 void remove_phylo();
 
-int izquierdo(int i){
+int left(int i){
     return (i + phylo_count - 1) % phylo_count;
 }
 
-int derecho(int i){
+int right(int i){
     return (i + 1) % phylo_count;
 }
 
-void probar(int i)
+void test(int i)
 {
-    if (estado[i] == HAMBRIENTO && estado[izquierdo(i)] != COMIENDO && estado[derecho(i)] != COMIENDO)
+    if (state[i] == HUNGRY && state[left(i)] != EATING && state[right(i)] != EATING)
     {
-        estado[i] = COMIENDO;
+        state[i] = EATING;
         printState();
         _sem_post(s[i]);
     }
@@ -52,38 +53,44 @@ void probar(int i)
 
 void printState()
 {
-    _sem_wait(state);
-    printf("%s\n", estado);
-    _sem_post(state);
+    _sem_wait(state_sem);
+    printf("%s\n", state);
+    _sem_post(state_sem);
 }
 
-void tomar_tenedores(int i)
+void pick_forks(int i)
 {
     _sem_wait(mutex);
-    estado[i] = HAMBRIENTO;
-    probar(i);
+    state[i] = HUNGRY;
+    test(i);
     _sem_post(mutex);
     _sem_wait(s[i]);
 }
 
-void poner_tenedores(int i)
+void put_forks(int i)
 {
     _sem_wait(mutex);
-    estado[i] = PENSANDO;
-    probar(izquierdo(i));
-    probar(derecho(i));
+    state[i] = THINKING;
+    test(left(i));
+    test(right(i));
     _sem_post(mutex);
 }
 
+void aux_sleep(){
+    for(int i = 0 ; i < 10000000 ; i++){
+        for(int j = 0 ; j < 1 ; j++){
 
+        }
+    }
+}
 
-void filosofo(int argc, char * argv[]){
+void philosopher(int argc, char * argv[]){
     int i = (int)strtol(argv[0],NULL,10);
     while(1){
-        //_sleep_time(1);
-        tomar_tenedores(i);
-        //_sleep_time(1);
-        poner_tenedores(i);
+        aux_sleep();
+        pick_forks(i);
+        aux_sleep();
+        put_forks(i);
     }
 }
 
@@ -104,11 +111,12 @@ void remove_phylo(){
     phylo_count--;
 
     
-    if(estado[phylo] == COMIENDO){
-        probar(phylo-1);
-        probar(0);
+    if(state[phylo] == EATING){
+        test(phylo-1);
+        test(0);
     }
-    estado[phylo] = '\0';
+    state[phylo] = '\0';
+
     _sem_post(mutex);
 }
 
@@ -147,10 +155,10 @@ void add_phylo(){
     char aux[8];
     itoa(phylo_count,aux,10);
     strcpy(name+10,aux);
-    s[phylo_count] = _sem_open(name,1);
+    s[phylo_count] = _sem_open(name,0);
     char * argv[1];
     argv[0] = aux;
-    pid[phylo_count++] = _run(filosofo,1,argv);
+    pid[phylo_count++] = _run(philosopher,1,argv);
 
     _sem_post(mutex);
 }
@@ -158,7 +166,7 @@ void add_phylo(){
 void phylo(){
 
     mutex =_sem_open("mutex",1);
-    state =_sem_open("state",1);
+    state_sem =_sem_open("state_sem",1);
 
     strcpy(name,"phylo_sem ");
 
@@ -168,10 +176,10 @@ void phylo(){
         char aux[8];
         itoa(i,aux,10);
         strcpy(name+10,aux);
-        s[i] = _sem_open(name,1);
+        s[i] = _sem_open(name,0);
         char * argv[1];
         argv[0] = aux;
-        pid[phylo_count++] = _run(filosofo,1,argv);
+        pid[phylo_count++] = _run(philosopher,1,argv);
     }
     
      _run(receptionist,0,NULL);
