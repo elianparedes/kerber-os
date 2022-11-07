@@ -151,44 +151,44 @@ int help(int argc, char *argv[]) {
     if (argc == 0)
         help_cmds();
 
-    else if (strcmp(argv[0], "all") == 0)
+    else if (strcmp(argv[1], "all") == 0)
         help_all();
 
-    else if (strcmp("clear", argv[0]) == 0)
+    else if (strcmp("clear", argv[1]) == 0)
         help_clear();
 
-    else if (strcmp("time", argv[0]) == 0)
+    else if (strcmp("time", argv[1]) == 0)
         help_time();
 
-    else if (strcmp("fibonacci", argv[0]) == 0)
+    else if (strcmp("fibonacci", argv[1]) == 0)
         help_fibonacci();
 
-    else if (strcmp("primes", argv[0]) == 0)
+    else if (strcmp("primes", argv[1]) == 0)
         help_primes();
 
-    else if (strcmp("printmem", argv[0]) == 0)
+    else if (strcmp("printmem", argv[1]) == 0)
         help_printmem();
 
-    else if (strcmp("inforeg", argv[0]) == 0)
+    else if (strcmp("inforeg", argv[1]) == 0)
         help_inforeg();
 
-    else if (strcmp("test-inforeg", argv[0]) == 0)
+    else if (strcmp("test-inforeg", argv[1]) == 0)
         help_testinforeg();
 
-    else if (strcmp("divzero", argv[0]) == 0)
+    else if (strcmp("divzero", argv[1]) == 0)
         help_divzero();
 
-    else if (strcmp("invopcode", argv[0]) == 0)
+    else if (strcmp("invopcode", argv[1]) == 0)
         help_invopcode();
 
-    else if (strcmp("kerberos", argv[0]) == 0)
+    else if (strcmp("kerberos", argv[1]) == 0)
         help_kerberos();
 
-    else if (strcmp("pipe", argv[0]) == 0)
+    else if (strcmp("pipe", argv[1]) == 0)
         help_pipe();
 
     else
-        help_error(argv[0]);
+        help_error(argv[1]);
 
     return 0;
 }

@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define EOF -1
+
 char *itoa(int num, char *str, int base);
 char *ltoa(long num, char *str, int base);
 long strtol(const char *nptr, char **endptr, int base);

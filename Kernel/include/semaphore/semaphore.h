@@ -2,7 +2,7 @@
 #define _SEMAPHORE_H_
 
 #define MAX_SEM_VALUE 5
-#define MAX_SEMAPHORES 15
+#define MAX_SEMAPHORES 100
 
 typedef struct sem * sem_ptr;
 typedef struct copy_sem copy_sem_t;
