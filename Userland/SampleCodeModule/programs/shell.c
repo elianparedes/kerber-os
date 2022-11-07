@@ -72,6 +72,7 @@ typedef struct cmd_entry {
 } cmd_entry_t;
 
 cmd_entry_t cmd_table[] = {{"help", help},
+                           {"clear", clear},
                            {"fibonacci", fibonacci},
                            {"primes", primes},
                            {"time", time},

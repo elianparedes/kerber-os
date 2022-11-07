@@ -3,6 +3,9 @@
 #include <clear.h>
 #include <kstdio.h>
 
-void clear() {
+#define FULLSCREEN 0
+
+int clear(int argc, char *argv[]) {
     _clear_screen();
+    _switch_screen_mode(FULLSCREEN);
 }
