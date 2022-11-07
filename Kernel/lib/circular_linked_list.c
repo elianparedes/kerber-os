@@ -27,8 +27,8 @@ typedef struct list_t {
     int (*comp_funct)(void *, void *); // function that will compare node->data
                                        // with argument "data" for deletion
     int size;
-    iterator_t *iterator; // one iterator can subscribe to the list and be
-                          // notified with changes
+    iterator_t *iterators[MAX_ITERATORS]; // one iterator can subscribe to the
+                                          // list and be notified with changes
 } list_t;
 
 list_t *new_circular_linked_list(int (*comp_funct)(void *, void *)) {
@@ -36,9 +36,13 @@ list_t *new_circular_linked_list(int (*comp_funct)(void *, void *)) {
     new_list->start = NULL;
     new_list->end = NULL;
     new_list->current = NULL;
-    new_list->iterator = NULL;
     new_list->comp_funct = comp_funct;
     new_list->size = 0;
+
+    for (size_t i = 0; i < MAX_ITERATORS; i++) {
+        new_list->iterators[i] = NULL;
+    }
+
     return new_list;
 }
 
@@ -47,6 +51,19 @@ static node_list_t *create_node(void *data) {
     new_node->data = data;
     new_node->next = NULL;
     return new_node;
+}
+
+static void notify_iterators(list_t *l) {
+    for (size_t i = 0; i < MAX_ITERATORS; i++) {
+        iterator_t *iterator = l->iterators[i];
+        if (iterator != NULL) {
+            iterator->start = l->start;
+            iterator->end = l->end;
+
+            if (iterator->current == NULL)
+                iterator->current = l->start;
+        }
+    }
 }
 
 int cl_size(list_t *l) {
@@ -65,13 +82,7 @@ void cl_add(list_t *list, void *data) {
     list->end->next = list->start;
 
     // Notify subscribed iterator
-    if (list->iterator != NULL) {
-        list->iterator->start = list->start;
-        list->iterator->end = list->end;
-
-        if (list->iterator->current == NULL)
-            list->iterator->current = list->start;
-    }
+    notify_iterators(list);
 
     list->size++;
 }
@@ -106,13 +117,7 @@ void *cl_remove(list_t *list, void *data) {
         list->start = target_node->next;
 
     // Notify subscribed iterator
-    if (list->iterator != NULL) {
-        list->iterator->start = list->start;
-        list->iterator->end = list->end;
-
-        if (list->iterator->current == target_node)
-            list->iterator->current = target_node->next;
-    }
+    notify_iterators(list);
 
     kfree(target_node);
     list->size--;
@@ -182,10 +187,17 @@ void *cl_next(iterator_t *i) {
     return data;
 }
 
-void cl_subscribe_iterator(list_t *l, iterator_t *i) {
-    l->iterator = i;
+void cl_subscribe_iterator(list_t *l, iterator_t *iterator) {
+    for (size_t i = 0; i < MAX_ITERATORS; i++) {
+        if (l->iterators[i] == NULL)
+            l->iterators[i] = iterator;
+    }
 }
 
-void cl_unsubscribe_iterator(list_t *l, iterator_t *i) {
-    l->iterator = NULL;
+void cl_unsubscribe_iterator(list_t *l, iterator_t *iterator) {
+    for (size_t i = 0; i < MAX_ITERATORS; i++) {
+        if (l->iterators[i] == iterator) {
+            l->iterators[i] = NULL;
+        }
+    }
 }

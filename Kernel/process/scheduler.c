@@ -204,8 +204,9 @@ int get_process_table(process_table_t *table) {
         new_circular_list_iterator(process_list);
 
     int i = 0;
+    cl_subscribe_iterator(process_list, iterator);
     cl_to_begin(process_list, iterator);
-    while (cl_has_next(iterator)) {
+    while (cl_has_next(iterator) && i < PROCESS_TABLE_MAX_SIZE) {
         process_t *process = cl_next(iterator);
 
         table->entries[i].pid = process->pid;
@@ -226,6 +227,7 @@ int get_process_table(process_table_t *table) {
     }
 
     table->count = i;
+    cl_unsubscribe_iterator(process_list, iterator);
     cl_free_iterator(iterator);
 }
 
