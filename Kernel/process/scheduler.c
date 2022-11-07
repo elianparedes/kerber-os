@@ -34,6 +34,7 @@ static int search_by_channel(process_t *process, uint64_t channel) {
 void init_scheduler() {
     process_list = new_circular_linked_list(search_by_pid);
     rr_iterator = new_circular_list_iterator(process_list);
+    cl_subscribe_iterator(process_list, rr_iterator);
 }
 
 int process_count() {
@@ -102,8 +103,7 @@ int add_process(function_t main, int argc, char *argv[]) {
     if (current_process != NULL) {
         add(current_process->children, process);
         process->parent = current_process;
-    } else
-        cl_to_begin(process_list, rr_iterator);
+    }
 
     return process->pid;
 }
@@ -125,7 +125,7 @@ static void remove_process(int pid) {
         return NULL;
 
     if (target == foreground_process)
-        foreground_process == NULL;
+        foreground_process = NULL;
 
     // remove process from parent's children list
     remove(target->parent->children, pid);
@@ -135,6 +135,9 @@ static void remove_process(int pid) {
 void exit_process(int status) {
     close_dataDescriptor(current_process->dataDescriptors[0]);
     close_dataDescriptor(current_process->dataDescriptors[1]);
+
+    current_process->dataDescriptors[0] = NULL;
+    current_process->dataDescriptors[1] = NULL;
 
     remove_children(current_process);
     wakeup(current_process->parent);
