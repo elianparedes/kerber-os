@@ -2,7 +2,7 @@
 #include <test_util.h>
 
 typedef struct P_rq {
-    int32_t pid;
+    int pid;
     pstatus_t state;
 } p_rq;
 
@@ -47,11 +47,12 @@ int test_proc(int argc, char *argv[]) {
                     case 0:
                         if (p_rqs[rq].state == READY ||
                             p_rqs[rq].state == WAITING) {
-                            /*if (_kill(p_rqs[rq].pid) == -1) {
+                            if (_kill(p_rqs[rq].pid) == -1) {
                                 printf(
                                     "test_processes: ERROR killing process\n");
                                 return -1;
-                            }*/
+                            }
+                            _wait();
                             p_rqs[rq].state = TERMINATED;
                             alive--;
                         }

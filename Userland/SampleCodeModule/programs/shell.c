@@ -29,6 +29,7 @@
 #include <test_pipe.h>
 #include <testmm.h>
 #include <testprio.h>
+#include <testproc.h>
 #include <testsync.h>
 #include <time.h>
 
@@ -96,6 +97,7 @@ cmd_entry_t cmd_table[] = {{"help", help},
                            {"kill", kill},
                            {"nice", nice},
                            {"testprio", test_prio},
+                           {"testproc", test_proc},
                            {NULL, NULL}};
 
 sem_ptr sem_pipe_exec;
