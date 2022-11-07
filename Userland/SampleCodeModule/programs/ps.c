@@ -1,5 +1,6 @@
 #include <kmman.h>
 #include <kprocess.h>
+#include <kstdio.h>
 #include <ps.h>
 
 static void draw_header() {

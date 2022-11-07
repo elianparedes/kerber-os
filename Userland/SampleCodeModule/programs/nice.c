@@ -20,6 +20,6 @@ void nice(int argc, char *argv[]) {
     int priority = satoi(argv[2]);
     int ret = _set_priority(pid, priority);
     if (ret == ERROR) {
-        printf("nice: error setting priority\n");
+        printf("nice: process does not exist\n");
     }
 }

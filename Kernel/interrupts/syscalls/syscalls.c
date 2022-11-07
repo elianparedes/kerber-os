@@ -8,10 +8,10 @@
 #include <pmm.h>
 #include <process.h>
 #include <registers.h>
+#include <scheduler.h>
 #include <semaphore/semaphore.h>
 #include <syscalls.h>
 #include <video.h>
-#include <scheduler.h>
 
 #define ADDRESS_LIMIT 0xFFFFFFFF
 
@@ -269,14 +269,20 @@ void sys_setfg(int pid) {
 void sys_proctable(process_table_t *table) {
     get_process_table(table);
 }
-int sys_get_proc_status(int pid){
+
+int sys_get_proc_status(int pid) {
     process_t *process = get_process(pid);
-    if (process == NULL){
+    if (process == NULL) {
         return ERROR;
     }
     return process->status;
 }
 
-int sys_set_priority(int pid, int priority){
-    return 0;
+int sys_set_priority(int pid, int priority) {
+    process_t *process = get_process(pid);
+    if (process == NULL) {
+        return ERROR;
+    }
+    process->priority = priority;
+    return SUCCESS;
 }

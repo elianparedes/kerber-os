@@ -10,11 +10,13 @@
 #include <invopcode.h>
 #include <ipc_programs.h>
 #include <kerberos.h>
+#include <kill.h>
 #include <kmman.h>
 #include <ksemaphore.h>
 #include <kstdbool.h>
 #include <kstdio.h>
 #include <kstring.h>
+#include <nice.h>
 #include <phylo.h>
 #include <primes.h>
 #include <printmem.h>
@@ -90,6 +92,8 @@ cmd_entry_t cmd_table[] = {{"help", help},
                            {"testmm", test_mm},
                            {"phylo", phylo},
                            {"ps", ps},
+                           {"kill", kill},
+                           {"nice", nice},
                            {NULL, NULL}};
 
 sem_ptr sem_pipe_exec;
