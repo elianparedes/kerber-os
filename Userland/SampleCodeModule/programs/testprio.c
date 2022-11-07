@@ -18,7 +18,6 @@ int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
 
 int test_prio(int argc, char const *argv[]) {
     while (1) {
-
         int64_t pids[TOTAL_PROCESSES];
         char *args[] = {"endless"};
         uint64_t i;
@@ -51,7 +50,9 @@ int test_prio(int argc, char const *argv[]) {
         bussy_wait(WAIT);
         printf("\nKILLING...\n");
 
-        for (i = 0; i < TOTAL_PROCESSES; i++)
+        for (i = 0; i < TOTAL_PROCESSES; i++) {
             _kill(pids[i]);
+            _wait();
+        }
     }
 }
