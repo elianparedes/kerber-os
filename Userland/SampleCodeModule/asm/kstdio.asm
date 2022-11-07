@@ -32,6 +32,7 @@ GLOBAL _block
 GLOBAL _unblock
 GLOBAL _setfg
 GLOBAL _get_proc_status
+GLOBAL _set_priority
 
 section .text
 
@@ -205,6 +206,11 @@ _setfg:
     int 0x80
     ret
 
+_set_priority:
+    mov rax, SYSCALL_SET_PRIORITY_ID
+    int 0x80
+    ret
+
 section .rodata
 SYSCALL_READ_ID equ 0
 SYSCALL_WRITE_ID equ 1
@@ -240,5 +246,6 @@ SYSCALL_GET_SEMS_ID equ 74
 SYSCALL_GET_MEM_STATE_ID equ 90
 SYSCALL_GET_PROC_STATUS_ID equ 91
 SYSCALL_SET_FG_ID equ 92
+SYSCALL_SET_PRIORITY_ID equ 141
 
 KBD_PRINT_REG equ 1

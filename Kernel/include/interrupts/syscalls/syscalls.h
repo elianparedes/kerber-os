@@ -39,6 +39,7 @@ enum STD {
 #define SYSCALL_WAITPID            69
 #define SYSCALL_FOCUS              77
 #define SYSCALL_SCHED_YIELD        24
+#define SYSCALL_SET_PRIORITY       141
 
 #define SYSCALL_SEM_OPEN           70
 #define SYSCALL_SEM_WAIT           71
@@ -204,5 +205,7 @@ int sys_info_all_pipes(pipe_info_t *info[], unsigned int size);
 int sys_dup2(unsigned int oldfd, unsigned int newfd);
 
 void sys_setfg(int pid);
+
+int sys_set_priority(int pid, int priority);
 
 #endif

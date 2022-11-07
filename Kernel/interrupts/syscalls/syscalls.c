@@ -273,3 +273,7 @@ int sys_get_proc_status(int pid){
     }
     return process->status;
 }
+
+int sys_set_priority(int pid, int priority){
+    
+}
