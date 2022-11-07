@@ -102,7 +102,7 @@ int16_t write(int fd, char *buffer, uint16_t count) {
     }
 }
 
-uint8_t sys_gettime(time_t *struct_time, int utc_offset) {
+uint8_t sys_gettime(time_rtc_t *struct_time, int utc_offset) {
     // set_UTC_offset(utc_offset);
     get_struct_time();
     return SUCCESS;

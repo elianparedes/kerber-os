@@ -204,3 +204,13 @@ long strtol(const char *nptr, char **endptr, int base) {
         *endptr = (char *)(any ? s - 1 : nptr);
     return (acc);
 }
+
+void *memset(void *destination, int32_t c, uint64_t length) {
+    uint8_t chr = (uint8_t)c;
+    char *dst = (char *)destination;
+
+    while (length--)
+        dst[length] = chr;
+
+    return destination;
+}

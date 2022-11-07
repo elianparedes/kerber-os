@@ -2,11 +2,11 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <kstdio.h>
 
-int isprime(unsigned int n);
+int isprime(int n);
 
 void primes() {
-    unsigned int n = 1;
-    unsigned int i = 0;
+    int n = 1;
+    int i = 0;
     while (1) {
         if (isprime(n)) {
             printf("prime [%d]:    %d\n", i, n);
@@ -16,7 +16,7 @@ void primes() {
     }
 }
 
-int isprime(unsigned int n) {
+int isprime(int n) {
     if (n == 0 || n == 1) {
         return 0;
     }

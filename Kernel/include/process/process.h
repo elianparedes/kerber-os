@@ -8,7 +8,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define K_PROCESS_STACK_SIZE 1024 * 4
+#define K_PROCESS_STACK_SIZE (1024 * 4)
 
 typedef enum pstatus {
     WAITING = 0,

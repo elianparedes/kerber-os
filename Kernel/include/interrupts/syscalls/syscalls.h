@@ -89,7 +89,7 @@ int16_t write(int fd, char *buffer, uint16_t count);
  * @param utc_offset offset to change hour
  * @return uint8_t SUCCESS if no error occured
  */
-uint8_t sys_gettime(time_t *struct_time, int utc_offset);
+uint8_t sys_gettime(time_rtc_t *struct_time, int utc_offset);
 
 void sys_exit(int error_code);
 
@@ -207,5 +207,9 @@ int sys_info_all_pipes(pipe_info_t *info[], unsigned int size);
 int sys_dup2(unsigned int oldfd, unsigned int newfd);
 
 void sys_setfg(int pid);
+
+int sys_set_priority(int pid, int priority);
+
+void sys_proctable(process_table_t *table);
 
 #endif

@@ -148,7 +148,7 @@ static void help_pipe() {
 }
 
 int help(int argc, char *argv[]) {
-    if (argc == 0)
+    if (argc == 1)
         help_cmds();
 
     else if (strcmp(argv[1], "all") == 0)

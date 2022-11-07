@@ -9,5 +9,6 @@
 char *itoa(int num, char *str, int base);
 char *ltoa(long num, char *str, int base);
 long strtol(const char *nptr, char **endptr, int base);
+void *memset(void *destiny, int32_t c, uint64_t length);
 
 #endif /* _KSTDLIB_H_ */

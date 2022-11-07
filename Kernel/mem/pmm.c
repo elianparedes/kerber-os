@@ -188,7 +188,7 @@ void kfree(void *ptr) {
 #define ALIGNMENT        8
 
 #define GET_SIZE(header) (header->size & ~0x1)
-#define ALIGN(size)      ((size + ALIGNMENT - 1) & -ALIGNMENT)
+#define ALIGN(size)      (((size) + ALIGNMENT - 1) & -ALIGNMENT)
 
 typedef union header {
     uint64_t size;
