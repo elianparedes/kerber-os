@@ -31,8 +31,7 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
             sys_delete_char();
             break;
         case SYSCALL_KILL:
-            sys_kill((int)arg0);
-            break;
+            return sys_kill((int)arg0);
         case SYSCALL_BLOCK:
             return sys_block((int)arg0);
             break;

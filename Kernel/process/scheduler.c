@@ -151,10 +151,10 @@ void exit_process(int status) {
     _force_schedule();
 }
 
-void kill_process(int pid) {
+int kill_process(int pid) {
     process_t *target = cl_find(process_list, pid, search_by_pid);
     if (target == NULL)
-        return;
+        return PID_ERR;
 
     close_dataDescriptor(target->dataDescriptors[0]);
     close_dataDescriptor(target->dataDescriptors[1]);

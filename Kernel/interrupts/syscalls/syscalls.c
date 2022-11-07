@@ -149,8 +149,8 @@ uint8_t sys_cntrl_listener(uint8_t *listener) {
     return SUCCESS;
 }
 
-void sys_kill(int pid) {
-    kill_process(pid);
+int sys_kill(int pid) {
+    return kill_process(pid);
 }
 
 int sys_block(int pid) {

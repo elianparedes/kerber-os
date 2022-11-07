@@ -148,7 +148,7 @@ int sys_wait();
  *
  * @param pid process id of the target process
  */
-void sys_kill(int pid);
+int sys_kill(int pid);
 
 /**
  * @brief Copies memory starting from address up to @count bytes to buffer

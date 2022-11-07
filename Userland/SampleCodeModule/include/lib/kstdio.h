@@ -79,7 +79,7 @@ int _run(void *main, int argc, char *argv[]);
 int _exit(int error_code);
 int _wait();
 int _waitpid(int pid, int *status_ptr);
-void _kill(int pid);
+int _kill(int pid);
 int _block(int pid);
 int _unblock(int pid);
 int _get_proc_status(int pid);
