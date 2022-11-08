@@ -2,6 +2,6 @@
 #define _INFO_PIPE_
 
 void info_pipe(char * name);
-void info_all_pipes();
+int info_all_pipes(int argc, char *argv[]);
 
 #endif

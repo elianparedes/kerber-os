@@ -129,7 +129,7 @@ void info_pipe(char * name){
 }
 
 
-void info_all_pipes(){
+int info_all_pipes(int argc, char *argv[]){
 
     pipe_info_t * arr[MAX_PIPES] = {0};
     for(int i = 0 ; i < MAX_PIPES ; i++){
@@ -149,4 +149,6 @@ void info_all_pipes(){
     for(int i = 0 ; i < MAX_PIPES ; i++){
         _free(arr[i]);
     }
+
+    return 0;
 }

@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <kstdio.h>
 
-void kerberos() {
+int kerberos(int argc, char *argv[]) {
     puts("`MMF' `YMM'                *MM                           .g8\"\"8q.    .M\"\"\"bgd"); 
     puts(" MM   .M'                   MM                         .dP'    `YM. ,MI    \"Y"); 
     puts(" MM .d\"     .gP\"Ya `7Mb,od8 MM,dMMb.   .gP\"Ya `7Mb,od8 dM'      `MM `MMb.    ");
@@ -23,5 +23,7 @@ void kerberos() {
     puts(" Type \"help [command]\" for more information.         (  |_ (    )  \\) _|     ");
     puts("                                                    _/ _)   \\   \\__/   (_    ");
     puts("//**********************************************// (,-(,(,(,/      \\,),),)   ");
+
+    return 0;
 }
                                                                     

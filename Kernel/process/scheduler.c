@@ -22,16 +22,17 @@ static int priority_timer_tick = 0;
 
 static void remove_process(int pid);
 
-static int search_by_status(process_t *process, pstatus_t status) {
-    return process->status == status;
+static int search_by_status(void *process, void *status) {
+    return ((process_t *)process)->status == status;
 }
 
-static int search_by_pid(process_t *process, pid_t pid) {
-    return process->pid == pid;
+static int search_by_pid(void *process, void *pid) {
+    return ((process_t *)process)->pid == pid;
 }
 
-static int search_by_channel(process_t *process, uint64_t channel) {
-    return process->status == WAITING && process->channel == channel;
+static int search_by_channel(void *process, void *channel) {
+    return ((process_t *)process)->status == WAITING &&
+           ((process_t *)process)->channel == channel;
 }
 
 void init_scheduler() {
@@ -180,7 +181,7 @@ int kill_process(int pid) {
 
     if (target == current_process)
         _force_schedule();
-    
+
     // no return
     return PID_ERR;
 }
@@ -238,7 +239,7 @@ int get_process_table(process_table_t *table) {
     table->count = row;
     cl_unsubscribe_iterator(process_list, iterator);
     cl_free_iterator(iterator);
-    
+
     return row;
 }
 

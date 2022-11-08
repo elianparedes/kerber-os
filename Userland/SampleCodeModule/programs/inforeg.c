@@ -42,7 +42,7 @@ static void show_registers(cpu_state_t registers) {
     }
 }
 
-void inforeg() {
+int inforeg(int argc, char *argv[]) {
     int succeed;
     cpu_state_t aux;
     succeed = _copy_cpu_state(&aux, KBD_PRINT_REG);
@@ -50,8 +50,10 @@ void inforeg() {
     if (!succeed) {
         printf("No snapshot to show.\n"
                "Type \"help inforeg\" for more information.\n");
-        return;
+        return -1;
     }
 
     show_registers(aux);
+
+    return 0;
 }

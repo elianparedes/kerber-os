@@ -18,7 +18,7 @@
 
 int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
 
-int test_prio(int argc, char const *argv[]) {
+int test_prio(int argc, char *argv[]) {
     while (1) {
         int64_t pids[TOTAL_PROCESSES];
         char *args[] = {"endless"};

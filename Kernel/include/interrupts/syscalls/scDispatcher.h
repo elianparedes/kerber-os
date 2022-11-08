@@ -15,8 +15,8 @@
  * @param id rax 64-bit CPU register
  * @return the return value of the syscall that was executed
  */
-void *syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
-                         uint64_t arg3, uint64_t arg4, uint64_t arg5,
-                         uint64_t id);
+int64_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
+                           uint64_t arg3, uint64_t arg4, uint64_t arg5,
+                           uint64_t id);
 
 #endif

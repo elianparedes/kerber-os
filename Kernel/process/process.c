@@ -15,8 +15,8 @@ static void start(function_t function, int argc, char *argv[]) {
     sys_exit(status);
 }
 
-static int search_by_pid(process_t *process, pid_t pid) {
-    return process->pid == pid;
+static int search_by_pid(void *process, void *pid) {
+    return ((process_t *)process)->pid == pid;
 }
 
 static char **get_argv_copy(int argc, char *argv[]) {
@@ -68,7 +68,7 @@ process_t *new_process(function_t main, int argc, char *argv[]) {
 
     process->channel = NULL;
     process->parent = NULL;
-    process->children = new_linked_list(search_by_pid);
+    process->children = new_linked_list((int (*)(void *, void *))search_by_pid);
 
     process->context =
         get_init_context(process, main, process->argc, process->argv);
