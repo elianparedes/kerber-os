@@ -31,6 +31,9 @@ int16_t read(int fd, char *buffer, uint16_t count) {
         return -2;
 
     dataDescriptor_t dataD = current_process->dataDescriptors[fd];
+    if(dataD == NULL)
+        return -2;
+
     if (getMode_dataDescriptor(dataD) != READ_MODE)
         return -2;
 
@@ -72,6 +75,10 @@ int16_t write(int fd, char *buffer, uint16_t count) {
         return -2;
 
     dataDescriptor_t dataD = current_process->dataDescriptors[fd];
+
+    if(dataD == NULL)
+        return -2;
+
     if (getMode_dataDescriptor(dataD) != WRITE_MODE)
         return -1;
 

@@ -20,13 +20,13 @@ int test_mm(int argc, char *argv[]) {
     uint32_t total;
     uint64_t max_memory;
 
-    if (argc != 1) {
-        printf("Error argc\n");
+    if (argc != 2) {
+        printf("testmm: error argc\n");
         return -1;
     }
 
-    if ((max_memory = satoi(argv[0])) <= 0) {
-        printf("Error max_mem\n");
+    if ((max_memory = satoi(argv[1])) <= 0) {
+        printf("testmm: error max_mem\n");
         return -1;
     }
 
