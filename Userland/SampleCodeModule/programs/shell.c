@@ -81,8 +81,10 @@ cmd_entry_t cmd_table[] = {{"help", help},
                            {"divzero", divzero},
                            {"kerberos", kerberos},
                            {"invopcode", invopcode},
+                           /*
                            {"inforeg", inforeg},
                            {"testinforeg", testinforeg},
+                           */
                            {"printmem", printmem},
                            {"mem", printmemstate},
                            {"testsync", test_sync},
