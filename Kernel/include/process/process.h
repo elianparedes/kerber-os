@@ -59,7 +59,7 @@ typedef struct process {
     context_id_t g_context;
     dataDescriptor_t dataDescriptors[128];
     size_t dataD_index;
-    void * channel;
+    void *channel;
     list_ptr children;
     int exit_status;
     int priority;
@@ -79,5 +79,7 @@ typedef int (*function_t)(int, char *[]);
  * could not be created
  */
 process_t *new_process(function_t main, int argc, char *argv[]);
+
+void free_process(process_t *process);
 
 #endif /* _PROCESS_H_ */

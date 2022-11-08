@@ -85,6 +85,7 @@ int _unblock(int pid);
 int _get_proc_status(int pid);
 int _set_priority(int pid, int priority);
 int _sleep(int seconds);
+int _getpid();
 
 int getchar();
 int putchar(int character);

@@ -1,7 +1,7 @@
-// From alejoaquili ITBA-72.11-SO repository
-
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
+// From alejoaquili ITBA-72.11-SO repository
 
 #include <kprocess.h>
 #include <kstdio.h>
@@ -73,7 +73,7 @@ void endless_loop_print(uint64_t wait) {
     int64_t pid = _getpid();
 
     while (1) {
-        // printf("%d ", pid);
+        printf("%d ", pid);
         bussy_wait(wait);
     }
 }

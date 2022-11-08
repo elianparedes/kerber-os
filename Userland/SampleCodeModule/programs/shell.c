@@ -25,8 +25,6 @@
 #include <printmemstate.h>
 #include <printsems.h>
 #include <ps.h>
-#include <schd.h>
-#include <sleeptest.h>
 #include <test_inforeg.h>
 #include <test_pipe.h>
 #include <testmm.h>
@@ -72,7 +70,7 @@ typedef struct cmd_entry {
     function_t function;
 } cmd_entry_t;
 
-static void background_exec(int argc, char * argv[]);
+static void background_exec(int argc, char *argv[]);
 
 cmd_entry_t cmd_table[] = {{"help", help},
                            {"clear", clear},
@@ -82,17 +80,12 @@ cmd_entry_t cmd_table[] = {{"help", help},
                            {"divzero", divzero},
                            {"kerberos", kerberos},
                            {"invopcode", invopcode},
-                           /*
-                           {"inforeg", inforeg},
-                           {"testinforeg", testinforeg},
-                           */
+
                            {"printmem", printmem},
                            {"mem", printmemstate},
                            {"loop", loop},
                            {"testsync", test_sync},
-                           {"sleeptest", sleeptest},
                            {"sem", printsems},
-                           {"sched", schd},
                            {"pipe", info_all_pipes},
                            {"cat", cat},
                            {"filter", filter},
@@ -104,7 +97,7 @@ cmd_entry_t cmd_table[] = {{"help", help},
                            {"ps", ps},
                            {"kill", kill},
                            {"nice", nice},
-                           {"background_exec",background_exec},
+                           {"background_exec", background_exec},
                            {"testprio", test_prio},
                            {"testproc", test_proc},
                            {NULL, NULL}};
@@ -138,7 +131,7 @@ static int run_command(char *name, int argc, char *argv[]) {
     function_t function = get_cmd(name);
 
     if (function == NULL) {
-        printf("[ Command %s not found ]\n", name);
+        invalid_command(name);
         return -2;
     }
 
@@ -203,7 +196,7 @@ static int gettoken(char **src, char *token, char *delimiters) {
     return *(*src);
 }
 
-static cmd_t *getcmd(char *input) {
+static cmd_t *parsecommand(char *input) {
     char *cmdidx = input;
     char token[TOKEN_LENGTH] = {0};
 
@@ -249,21 +242,21 @@ static line_t *parseline(char *line) {
                     break;
 
                 pline->operator= '|';
-                pline->left_cmd = getcmd(chunk);
+                pline->left_cmd = parsecommand(chunk);
                 break;
             case '&':
                 if (pline->operator)
                     break;
 
                 pline->operator= '&';
-                pline->left_cmd = getcmd(chunk);
+                pline->left_cmd = parsecommand(chunk);
                 break;
             case '\0':
                 if (pline->operator== '|')
-                    pline->right_cmd = getcmd(chunk);
+                    pline->right_cmd = parsecommand(chunk);
 
                 else if (pline->operator!= '&')
-                    pline->left_cmd = getcmd(chunk);
+                    pline->left_cmd = parsecommand(chunk);
 
                 break;
             default:
@@ -376,17 +369,17 @@ static void pipe_exec(cmd_t *left, cmd_t *right) {
     _sem_close(sem_pipe_exec);
 }
 
-static void background_exec(int argc, char * argv[]){
-    
+static void background_exec(int argc, char *argv[]) {
+
     function_t function = get_cmd(argv[0]);
-    
-    if(function == NULL)
+
+    if (function == NULL)
         _exit(-1);
-    
+
     _close(0);
     _close(1);
 
-    function(argc,argv);
+    function(argc, argv);
 }
 
 int shell() {
@@ -413,7 +406,8 @@ int shell() {
                 pipe_exec(parsedline->left_cmd, parsedline->right_cmd);
                 break;
             case '&':
-                run_command("background_exec",parsedline->left_cmd->argc,parsedline->left_cmd->argv);
+                run_command("background_exec", parsedline->left_cmd->argc,
+                            parsedline->left_cmd->argv);
                 break;
             default:
                 pid = run_command(parsedline->left_cmd->name,

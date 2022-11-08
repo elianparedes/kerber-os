@@ -7,8 +7,8 @@
 #define SEM_ID               "sem"
 #define TOTAL_PAIR_PROCESSES 2
 
-int64_t global = 0; // shared memory
-sem_ptr global_sem; // used to close semaphore from test_sync
+int64_t global = 0;        // shared memory
+sem_ptr global_sem = NULL; // used to close semaphore from test_sync
 
 void slowInc(int64_t *p, int inc) {
     uint64_t aux = *p;
@@ -21,7 +21,7 @@ int myprocinc(int argc, char *argv[]) {
     uint64_t n;
     int8_t inc;
     int8_t use_sem;
-    sem_ptr sem;
+    sem_ptr sem = NULL;
 
     if (argc != 4)
         return -1;
@@ -48,7 +48,8 @@ int myprocinc(int argc, char *argv[]) {
             _sem_post(sem);
     }
 
-    global_sem = sem;
+    if (use_sem)
+        global_sem = sem;
 
     return 0;
 }
@@ -96,7 +97,7 @@ int test_sync(int argc, char *argv[]) { //{n, use_sem, 0}
     if (satoi(argv[2]) > 0)
         _sem_close(global_sem);
 
-    printf("Final value: %d\n", global);
+    printf("testsync: final value: %d\n", global);
 
     return 0;
 }
