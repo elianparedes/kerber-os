@@ -17,6 +17,8 @@ static circular_list_iterator_t rr_iterator;
 static process_t *current_process;
 static process_t *foreground_process;
 
+static int priority_timer_tick = 0;
+
 static void remove_process(int pid);
 
 static int search_by_status(process_t *process, pstatus_t status) {
@@ -239,8 +241,10 @@ context_t *schedule(context_t *rsp) {
         return rsp;
 
     if (current_process != NULL && current_process->status == READY &&
-        ticks_elapsed() < current_process->priority)
+        priority_timer_tick < current_process->priority) {
+        priority_timer_tick++;
         return rsp;
+    }
 
     if (current_process != NULL)
         current_process->context = rsp;
@@ -250,7 +254,7 @@ context_t *schedule(context_t *rsp) {
     } while (current_process->status != READY);
 
     // set timer ticks to 0
-    timer_reset();
+    priority_timer_tick = 0;
 
     return current_process->context;
 }

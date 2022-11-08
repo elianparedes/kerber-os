@@ -56,6 +56,7 @@ enum STD {
 #define SYSCALL_SETFG              92
 #define SYSCALL_GET_PROC_TABLE     93
 #define SYSCALL_GETPID             95
+#define SYSCALL_SLEEP              150
 
 typedef struct sem *sem_ptr;
 typedef struct copy_sem copy_sem_t;
@@ -214,5 +215,7 @@ int sys_getpid();
 int sys_set_priority(int pid, int priority);
 
 void sys_proctable(process_table_t *table);
+
+void sys_sleep(int seconds);
 
 #endif
