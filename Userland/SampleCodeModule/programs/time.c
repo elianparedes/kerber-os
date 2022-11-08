@@ -11,4 +11,6 @@ int time(int argc, char * argv[]) {
     printf("Current time:\n");
     printf("%d:%d:%d\n", (int)current_time.hour, (int)current_time.minutes,
            (int)current_time.seconds);
+
+    return 0;
 }

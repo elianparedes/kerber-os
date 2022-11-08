@@ -379,7 +379,9 @@ static int background_exec(int argc, char * argv[]){
     _close(0);
     _close(1);
 
-    function(argc, argv);
+    function(argc,argv);
+
+    return 0;
 }
 
 int shell() {
