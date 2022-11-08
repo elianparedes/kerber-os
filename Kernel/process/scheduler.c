@@ -192,7 +192,10 @@ void set_foreground_process(int pid) {
     if (found == NULL)
         return;
 
+    // set the new foreground process priority to the highest
+    foreground_process->priority = LOWEST;
     foreground_process = found;
+    foreground_process->priority = HIGHEST;
 }
 
 process_t *get_foreground_process() {

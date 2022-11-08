@@ -8,6 +8,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define LOWEST               1
+#define MEDIUM               5
+#define HIGHEST              10
+
 #define K_PROCESS_STACK_SIZE (1024 * 4)
 
 typedef enum pstatus {

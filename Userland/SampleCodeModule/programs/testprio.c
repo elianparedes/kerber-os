@@ -10,9 +10,9 @@
              // theese processes beeing run at least twice
 
 #define TOTAL_PROCESSES 3
-#define LOWEST          1 // Change as required
-#define MEDIUM          3 // Change as required
-#define HIGHEST         5 // Change as required
+#define LOWEST          1  // Change as required
+#define MEDIUM          5  // Change as required
+#define HIGHEST         10 // Change as required
 
 int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
 

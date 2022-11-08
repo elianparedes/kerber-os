@@ -9,7 +9,6 @@
 #define P_EXIT_CODE   0
 
 static int last_pid = 0;
-static int ticks_by_priority[6] = {1, 2, 3, 5, 8, 13};
 
 static void start(function_t function, int argc, char *argv[]) {
     int status = function(argc, argv);
@@ -62,7 +61,7 @@ process_t *new_process(function_t main, int argc, char *argv[]) {
     process->argc = argc;
 
     process->pid = last_pid++;
-    process->priority = 10;
+    process->priority = LOWEST;
 
     process->status = READY;
     process->exit_status = -1;
