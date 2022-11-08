@@ -3,8 +3,10 @@
 64-bit operative system with multitasking capabilities built on top of [x64BareBones](https://bitbucket.org/RowDaBoat/x64barebones/wiki/Home).
 
 <p align="center">
-  <img width="600" src="https://user-images.githubusercontent.com/70670549/174647354-4fb9ae44-78f0-4839-aa49-88d345e46572.gif">
+  <img width="600" src="https://user-images.githubusercontent.com/70670549/200480222-a6d6492d-fc5b-4e5a-bd92-66ce1ef17a37.gif">
 </p>
+
+
 
 # Building
 

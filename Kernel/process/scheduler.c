@@ -182,8 +182,7 @@ int kill_process(int pid) {
     if (target == current_process)
         _force_schedule();
 
-    // no return
-    return PID_ERR;
+    return pid;
 }
 
 process_t *get_current_process() {
