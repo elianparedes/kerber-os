@@ -35,6 +35,7 @@ GLOBAL _get_process_table
 GLOBAL _get_proc_status
 GLOBAL _set_priority
 GLOBAL _getpid
+GLOBAL _sleep
 
 section .text
 
@@ -223,6 +224,11 @@ _getpid:
     int 0x80
     ret
 
+_sleep:
+    mov rax, SYSCALL_SLEEP
+    int 0x80
+    ret
+
 section .rodata
 SYSCALL_READ_ID equ 0
 SYSCALL_WRITE_ID equ 1
@@ -261,5 +267,6 @@ SYSCALL_SET_FG_ID equ 92
 SYSCALL_SET_PRIORITY_ID equ 141
 SYSCALL_GET_PROC_TABLE_ID equ 93
 SYSCALL_GETPID_ID equ 95
+SYSCALL_SLEEP equ 150
 
 KBD_PRINT_REG equ 1

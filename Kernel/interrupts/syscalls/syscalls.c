@@ -11,6 +11,7 @@
 #include <scheduler.h>
 #include <semaphore/semaphore.h>
 #include <syscalls.h>
+#include <time.h>
 #include <video.h>
 
 #define ADDRESS_LIMIT 0xFFFFFFFF
@@ -307,4 +308,12 @@ int sys_getpid() {
         return -1;
 
     return process->pid;
+}
+
+void sys_sleep(int seconds) {
+    _sti();
+    int prev = seconds_elapsed();
+    while (seconds_elapsed() < (prev + seconds))
+        ;
+    _cli();
 }

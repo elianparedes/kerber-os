@@ -17,6 +17,7 @@
 #include <kstdbool.h>
 #include <kstdio.h>
 #include <kstring.h>
+#include <loop.h>
 #include <nice.h>
 #include <phylo.h>
 #include <primes.h>
@@ -81,10 +82,13 @@ cmd_entry_t cmd_table[31] = {{"help", help},
                            {"divzero", divzero},
                            {"kerberos", kerberos},
                            {"invopcode", invopcode},
+                           /*
                            {"inforeg", inforeg},
                            {"testinforeg", testinforeg},
+                           */
                            {"printmem", printmem},
                            {"mem", printmemstate},
+                           {"loop", loop},
                            {"testsync", test_sync},
                            {"sleeptest", sleeptest},
                            {"sem", printsems},

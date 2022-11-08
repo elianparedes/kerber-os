@@ -59,7 +59,7 @@ typedef struct process {
     context_id_t g_context;
     dataDescriptor_t dataDescriptors[128];
     size_t dataD_index;
-    uint64_t channel;
+    void * channel;
     list_ptr children;
     int exit_status;
     int priority;

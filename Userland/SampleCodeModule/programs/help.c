@@ -15,45 +15,21 @@ static void help_cmds() {
     formatter("ps", "mem", "sem", "kill");
     formatter("nice", "block", "cat", "wc");
     formatter("filter", "pipe", "phylo", "loop");
-    formatter("printmem", "inforeg", "divzero", "invopcode");
-    puts(" kerberos");
+    formatter("printmem", "divzero", "invopcode", "kerberos");
     puts("");
     puts("Tests:");
     formatter("testmm", "testprocesses", "testpriority", "testsync");
-    formatter("test-inforeg", "runalltests", "", "");
     puts("");
     puts("Operators:");
-    puts(" [p1] | [p2]     Connects a pipe between [p1] and [p2] processes.");
-    puts(" [p1] &          Runs process [p1] on background.");
-    puts("");
-    puts("Type \"help [command]\" for information about a specific command.");
-    puts("");
-}
-
-static void help_all() {
-    puts("");
-    puts("Commands:");
-    puts("    clear           Clears the screen.");
-    puts("    time            Displays system day and hour.");
-    puts("    fibonacci       Prints fibonacci sequence.");
-    puts("    primes          Prints prime numbers.");
-    puts("    printmem        Prints memory values from given address.");
-    puts("    inforeg         Shows the last snapshot taken.");
-    puts("    test-inforeg    Testing program for inforeg.");
-    puts("    divzero         Forces divide-by-zero exception.");
-    puts("    invopcode       Forces invalid opcode exception.");
-    puts("    kerberos        The KerberOS boot screen.");
-    puts("");
-    puts("Operators:");
-    puts("    [c1] | [c2]     Runs both [c1] and [c2] commands in split screen "
-         "mode.");
+    puts(" [c1] | [c2]     Connects a pipe between [c1] and [c2] commands.");
+    puts(" [c1] &          Runs command [c1] on background.");
     puts("");
     puts("Type \"help [command]\" for information about a specific command.");
     puts("");
 }
 
 static void help_error(char *cmd) {
-    printf("Command %s not found.\nType \"help\" to show available commands.\n",
+    printf("Entry for command %s not found.\nType \"help\" to show available commands.\n",
            cmd);
 }
 

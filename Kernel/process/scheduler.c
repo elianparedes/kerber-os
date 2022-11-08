@@ -5,6 +5,7 @@
 #include <idtLoader.h>
 #include <lib/linked_list.h>
 #include <pmm.h>
+#include <process.h>
 #include <scheduler.h>
 #include <stdbool.h>
 
@@ -16,6 +17,8 @@ static circular_list_iterator_t rr_iterator;
 
 static process_t *current_process;
 static process_t *foreground_process;
+
+static int priority_timer_tick = 0;
 
 static void remove_process(int pid);
 
@@ -45,7 +48,7 @@ pid_t wait_process(pid_t pid, int *status_ptr) {
 
     // if no children, return
     if (size(current_process->children) == 0 || pid < -1)
-        return;
+        return PID_ERR;
 
     list_ptr children_list = current_process->children;
     process_t *target_child = NULL;
@@ -60,7 +63,7 @@ pid_t wait_process(pid_t pid, int *status_ptr) {
                 remove_process(target_child->pid);
                 return target_child->pid;
             }
-        } else if (pid == -1) {
+        } else {
             target_child = find(children_list, TERMINATED, search_by_status);
 
             if (target_child != NULL) {
@@ -71,7 +74,7 @@ pid_t wait_process(pid_t pid, int *status_ptr) {
             }
         }
 
-        sleep(current_process);
+        sleep((uint64_t)current_process);
     }
 }
 
@@ -142,7 +145,7 @@ void exit_process(int status) {
     current_process->dataDescriptors[1] = NULL;
 
     remove_children(current_process);
-    wakeup(current_process->parent);
+    wakeup((uint64_t)current_process->parent);
 
     // leave process as terminated. Parent will clean it up on wait
     current_process->status = TERMINATED;
@@ -160,7 +163,7 @@ int kill_process(int pid) {
     close_dataDescriptor(target->dataDescriptors[1]);
 
     remove_children(target);
-    wakeup(target->parent);
+    wakeup((uint64_t)target->parent);
 
     // leave process as terminated. Parent will clean it up on wait
     target->status = TERMINATED;
@@ -177,6 +180,9 @@ int kill_process(int pid) {
 
     if (target == current_process)
         _force_schedule();
+    
+    // no return
+    return PID_ERR;
 }
 
 process_t *get_current_process() {
@@ -232,6 +238,8 @@ int get_process_table(process_table_t *table) {
     table->count = row;
     cl_unsubscribe_iterator(process_list, iterator);
     cl_free_iterator(iterator);
+    
+    return row;
 }
 
 context_t *schedule(context_t *rsp) {
@@ -239,8 +247,10 @@ context_t *schedule(context_t *rsp) {
         return rsp;
 
     if (current_process != NULL && current_process->status == READY &&
-        ticks_elapsed() < current_process->priority)
+        priority_timer_tick < current_process->priority) {
+        priority_timer_tick++;
         return rsp;
+    }
 
     if (current_process != NULL)
         current_process->context = rsp;
@@ -250,7 +260,7 @@ context_t *schedule(context_t *rsp) {
     } while (current_process->status != READY);
 
     // set timer ticks to 0
-    timer_reset();
+    priority_timer_tick = 0;
 
     return current_process->context;
 }

@@ -5,8 +5,8 @@
 #include <syscalls.h>
 
 int syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
-                           uint64_t arg3, uint64_t arg4, uint64_t arg5,
-                           uint64_t id) {
+                       uint64_t arg3, uint64_t arg4, uint64_t arg5,
+                       uint64_t id) {
     switch (id) {
         case SYSCALL_READ:
             return read((int)arg0, (char *)arg1, arg2);
@@ -98,6 +98,9 @@ int syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
             break;
         case SYSCALL_GETPID:
             return sys_getpid();
+        case SYSCALL_SLEEP:
+            sys_sleep((int)arg0);
+            break;
         default:
             return 0;
     }
