@@ -385,7 +385,7 @@ static int background_exec(int argc, char * argv[]){
 }
 
 int shell() {
-    char cmd_buff[LINE_LENGTH], token_buff[TOKEN_LENGTH];
+    char cmd_buff[LINE_LENGTH];
     _cntrl_listener(&ctrl_pressed);
 
     kerberos(0,NULL); // show welcome screen

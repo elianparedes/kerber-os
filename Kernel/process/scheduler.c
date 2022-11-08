@@ -128,7 +128,7 @@ static void remove_children(process_t *process) {
 static void remove_process(int pid) {
     process_t *target = cl_remove(process_list, pid);
     if (target == NULL)
-        return NULL;
+        return;
 
     if (target == foreground_process)
         foreground_process = NULL;

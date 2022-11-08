@@ -3,7 +3,7 @@
 #include <kstdio.h>
 #include <test_util.h>
 
-void loop(int argc, char *argv[]) {
+int loop(int argc, char *argv[]) {
     int seconds;
     if (argc != 2) {
         printf("loop: missing arguments in seconds\n");

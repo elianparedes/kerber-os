@@ -295,7 +295,7 @@ int sys_set_priority(int pid, int priority) {
     // clamp priority value
     if (process->priority >= HIGHEST)
         process->priority = HIGHEST;
-    else if (process <= LOWEST)
+    else if (process->priority <= LOWEST)
         process->priority = LOWEST;
     else
         process->priority = priority;
