@@ -1,6 +1,6 @@
 #ifndef _KERBEROS_H_
 #define _KERBEROS_H_
 
-void kerberos();
+int kerberos(int argc, char *argv[]);
 
 #endif /* _KERBEROS_H_ */

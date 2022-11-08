@@ -1,6 +1,6 @@
 #ifndef _PRINTSEMS_H_
 #define _PRINTSEMS_H_
 
-void printsems();
+int printsems(int argc, char *argv[]);
 
 #endif /* _PRINTSEMS_H_ */

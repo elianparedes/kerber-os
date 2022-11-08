@@ -39,16 +39,18 @@ void process_right() {
 
     // cat();
     // filter();
-    wc();
+    wc(0,NULL);
 
     _exit(0);
 }
 
-void test_pipes() {
+int test_pipes(int argc, char *argv[]) {
     sem_shell = _sem_open("shell_sem", 1);
     _run(process_left, 0, NULL);
     _run(process_right, 0, NULL);
     _wait();
     _wait();
     _sem_close(sem_shell);
+
+    return 0;
 }

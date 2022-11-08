@@ -5,7 +5,7 @@
 #include <printmem.h>
 #define PRINT_SIZE 32 // number of bytes
 
-void printmem(int argc, char *argv[]) {
+int printmem(int argc, char *argv[]) {
     uint8_t buffer[PRINT_SIZE];
     char *endp;
     long address = strtol(argv[1], &endp, 16);
@@ -14,7 +14,7 @@ void printmem(int argc, char *argv[]) {
     // then the argument is not a hexadecimal number
     if (*endp != '\0') {
         printf("Invalid argument.\n");
-        return;
+        return -1;
     }
 
     uint16_t copied = _get_mem((uint8_t *)address, buffer, PRINT_SIZE);
@@ -32,4 +32,6 @@ void printmem(int argc, char *argv[]) {
         }
     }
     printf("\n");
+
+    return 0;
 }

@@ -9,7 +9,7 @@
      TO_UPPER(X) == 'O' || TO_UPPER(X) == 'U')
 #define SIZE_BUFFER 2048
 
-void filter() {
+int filter(int argc, char *argv[]) {
     int16_t c;
     int i = 0;
     char buffer[SIZE_BUFFER];
@@ -26,9 +26,11 @@ void filter() {
     buffer[i++] = '\n';
     buffer[i] = '\0';
     printf("%s", buffer);
+
+    return 0;
 }
 
-void cat() {
+int cat(int argc, char *argv[]) {
     int16_t c;
     int i = 0;
     char buffer[SIZE_BUFFER];
@@ -43,9 +45,11 @@ void cat() {
     buffer[i++] = '\n';
     buffer[i] = '\0';
     printf("%s", buffer);
+
+    return 0;
 }
 
-void wc() {
+int wc(int argc, char *argv[]) {
     int16_t c;
     int count = 1;
     int i = 0;
@@ -65,4 +69,6 @@ void wc() {
     printf("%s", buffer);
 
     printf("TOTAL LINES: %d\n", count);
+
+    return 0;
 }

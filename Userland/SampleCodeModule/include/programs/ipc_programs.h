@@ -1,8 +1,8 @@
 #ifndef _IPC_PROGRAMS_H
 #define _IPC_PROGRAMS_H
 
-void filter();
-void wc();
-void cat();
+int filter(int argc, char *argv[]);
+int wc(int argc, char *argv[]);
+int cat(int argc, char *argv[]);
 
 #endif

@@ -2,6 +2,6 @@
 #define _PRINTMEM_H_
 #include <stdint.h>
 
-void printmem(int argc, char *argv[]);
+int printmem(int argc, char *argv[]);
 
 #endif /* _PRINTMEM_H_ */

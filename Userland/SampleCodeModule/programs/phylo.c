@@ -78,9 +78,7 @@ void put_forks(int i)
 
 void aux_sleep(){
     for(int i = 0 ; i < 10000000 ; i++){
-        for(int j = 0 ; j < 1 ; j++){
 
-        }
     }
 }
 
@@ -163,7 +161,7 @@ void add_phylo(){
     _sem_post(mutex);
 }
 
-void phylo(){
+int phylo(int argc, char *argv[]){
 
     mutex =_sem_open("mutex",1);
     state_sem =_sem_open("state_sem",1);
@@ -189,4 +187,6 @@ void phylo(){
     for(int i = 0 ; i < N ; i++){
         _wait();
     }
+
+    return 0;
 }

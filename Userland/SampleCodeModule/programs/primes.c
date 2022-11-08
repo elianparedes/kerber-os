@@ -4,7 +4,7 @@
 
 int isprime(int n);
 
-void primes() {
+int primes(int argc, char *argv[]) {
     int n = 1;
     int i = 0;
     while (1) {
@@ -14,6 +14,8 @@ void primes() {
         }
         n++;
     }
+    
+    return 0;
 }
 
 int isprime(int n) {

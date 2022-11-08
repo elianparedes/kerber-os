@@ -71,9 +71,9 @@ typedef struct cmd_entry {
     function_t function;
 } cmd_entry_t;
 
-static void background_exec(int argc, char * argv[]);
+static int background_exec(int argc, char * argv[]);
 
-cmd_entry_t cmd_table[] = {{"help", help},
+cmd_entry_t cmd_table[31] = {{"help", help},
                            {"clear", clear},
                            {"fibonacci", fibonacci},
                            {"primes", primes},
@@ -372,7 +372,7 @@ static void pipe_exec(cmd_t *left, cmd_t *right) {
     _sem_close(sem_pipe_exec);
 }
 
-static void background_exec(int argc, char * argv[]){
+static int background_exec(int argc, char * argv[]){
     
     function_t function = get_cmd(argv[0]);
     
@@ -389,7 +389,7 @@ int shell() {
     char cmd_buff[LINE_LENGTH], token_buff[TOKEN_LENGTH];
     _cntrl_listener(&ctrl_pressed);
 
-    kerberos(); // show welcome screen
+    kerberos(0,NULL); // show welcome screen
 
     while (1) {
         lock_screen();

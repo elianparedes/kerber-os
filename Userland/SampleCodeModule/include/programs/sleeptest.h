@@ -2,6 +2,6 @@
 #define _SLEEPTEST_H_
 #include <stdint.h>
 
-void sleeptest();
+int sleeptest(int argc, char *argv[]);
 
 #endif /* _SLEEPTEST_H_ */

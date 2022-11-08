@@ -7,7 +7,7 @@ int dummy(int argc, char *argv[]) {
     return 0;
 }
 
-void schd() {
+int schd(int argc, char *argv[]) {
     char *args[] = {"dummy"};
     while (1) {
         _run(dummy, 1, args);

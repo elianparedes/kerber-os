@@ -7,7 +7,7 @@
  * Prints fibonacci sequence
  */
 
-void fibonacci(int argc, char *argv[]) {
+int fibonacci(int argc, char *argv[]) {
     int max = 200;
 
     int n1 = 0;
@@ -35,4 +35,6 @@ void fibonacci(int argc, char *argv[]) {
         next = n1 + n2;
         i++;
     }
+
+    return 0;
 }

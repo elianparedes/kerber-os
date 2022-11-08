@@ -1,6 +1,6 @@
 #ifndef _SCHD_H_
 #define _SCHD_H_
 
-void schd();
+int schd(int argc, char *argv[]);
 
 #endif /* _SCHED_H_ */

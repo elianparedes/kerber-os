@@ -18,7 +18,7 @@ void child() {
     }
 }
 
-void sleeptest() {
+int sleeptest(int argc, char *argv[]) {
     int pid = 0;
     int i = 0;
     while (i < MAX) {
@@ -30,4 +30,6 @@ void sleeptest() {
         }
         i++;
     }
+
+    return 0;
 }

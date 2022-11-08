@@ -6,19 +6,19 @@
 
 #define ERROR -1
 
-void block(int argc, char ** argv){
+int block(int argc, char *argv[]){
     if (argc < 2){
         printf("block: missing arguments\n");
-        return;
+        return -1;
     }
     if (argc > 2){
         printf("block: too many arguments\n");
-        return;
+        return -1;
     }
     int pid = satoi(argv[1]);
     if ((pid == 0 && strcmp("0", argv[1]) != 0) || pid < 0){
         printf("block: not a valid pid\n");
-        return;
+        return -1;
     }
     int status = _get_proc_status(pid);
     switch(status){
@@ -34,4 +34,6 @@ void block(int argc, char ** argv){
         default:
             break;
     }
+
+    return 0;
 }

@@ -5,7 +5,7 @@
 #include <kstdio.h>
 #include <printsems.h>
 
-void printsems() {
+int printsems(int argc, char *argv[]) {
 
     copy_sem_t *copied_sems[MAX_SEMAPHORES];
 
@@ -33,4 +33,6 @@ void printsems() {
     for (int k = 0; k < MAX_SEMAPHORES; k++) {
         _free(copied_sems[k]);
     }
+
+    return 0;
 }

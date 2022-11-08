@@ -1,6 +1,6 @@
 #ifndef _PRINTMEMSTATE_
 #define _PRINTMEMSTATE_
 
-void printmemstate();
+int printmemstate(int argc, char *argv[]);
 
 #endif
