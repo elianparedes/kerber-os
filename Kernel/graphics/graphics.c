@@ -2,13 +2,18 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <graphics.h>
 
-//     0	1	2	3	4	5	6	7	8	9	A	B	C	D
+//     0	1	2	3	4	5	6	7	8
+//     9
+//     A
+//     B
+//     C
+//     D
 //     E
 //     F
-// B			    │	┤	╡	╢	╖	╕	╣	║	╗
-// ╝ ╜	╛	┐
-// C   └	┴	┬	├	─	┼	╞	╟	╚	╔	╩	╦
-// ╠ ═	╬	╧
+// B			    │	┤	╡	╢	╖	╕	╣
+// ║ ╗ ╝ ╜	╛	┐
+// C   └	┴	┬	├	─	┼	╞	╟	╚
+// ╔ ╩ ╦ ╠ ═	╬	╧
 // D   ╨	╤	╥	╙	╘	╒	╓	╫	╪
 // ┘ ┌
 
@@ -134,11 +139,11 @@ void create_bottom_module() {
     col += strlen(" REG SNAPSHOT ");
     col += 6;
     move_cursor((position_t){bottom_line.first_row, col});
-    print_string(" CTRL+TAB ");
-    col += strlen(" CTRL+TAB ");
+    print_string(" CTRL+D ");
+    col += strlen(" CTRL+D ");
     set_background_color(bottom_line.first_row, col, bottom_line.first_row,
-                         col + strlen(" TOGGLE FOCUS"), CYAN);
-    print_string(" TOGGLE FOCUS ");
+                         col + strlen(" SEND EOF"), CYAN);
+    print_string(" SEND EOF ");
 }
 
 context_id_t get_context_id() {
@@ -151,7 +156,6 @@ context_id_t get_context_id() {
                 return RIGHT;
         default:
             return FULL;
-
     }
 }
 
@@ -206,7 +210,6 @@ void full_screen_distribution() {
     create_line(top_line, CYAN);
     set_foreground_color(0, 0, 0, MAX_COLS - 1, WHITE);
     print_string(" KerberOS");
-
 
     create_bottom_module();
     move_cursor(contexts[2].last_cursor_pos);

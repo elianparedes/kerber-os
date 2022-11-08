@@ -109,7 +109,7 @@ int16_t write(int fd, char *buffer, uint16_t count) {
     }
 }
 
-uint8_t sys_gettime(time_t *struct_time, int utc_offset) {
+uint8_t sys_gettime(time_rtc_t *struct_time, int utc_offset) {
     // set_UTC_offset(utc_offset);
     get_struct_time();
     return SUCCESS;
@@ -156,8 +156,8 @@ uint8_t sys_cntrl_listener(uint8_t *listener) {
     return SUCCESS;
 }
 
-void sys_kill(int pid) {
-    kill_process(pid);
+int sys_kill(int pid) {
+    return kill_process(pid);
 }
 
 int sys_block(int pid) {
@@ -290,6 +290,21 @@ int sys_set_priority(int pid, int priority) {
     if (process == NULL) {
         return ERROR;
     }
-    process->priority = priority;
+
+    // clamp priority value
+    if (process->priority >= HIGHEST)
+        process->priority = HIGHEST;
+    else if (process <= LOWEST)
+        process->priority = LOWEST;
+    else
+        process->priority = priority;
     return SUCCESS;
+}
+
+int sys_getpid() {
+    process_t *process = get_current_process();
+    if (process == NULL)
+        return -1;
+
+    return process->pid;
 }

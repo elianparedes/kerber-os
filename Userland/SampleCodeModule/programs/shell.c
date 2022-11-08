@@ -12,6 +12,7 @@
 #include <kerberos.h>
 #include <kill.h>
 #include <kmman.h>
+#include <kpipe.h>
 #include <ksemaphore.h>
 #include <kstdbool.h>
 #include <kstdio.h>
@@ -28,6 +29,8 @@
 #include <test_inforeg.h>
 #include <test_pipe.h>
 #include <testmm.h>
+#include <testprio.h>
+#include <testproc.h>
 #include <testsync.h>
 #include <time.h>
 
@@ -71,6 +74,7 @@ typedef struct cmd_entry {
 static void background_exec(int argc, char * argv[]);
 
 cmd_entry_t cmd_table[] = {{"help", help},
+                           {"clear", clear},
                            {"fibonacci", fibonacci},
                            {"primes", primes},
                            {"time", time},
@@ -97,6 +101,8 @@ cmd_entry_t cmd_table[] = {{"help", help},
                            {"kill", kill},
                            {"nice", nice},
                            {"background_exec",background_exec},
+                           {"testprio", test_prio},
+                           {"testproc", test_proc},
                            {NULL, NULL}};
 
 sem_ptr sem_pipe_exec;
@@ -132,7 +138,7 @@ static int run_command(char *name, int argc, char *argv[]) {
         return -2;
     }
 
-    _run(function, argc, argv);
+    return _run(function, argc, argv);
 }
 
 /**

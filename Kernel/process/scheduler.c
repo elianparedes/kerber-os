@@ -151,10 +151,10 @@ void exit_process(int status) {
     _force_schedule();
 }
 
-void kill_process(int pid) {
+int kill_process(int pid) {
     process_t *target = cl_find(process_list, pid, search_by_pid);
     if (target == NULL)
-        return;
+        return PID_ERR;
 
     close_dataDescriptor(target->dataDescriptors[0]);
     close_dataDescriptor(target->dataDescriptors[1]);
@@ -192,7 +192,10 @@ void set_foreground_process(int pid) {
     if (found == NULL)
         return;
 
+    // set the new foreground process priority to the highest
+    foreground_process->priority = LOWEST;
     foreground_process = found;
+    foreground_process->priority = HIGHEST;
 }
 
 process_t *get_foreground_process() {
@@ -203,29 +206,31 @@ int get_process_table(process_table_t *table) {
     circular_list_iterator_t *iterator =
         new_circular_list_iterator(process_list);
 
-    int i = 0;
+    int row = 0;
+    cl_subscribe_iterator(process_list, iterator);
     cl_to_begin(process_list, iterator);
-    while (cl_has_next(iterator)) {
+    while (cl_has_next(iterator) && row < PROCESS_TABLE_MAX_SIZE) {
         process_t *process = cl_next(iterator);
 
-        table->entries[i].pid = process->pid;
-        table->entries[i].priority = process->priority;
-        table->entries[i].status = process->status;
-        table->entries[i].rbp = process->context->rbp;
-        table->entries[i].stack = process->context;
-        table->entries[i].children_count = size(process->children);
+        table->entries[row].pid = process->pid;
+        table->entries[row].priority = process->priority;
+        table->entries[row].status = process->status;
+        table->entries[row].rbp = process->context->rbp;
+        table->entries[row].stack = process->context;
+        table->entries[row].children_count = size(process->children);
 
         if (process->parent != NULL)
-            strcpy(table->entries[i].parent_name, process->parent->argv[0]);
+            strcpy(table->entries[row].parent_name, process->parent->argv[0]);
         else
-            strcpy(table->entries[i].parent_name, "-");
+            strcpy(table->entries[row].parent_name, "-");
 
-        strcpy(table->entries[i].name, process->argv[0]);
+        strcpy(table->entries[row].name, process->argv[0]);
 
-        i++;
+        row++;
     }
 
-    table->count = i;
+    table->count = row;
+    cl_unsubscribe_iterator(process_list, iterator);
     cl_free_iterator(iterator);
 }
 

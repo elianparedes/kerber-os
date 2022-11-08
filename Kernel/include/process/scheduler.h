@@ -71,7 +71,7 @@ void exit_process(int status);
  *
  * @param pid
  */
-void kill_process(pid_t pid);
+int kill_process(pid_t pid);
 
 /**
  * @brief Get the current process that is running

@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <kmman.h>
 #include <kstdio.h>
 #include <kstdlib.h>
@@ -36,7 +38,7 @@ int test_mm(int argc, char *argv[]) {
         mm_rqs[rq].size = GetUniform(max_memory - total - 1) + 1;
         mm_rqs[rq].address = _malloc(mm_rqs[rq].size);
 
-        printf("block [%d] size: %d, address: %d\n", rq, mm_rqs[rq].size,
+        printf("block [%d] size: %d, address: %d\n", rq, (int)mm_rqs[rq].size,
                mm_rqs[rq].address);
 
         if (mm_rqs[rq].address) {
@@ -52,12 +54,14 @@ int test_mm(int argc, char *argv[]) {
             memset(mm_rqs[i].address, i, mm_rqs[i].size);
 
     // Check
-    for (i = 0; i < rq; i++)
-        if (mm_rqs[i].address)
+    for (i = 0; i < rq; i++) {
+        if (mm_rqs[i].address) {
             if (!memcheck(mm_rqs[i].address, i, mm_rqs[i].size)) {
                 printf("test_mm ERROR\n");
                 return -1;
             }
+        }
+    }
 
     // Free
     for (i = 0; i < rq; i++)
@@ -65,4 +69,5 @@ int test_mm(int argc, char *argv[]) {
             _free(mm_rqs[i].address);
 
     printf("testmm: memory test passed!\n");
+    return 0;
 }

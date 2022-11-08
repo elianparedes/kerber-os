@@ -87,7 +87,7 @@ uint64_t get_year() {
     return get_time(YEAR);
 }
 
-void get_struct_time(time_t *struct_time) {
+void get_struct_time(time_rtc_t *struct_time) {
     struct_time->year = get_year();
     struct_time->month = get_month();
     struct_time->day = get_day_month();

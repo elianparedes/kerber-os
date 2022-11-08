@@ -55,6 +55,7 @@ enum STD {
 #define SYSCALL_DUP2               55
 #define SYSCALL_SETFG              92
 #define SYSCALL_GET_PROC_TABLE     93
+#define SYSCALL_GETPID             95
 
 typedef struct sem *sem_ptr;
 typedef struct copy_sem copy_sem_t;
@@ -89,7 +90,7 @@ int16_t write(int fd, char *buffer, uint16_t count);
  * @param utc_offset offset to change hour
  * @return uint8_t SUCCESS if no error occured
  */
-uint8_t sys_gettime(time_t *struct_time, int utc_offset);
+uint8_t sys_gettime(time_rtc_t *struct_time, int utc_offset);
 
 void sys_exit(int error_code);
 
@@ -147,7 +148,7 @@ int sys_wait();
  *
  * @param pid process id of the target process
  */
-void sys_kill(int pid);
+int sys_kill(int pid);
 
 /**
  * @brief Copies memory starting from address up to @count bytes to buffer
@@ -207,5 +208,11 @@ int sys_info_all_pipes(pipe_info_t *info[], unsigned int size);
 int sys_dup2(unsigned int oldfd, unsigned int newfd);
 
 void sys_setfg(int pid);
+
+int sys_getpid();
+
+int sys_set_priority(int pid, int priority);
+
+void sys_proctable(process_table_t *table);
 
 #endif

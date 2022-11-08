@@ -4,7 +4,7 @@
 #include <scDispatcher.h>
 #include <syscalls.h>
 
-uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
+int syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
                            uint64_t arg3, uint64_t arg4, uint64_t arg5,
                            uint64_t id) {
     switch (id) {
@@ -22,7 +22,7 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
             sys_exit((int)arg0);
             break;
         case SYSCALL_GETTIME:
-            return sys_gettime((time_t *)arg0, (int)arg1);
+            return sys_gettime((time_rtc_t *)arg0, (int)arg1);
         case SYSCALL_RUN:
             return sys_run((void *)arg0, (int)arg1, (char **)arg2);
         case SYSCALL_CNTRL_LISTENER:
@@ -31,8 +31,7 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
             sys_delete_char();
             break;
         case SYSCALL_KILL:
-            sys_kill((int)arg0);
-            break;
+            return sys_kill((int)arg0);
         case SYSCALL_BLOCK:
             return sys_block((int)arg0);
             break;
@@ -97,6 +96,8 @@ uint8_t syscall_dispatcher(uint64_t arg0, uint64_t arg1, uint64_t arg2,
         case SYSCALL_GET_PROC_TABLE:
             sys_proctable((process_table_t *)arg0);
             break;
+        case SYSCALL_GETPID:
+            return sys_getpid();
         default:
             return 0;
     }

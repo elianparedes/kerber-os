@@ -23,7 +23,7 @@ typedef struct time {
     uint64_t hour;
     uint64_t minutes;
     uint64_t seconds;
-} time_t;
+} time_rtc_t;
 
 typedef struct cpu_state {
     uint64_t rsp;
@@ -64,7 +64,7 @@ int _write(int fd, char *buffer, size_t count);
 void _close(unsigned int fd);
 int _switch_screen_mode(int mode);
 int _clear_screen();
-int _time(time_t *time_struct, int utc_offset);
+int _time(time_rtc_t *time_struct, int utc_offset);
 int _cntrl_pressed();
 int _copy_cpu_state(cpu_state_t *cpu_ptr, request_t request);
 void _delete_char();
@@ -79,7 +79,7 @@ int _run(void *main, int argc, char *argv[]);
 int _exit(int error_code);
 int _wait();
 int _waitpid(int pid, int *status_ptr);
-void _kill(int pid);
+int _kill(int pid);
 int _block(int pid);
 int _unblock(int pid);
 int _get_proc_status(int pid);
