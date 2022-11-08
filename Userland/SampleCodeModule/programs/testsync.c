@@ -8,6 +8,7 @@
 #define TOTAL_PAIR_PROCESSES 2
 
 int64_t global = 0; // shared memory
+sem_ptr global_sem; // used to close semaphore from test_sync
 
 void slowInc(int64_t *p, int inc) {
     uint64_t aux = *p;
@@ -47,8 +48,7 @@ int myprocinc(int argc, char *argv[]) {
             _sem_post(sem);
     }
 
-    if (use_sem)
-        _sem_close(sem);
+    global_sem = sem;
 
     return 0;
 }
@@ -83,19 +83,20 @@ int test_sync(int argc, char *argv[]) { //{n, use_sem, 0}
     char *argvInc[] = {"myprocinc", argv[1], "1", argv[2]};
 
     uint64_t i;
-    while (1) {
-        for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
-            pids[i] = _run(myprocinc, 4, argvDec);
-            pids[i + TOTAL_PAIR_PROCESSES] = _run(myprocinc, 4, argvInc);
-        }
-
-        for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
-            _waitpid(pids[i], &exit_status);
-            _waitpid(pids[i + TOTAL_PAIR_PROCESSES], &exit_status);
-        }
-
-        // printf("Final value: %d\n", global);
+    for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
+        pids[i] = _run(myprocinc, 4, argvDec);
+        pids[i + TOTAL_PAIR_PROCESSES] = _run(myprocinc, 4, argvInc);
     }
+
+    for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
+        _waitpid(pids[i], &exit_status);
+        _waitpid(pids[i + TOTAL_PAIR_PROCESSES], &exit_status);
+    }
+
+    if (satoi(argv[2]) > 0)
+        _sem_close(global_sem);
+
+    printf("Final value: %d\n", global);
 
     return 0;
 }
