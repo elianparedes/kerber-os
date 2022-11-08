@@ -8,4 +8,5 @@
 int clear(int argc, char *argv[]) {
     _clear_screen();
     _switch_screen_mode(FULLSCREEN);
+    return 0;
 }
