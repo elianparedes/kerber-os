@@ -318,6 +318,7 @@ void freecmd(cmd_t *cmd) {
         _free(cmd->argv[i]);
 
     _free(cmd->name);
+    _free(cmd);
 }
 
 void freepline(line_t *parsedline) {
@@ -331,13 +332,14 @@ static void pipe_exec_left(int argc, char *argv[]) {
     function_t function = get_cmd(argv[0]);
 
     int fd[2];
+    _sem_wait(sem_pipe_exec);
     if (_create_pipe("shell_pipe", fd) == -1)
         _open_pipe("shell_pipe", fd);
     _sem_post(sem_pipe_exec);
 
     _dup2(fd[1], 1);
     _close(fd[1]);
-    _close(fd[0]);
+    _close(fd[0]); // close read
 
     function(argc, argv);
 }
@@ -354,7 +356,7 @@ static void pipe_exec_right(int argc, char *argv[]) {
 
     _dup2(fd[0], 0);
     _close(fd[0]);
-    _close(fd[1]);
+    _close(fd[1]); // close write
 
     function(argc, argv);
 }

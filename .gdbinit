@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
-target remote 172.31.98.23:1234
-=======
-target remote 172.20.20.229:1234
->>>>>>> Stashed changes
+target remote 172.22.65.252:1234
 add-symbol-file Kernel/kernel.elf 0x100000
 add-symbol-file Userland/0000-sampleCodeModule.elf 0x400000
 

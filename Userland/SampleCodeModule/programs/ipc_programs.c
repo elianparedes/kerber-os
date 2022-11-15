@@ -23,10 +23,13 @@ int filter(int argc, char *argv[]) {
             }
         }
     }
-    buffer[i++] = '\n';
-    buffer[i] = '\0';
-    printf("%s", buffer);
 
+    if (i != 0){
+        buffer[i++] = '\n';
+        buffer[i] = '\0';
+        printf("%s", buffer);
+    }
+        
     return 0;
 }
 
@@ -42,16 +45,19 @@ int cat(int argc, char *argv[]) {
             i = 0;
         }
     }
-    buffer[i++] = '\n';
-    buffer[i] = '\0';
-    printf("%s", buffer);
+    
+    if (i != 0){
+        buffer[i++] = '\n';
+        buffer[i] = '\0';
+        printf("%s", buffer);
+    }
 
     return 0;
 }
 
 int wc(int argc, char *argv[]) {
     int16_t c;
-    int count = 1;
+    int count = 0;
     int i = 0;
     char buffer[SIZE_BUFFER];
     while (((c = getchar()) != (int16_t)-1)) {
@@ -64,9 +70,12 @@ int wc(int argc, char *argv[]) {
         }
     }
 
-    buffer[i++] = '\n';
-    buffer[i] = '\0';
-    printf("%s", buffer);
+   
+    if (i != 0){
+        buffer[i++] = '\n';
+        buffer[i] = '\0';
+        printf("%s", buffer);
+    }
 
     printf("TOTAL LINES: %d\n", count);
 

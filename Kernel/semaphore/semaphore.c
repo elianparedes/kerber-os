@@ -71,7 +71,7 @@ sem_ptr sem_open(char *name, int value) {
         strcpy(new_sem->name, name);
         new_sem->value = value;
         new_sem->lock = 0;
-        new_sem->blocked_processes=new_linked_list(process_comparison_function);
+        new_sem->blocked_processes = new_linked_list(process_comparison_function);
         add(sem_list, new_sem);
         sem_count++;
         return new_sem;
@@ -86,7 +86,7 @@ int sem_wait(sem_ptr sem) {
     {
         //TODO: check
         process_t *current_process = get_current_process();
-        add(sem->blocked_processes, (void *)&current_process->pid);
+        add(sem->blocked_processes, &current_process->pid);
         release(&sem->lock);
         sleep((uint64_t)sem);
     }
@@ -103,7 +103,7 @@ int sem_post(sem_ptr sem) {
     sem->value++;
     int pid = wakeup((uint64_t)sem);
     if (pid != ERROR){
-        remove(sem->blocked_processes, (void *)&pid);
+        remove(sem->blocked_processes, &pid);
         release(&sem->lock);
         return SUCCESS;
     }
